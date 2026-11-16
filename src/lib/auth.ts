@@ -22,7 +22,17 @@ export async function getAdminSession(): Promise<AuthSession> {
     return { isAdmin: false };
   }
 
-  // 1. Verify via Supabase Auth
+  // 1. Controlled Environment Secret Check (Direct master passkey check)
+  const envSecret = process.env.ADMIN_SECRET_KEY;
+  if (envSecret && envSecret.trim() !== '' && sessionToken === envSecret) {
+    return {
+      isAdmin: true,
+      email: 'admin@rajvidiamonds.com',
+      userId: 'env-authorized-admin',
+    };
+  }
+
+  // 2. Verify via Supabase Auth (when user logs in with Supabase email & password)
   const supabase = createClient();
   if (supabase) {
     try {
@@ -59,18 +69,8 @@ export async function getAdminSession(): Promise<AuthSession> {
         }
       }
     } catch {
-      // Supabase verification error, proceed to fallback check
+      // Supabase verification error
     }
-  }
-
-  // 2. Controlled Environment Secret Check (Only if explicitly set in environment)
-  const envSecret = process.env.ADMIN_SECRET_KEY;
-  if (envSecret && envSecret.trim() !== '' && sessionToken === envSecret) {
-    return {
-      isAdmin: true,
-      email: 'admin@rajvidiamonds.com',
-      userId: 'env-authorized-admin',
-    };
   }
 
   return { isAdmin: false };

@@ -23,7 +23,30 @@ export async function POST(request: NextRequest) {
 
       const normalizedEmail = email.trim().toLowerCase();
 
-      // 1. Authenticate via Supabase Auth
+      // 1. Direct Master Passkey Check (Instant access using ADMIN_SECRET_KEY configured in .env)
+      const envSecret = process.env.ADMIN_SECRET_KEY;
+      if (
+        envSecret &&
+        envSecret.trim() !== '' &&
+        password === envSecret
+      ) {
+        const response = NextResponse.json({
+          success: true,
+          message: 'Authenticated successfully via master passkey',
+        });
+
+        response.cookies.set(ADMIN_COOKIE_NAME, envSecret, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          maxAge: 60 * 60 * 24 * 7,
+          path: '/',
+        });
+
+        return response;
+      }
+
+      // 2. Authenticate via Supabase Auth (if registered in Supabase Authentication)
       const supabase = createClient();
       if (supabase) {
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -62,35 +85,6 @@ export async function POST(request: NextRequest) {
         });
 
         response.cookies.set(ADMIN_COOKIE_NAME, data.session.access_token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
-          maxAge: 60 * 60 * 24 * 7,
-          path: '/',
-        });
-
-        return response;
-      }
-
-      // 2. Controlled Environment Secret Check (Only if ADMIN_SECRET_KEY is explicitly configured in .env)
-      const envSecret = process.env.ADMIN_SECRET_KEY;
-      const isAllowedEmailOrUsername =
-        normalizedEmail === 'admin' ||
-        normalizedEmail === 'admin@rajvidiamonds.com' ||
-        normalizedEmail.includes('@');
-
-      if (
-        envSecret &&
-        envSecret.trim() !== '' &&
-        isAllowedEmailOrUsername &&
-        password === envSecret
-      ) {
-        const response = NextResponse.json({
-          success: true,
-          message: 'Authenticated successfully via environment passkey',
-        });
-
-        response.cookies.set(ADMIN_COOKIE_NAME, envSecret, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax',
