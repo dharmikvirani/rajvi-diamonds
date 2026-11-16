@@ -8,6 +8,8 @@ interface WhatsAppButtonProps {
   phoneNumber: string;
   diamondName?: string;
   selectedSize?: string | number | null;
+  color?: string | null;
+  clarity?: string | null;
   pageUrl?: string;
   variant?: 'floating' | 'primary' | 'outline' | 'header';
   className?: string;
@@ -18,15 +20,59 @@ export default function WhatsAppButton({
   phoneNumber,
   diamondName,
   selectedSize,
+  color,
+  clarity,
   pageUrl,
   variant = 'primary',
   className = '',
   label,
 }: WhatsAppButtonProps) {
+  const hasPhone = Boolean(phoneNumber && phoneNumber.trim() !== '');
+
+  if (!hasPhone) {
+    if (variant === 'floating') return null;
+
+    if (variant === 'header') {
+      return (
+        <a
+          href="/contact"
+          className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-rajvi-gold/40 text-rajvi-gold hover:text-rajvi-black hover:bg-rajvi-gold hover:border-rajvi-gold text-xs font-medium tracking-wider uppercase transition-all duration-300 ${className}`}
+        >
+          <MessageCircle className="w-3.5 h-3.5 text-current" />
+          <span>Trade Inquiry</span>
+        </a>
+      );
+    }
+
+    if (variant === 'outline') {
+      return (
+        <a
+          href="/contact"
+          className={`inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-sm border border-rajvi-gold text-rajvi-gold hover:bg-rajvi-gold hover:text-rajvi-black text-xs uppercase tracking-widest font-semibold transition-all duration-300 ${className}`}
+        >
+          <MessageCircle className="w-4 h-4" />
+          <span>{label || 'Send Trade Inquiry'}</span>
+        </a>
+      );
+    }
+
+    return (
+      <a
+        href="/contact"
+        className={`inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-sm bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black text-xs uppercase tracking-widest font-semibold transition-all duration-300 shadow-md hover:shadow-lg ${className}`}
+      >
+        <MessageCircle className="w-4 h-4" />
+        <span>{label || 'Send Trade Inquiry'}</span>
+      </a>
+    );
+  }
+
   const url = generateWhatsAppUrl({
     phoneNumber,
     diamondName,
     selectedSize,
+    color,
+    clarity,
     pageUrl,
   });
 

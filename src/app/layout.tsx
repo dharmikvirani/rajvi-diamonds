@@ -16,7 +16,7 @@ const inter = Inter({
 });
 
 export const viewport: Viewport = {
-  themeColor: '#171614',
+  themeColor: '#FAF8F5',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -54,9 +54,9 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: settings.brand_name,
       images: [
         {
-          url: '/rajvi-diamonds-logo.jpg',
-          width: 1280,
-          height: 853,
+          url: '/rajvi-diamonds-logo.png',
+          width: 1536,
+          height: 1024,
           alt: 'Rajvi Diamonds Brand',
         },
       ],
@@ -65,7 +65,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: 'summary_large_image',
       title: `${settings.brand_name} | Premium Fancy Cut Diamonds`,
       description: settings.hero_subtitle,
-      images: ['/rajvi-diamonds-logo.jpg'],
+      images: ['/rajvi-diamonds-logo.png'],
     },
     robots: {
       index: true,
@@ -79,8 +79,15 @@ export async function generateMetadata(): Promise<Metadata> {
       },
     },
     icons: {
-      icon: '/rajvi-diamonds-logo.jpg',
-      apple: '/rajvi-diamonds-logo.jpg',
+      icon: [
+        { url: '/favicon.ico', sizes: 'any' },
+        { url: '/favicon.png', type: 'image/png', sizes: '192x192' },
+        { url: '/favicon-32x32.png', type: 'image/png', sizes: '32x32' },
+        { url: '/favicon-16x16.png', type: 'image/png', sizes: '16x16' },
+      ],
+      apple: [
+        { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      ],
     },
   };
 }
@@ -92,7 +99,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
-      <body className="bg-rajvi-black text-rajvi-offWhite font-sans antialiased selection:bg-rajvi-gold selection:text-rajvi-black min-h-screen flex flex-col">
+      <body className="bg-rajvi-offWhite text-rajvi-textDark font-sans antialiased selection:bg-rajvi-gold selection:text-rajvi-black min-h-screen flex flex-col">
         {children}
       </body>
     </html>

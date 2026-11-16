@@ -1,6 +1,12 @@
 import React from 'react';
-import { notFound } from 'next/navigation';
-import { getAllCategoriesAdmin, getDiamondByIdAdmin } from '@/lib/db';
+import { notFound, redirect } from 'next/navigation';
+import { getAdminSession } from '@/lib/auth';
+import {
+  getAllCategoriesAdmin,
+  getAllDiamondColorsAdmin,
+  getAllDiamondClaritiesAdmin,
+  getDiamondByIdAdmin,
+} from '@/lib/db';
 import DiamondEditorForm from '@/components/admin/DiamondEditorForm';
 
 export const dynamic = 'force-dynamic';
@@ -12,8 +18,15 @@ interface EditDiamondPageProps {
 }
 
 export default async function EditDiamondPage({ params }: EditDiamondPageProps) {
-  const [categories, diamond] = await Promise.all([
+  const session = await getAdminSession();
+  if (!session.isAdmin) {
+    redirect('/admin/login');
+  }
+
+  const [categories, colors, clarities, diamond] = await Promise.all([
     getAllCategoriesAdmin(),
+    getAllDiamondColorsAdmin(),
+    getAllDiamondClaritiesAdmin(),
     getDiamondByIdAdmin(params.id),
   ]);
 
@@ -23,7 +36,12 @@ export default async function EditDiamondPage({ params }: EditDiamondPageProps) 
 
   return (
     <div className="space-y-6">
-      <DiamondEditorForm initialDiamond={diamond} categories={categories} />
+      <DiamondEditorForm
+        initialDiamond={diamond}
+        categories={categories}
+        availableColors={colors}
+        availableClarities={clarities}
+      />
     </div>
   );
 }

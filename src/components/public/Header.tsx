@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/navigation';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Menu, X, ArrowUpRight } from 'lucide-react';
@@ -13,7 +12,7 @@ interface HeaderProps {
 }
 
 export default function Header({
-  whatsappNumber = '+919876543210',
+  whatsappNumber = '',
   brandName = 'Rajvi Diamonds',
 }: HeaderProps) {
   const pathname = usePathname();
@@ -44,21 +43,21 @@ export default function Header({
     <header
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${
         isScrolled
-          ? 'bg-rajvi-black/95 backdrop-blur-md border-b border-rajvi-borderDark py-3 shadow-luxuryDark'
-          : 'bg-rajvi-black border-b border-rajvi-borderDark/60 py-4'
+          ? 'bg-white/95 backdrop-blur-md border-b border-rajvi-borderLight py-2.5 sm:py-3 shadow-luxury'
+          : 'bg-white/90 backdrop-blur-sm border-b border-rajvi-borderLight/80 py-3 sm:py-3.5'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-        {/* Brand Logo - Preserving exact original proportions & file */}
-        <a href="/" className="flex items-center gap-3 group">
-          <div className="relative h-11 sm:h-12 w-36 sm:w-44 flex items-center justify-start overflow-hidden">
+        {/* Brand Logo - Preserving exact original proportions & artwork */}
+        <a href="/" className="flex items-center gap-3 group shrink-0">
+          <div className="relative h-[56px] sm:h-[64px] md:h-[70px] w-[145px] sm:w-[170px] md:w-[195px] flex items-center justify-start overflow-hidden transition-transform duration-300 group-hover:scale-[1.02]">
             <Image
-              src="/rajvi-diamonds-logo.jpg"
+              src="/rajvi-diamonds-logo-display.png"
               alt={brandName}
-              width={1280}
-              height={853}
+              width={1089}
+              height={840}
               priority
-              className="object-contain h-full w-auto transition-transform duration-300 group-hover:scale-105"
+              className="object-contain object-left h-full w-auto"
             />
           </div>
         </a>
@@ -77,7 +76,7 @@ export default function Header({
                 className={`text-xs uppercase tracking-widest font-medium transition-all duration-200 relative py-1 ${
                   isActive
                     ? 'text-rajvi-gold font-semibold'
-                    : 'text-rajvi-offWhite/80 hover:text-rajvi-goldLight'
+                    : 'text-rajvi-textDark hover:text-rajvi-gold'
                 }`}
               >
                 {link.label}
@@ -99,7 +98,7 @@ export default function Header({
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
-            className="p-2 text-rajvi-offWhite hover:text-rajvi-gold transition-colors focus:outline-none"
+            className="p-2 text-rajvi-textDark hover:text-rajvi-gold transition-colors focus:outline-none"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -108,7 +107,7 @@ export default function Header({
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-rajvi-black border-b border-rajvi-borderDark px-6 py-6 space-y-5 animate-in slide-in-from-top-4 duration-300">
+        <div className="md:hidden bg-white border-b border-rajvi-borderLight px-6 py-6 space-y-5 animate-in slide-in-from-top-4 duration-300 shadow-luxury">
           <nav className="flex flex-col space-y-4">
             {navLinks.map((link) => {
               const isActive =
@@ -119,14 +118,14 @@ export default function Header({
                 <a
                   key={link.href}
                   href={link.href}
-                  className={`text-sm uppercase tracking-widest py-2 border-b border-rajvi-borderDark/40 flex items-center justify-between ${
+                  className={`text-sm uppercase tracking-widest py-2 border-b border-rajvi-borderLight/60 flex items-center justify-between ${
                     isActive
                       ? 'text-rajvi-gold font-semibold'
-                      : 'text-rajvi-offWhite/90 hover:text-rajvi-gold'
+                      : 'text-rajvi-textDark hover:text-rajvi-gold'
                   }`}
                 >
                   <span>{link.label}</span>
-                  <ArrowUpRight className="w-4 h-4 opacity-40" />
+                  <ArrowUpRight className="w-4 h-4 opacity-40 text-rajvi-textMuted" />
                 </a>
               );
             })}
@@ -135,7 +134,7 @@ export default function Header({
           <div className="pt-2">
             <WhatsAppButton
               phoneNumber={whatsappNumber}
-              variant="primary"
+              variant="outline"
               className="w-full text-center"
             />
           </div>

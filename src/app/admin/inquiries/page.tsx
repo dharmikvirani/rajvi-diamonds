@@ -1,4 +1,6 @@
 import React from 'react';
+import { redirect } from 'next/navigation';
+import { getAdminSession } from '@/lib/auth';
 import { getInquiriesAdmin, getSiteSettings } from '@/lib/db';
 import InquiriesClient from './InquiriesClient';
 
@@ -11,6 +13,11 @@ interface InquiriesPageProps {
 }
 
 export default async function AdminInquiriesPage({ searchParams }: InquiriesPageProps) {
+  const session = await getAdminSession();
+  if (!session.isAdmin) {
+    redirect('/admin/login');
+  }
+
   const [inquiries, settings] = await Promise.all([
     getInquiriesAdmin(),
     getSiteSettings(),

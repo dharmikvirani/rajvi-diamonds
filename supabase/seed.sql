@@ -96,13 +96,14 @@ INSERT INTO site_settings (setting_key, setting_value)
 VALUES
   ('brand_name', '"Rajvi Diamonds"'::jsonb),
   ('tagline', '"The Art of Extraordinary Diamonds"'::jsonb),
-  ('whatsapp_number', '"+919876543210"'::jsonb),
+  ('whatsapp_number', '"+919123456789"'::jsonb),
   ('contact_email', '"inquiry@rajvidiamonds.com"'::jsonb),
-  ('phone_number', '"+91 98765 43210"'::jsonb),
+  ('phone_number', '"+919123456789"'::jsonb),
   ('instagram_url', '"https://instagram.com/rajvidiamonds"'::jsonb),
-  ('business_address', '"Bharat Diamond Bourse, BKC, Bandra East, Mumbai, Maharashtra 400051, India"'::jsonb),
+  ('business_address', '"C-108, Vrundavan Nager Soc, Near Gitanjli petrol pump, Varachha Road, Surat, Gujarat"'::jsonb),
   ('footer_text', '"Manufacturer and supplier of exceptional fancy diamond cuts. Dedicated to precision craftsmanship, rarity, and enduring trade excellence."'::jsonb),
   ('hero_heading', '"The Art of Extraordinary Diamonds"'::jsonb),
-  ('hero_subtitle', '"Discover exceptional fancy diamond cuts crafted for brilliance."'::jsonb)
+  ('hero_subtitle', '"Discover exceptional fancy diamond cuts crafted for brilliance."'::jsonb),
+  ('hero_image_url', '"https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?auto=format&fit=crop&w=2000&q=85"'::jsonb)
 ON CONFLICT (setting_key) DO UPDATE 
 SET setting_value = EXCLUDED.setting_value, updated_at = timezone('utc'::text, now());

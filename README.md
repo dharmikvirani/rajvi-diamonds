@@ -9,7 +9,7 @@ A production-ready digital showcase and trade catalogue platform for **Rajvi Dia
 ## 1. Brand & Design System
 
 - **Brand Name:** Rajvi Diamonds
-- **Brand Logo:** Original authentic logo provided by project owner preserved at `public/rajvi-diamonds-logo.jpg`.
+- **Brand Logo:** Original authentic logo provided by project owner preserved at `public/rajvi-diamonds-logo.png`.
 - **Theme Concept:** Mixed-theme luxury editorial
   - **Homepage:** Deep dark luxury theme (`#171614` background with champagne gold `#C6A46A` typography and accents).
   - **Diamond Catalogue (`/collections`):** Pristine white and off-white (`#F8F7F4`) background with clean light grey surfaces, minimal borders, and editorial product cards.
@@ -39,7 +39,7 @@ A production-ready digital showcase and trade catalogue platform for **Rajvi Dia
 ```
 rajvi-diamonds/
 ├── public/
-│   ├── rajvi-diamonds-logo.jpg    # Authentic original logo
+│   ├── rajvi-diamonds-logo.png    # Authentic original logo
 │   └── images/                     # Diamond cut photography assets
 ├── src/
 │   ├── app/
@@ -158,8 +158,8 @@ CLOUDINARY_API_SECRET=your-cloudinary-api-secret
 # Public Site Configuration
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
-# Standalone Admin Access Secret Key
-ADMIN_SECRET_KEY=RajviLuxurySecure2024!
+# Standalone Admin Access Secret Key (configure in your private .env.local)
+ADMIN_SECRET_KEY=your-secure-admin-passkey-min-16-characters
 ```
 
 ---
@@ -193,9 +193,9 @@ ADMIN_SECRET_KEY=RajviLuxurySecure2024!
 ## 7. Admin Portal Access
 
 - **Admin Login Route:** [http://localhost:3000/admin/login](http://localhost:3000/admin/login)
-- **Local Development Credentials:**
-  - **Email:** `admin@rajvidiamonds.com`
-  - **Password / Passkey:** `RajviLuxurySecure2024!`
+- **Authentication Methods:**
+  - **Supabase Auth:** Authenticate using an email/password configured in Supabase Auth and registered in `admin_users`.
+  - **Passkey Fallback:** Authenticate using the administrator email and the private `ADMIN_SECRET_KEY` defined in `.env.local`.
 
 ### Setting up Supabase Auth Admin:
 1. In your Supabase Dashboard, go to **Authentication -> Users** and click **Add User**.

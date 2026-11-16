@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: DiamondDetailPageProps): Prom
   const primaryImg =
     diamond.images.find((i) => i.is_primary)?.image_url ||
     diamond.images[0]?.image_url ||
-    '/rajvi-diamonds-logo.jpg';
+    '/rajvi-diamonds-logo.png';
 
   return {
     title: diamond.seo_title || `${diamond.name} Fancy Diamond Cut`,

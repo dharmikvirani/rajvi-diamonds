@@ -1,4 +1,49 @@
-import { Category, Diamond, Inquiry, SiteSettings } from './types';
+import { Category, Diamond, DiamondColorOption, DiamondClarityOption, Inquiry, SiteSettings } from './types';
+
+export const initialDiamondColors: DiamondColorOption[] = [
+  ...['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'].map((letter, idx) => ({
+    id: `col-${idx + 1}`,
+    name: letter,
+    category: 'standard' as const,
+    display_order: idx + 1,
+    is_active: true,
+    created_at: new Date('2024-01-01').toISOString(),
+    updated_at: new Date('2024-01-01').toISOString(),
+  })),
+  ...[
+    'Fancy Yellow',
+    'Fancy Pink',
+    'Fancy Blue',
+    'Fancy Green',
+    'Fancy Orange',
+    'Fancy Purple',
+    'Fancy Brown',
+    'Fancy Black',
+    'Fancy Champagne',
+  ].map((name, idx) => ({
+    id: `col-fancy-${idx + 1}`,
+    name,
+    category: 'fancy' as const,
+    display_order: 24 + idx,
+    is_active: true,
+    created_at: new Date('2024-01-01').toISOString(),
+    updated_at: new Date('2024-01-01').toISOString(),
+  })),
+];
+
+export const initialDiamondClarities: DiamondClarityOption[] = [
+  { id: 'clr-1', name: 'FL', label: 'Flawless', display_order: 1, is_active: true, created_at: new Date('2024-01-01').toISOString(), updated_at: new Date('2024-01-01').toISOString() },
+  { id: 'clr-2', name: 'IF', label: 'Internally Flawless', display_order: 2, is_active: true, created_at: new Date('2024-01-01').toISOString(), updated_at: new Date('2024-01-01').toISOString() },
+  { id: 'clr-3', name: 'VVS1', label: 'Very Very Slightly Included 1', display_order: 3, is_active: true, created_at: new Date('2024-01-01').toISOString(), updated_at: new Date('2024-01-01').toISOString() },
+  { id: 'clr-4', name: 'VVS2', label: 'Very Very Slightly Included 2', display_order: 4, is_active: true, created_at: new Date('2024-01-01').toISOString(), updated_at: new Date('2024-01-01').toISOString() },
+  { id: 'clr-5', name: 'VS1', label: 'Very Slightly Included 1', display_order: 5, is_active: true, created_at: new Date('2024-01-01').toISOString(), updated_at: new Date('2024-01-01').toISOString() },
+  { id: 'clr-6', name: 'VS2', label: 'Very Slightly Included 2', display_order: 6, is_active: true, created_at: new Date('2024-01-01').toISOString(), updated_at: new Date('2024-01-01').toISOString() },
+  { id: 'clr-7', name: 'SI1', label: 'Slightly Included 1', display_order: 7, is_active: true, created_at: new Date('2024-01-01').toISOString(), updated_at: new Date('2024-01-01').toISOString() },
+  { id: 'clr-8', name: 'SI2', label: 'Slightly Included 2', display_order: 8, is_active: true, created_at: new Date('2024-01-01').toISOString(), updated_at: new Date('2024-01-01').toISOString() },
+  { id: 'clr-9', name: 'I1', label: 'Included 1', display_order: 9, is_active: true, created_at: new Date('2024-01-01').toISOString(), updated_at: new Date('2024-01-01').toISOString() },
+  { id: 'clr-10', name: 'I2', label: 'Included 2', display_order: 10, is_active: true, created_at: new Date('2024-01-01').toISOString(), updated_at: new Date('2024-01-01').toISOString() },
+  { id: 'clr-11', name: 'I3', label: 'Included 3', display_order: 11, is_active: true, created_at: new Date('2024-01-01').toISOString(), updated_at: new Date('2024-01-01').toISOString() },
+];
 
 export const initialCategories: Category[] = [
   {
@@ -6,7 +51,7 @@ export const initialCategories: Category[] = [
     name: 'Geometric Fancy Cuts',
     slug: 'geometric-fancy-cuts',
     description: 'Architectural faceting showcasing symmetry, clean planar reflections, and historic lapidary precision.',
-    image_url: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=1200&q=80',
+    image_url: 'https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?auto=format&fit=crop&w=1200&q=80',
     is_active: true,
     display_order: 1,
     created_at: new Date('2024-01-01').toISOString(),
@@ -17,7 +62,7 @@ export const initialCategories: Category[] = [
     name: 'Botanical & Organic Cuts',
     slug: 'botanical-organic-cuts',
     description: 'Nature-inspired silhouettes sculpted with petal facets and romantic vintage allure.',
-    image_url: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1200&q=80',
+    image_url: 'https://images.unsplash.com/photo-1750767323874-5946ad2c7e91?auto=format&fit=crop&w=1200&q=80',
     is_active: true,
     display_order: 2,
     created_at: new Date('2024-01-01').toISOString(),
@@ -28,7 +73,7 @@ export const initialCategories: Category[] = [
     name: 'Antique & Heritage Cuts',
     slug: 'antique-heritage-cuts',
     description: 'Reimagined historical cuts balancing subtle dispersion with dramatic crown proportions.',
-    image_url: 'https://images.unsplash.com/photo-1598560917505-59a3ad559071?auto=format&fit=crop&w=1200&q=80',
+    image_url: 'https://images.unsplash.com/photo-1554283493-fbe7e5cd03cf?auto=format&fit=crop&w=1200&q=80',
     is_active: true,
     display_order: 3,
     created_at: new Date('2024-01-01').toISOString(),
@@ -47,6 +92,8 @@ export const initialDiamonds: Diamond[] = [
 
 Each facet is hand-oriented by master diamond cutters to maximize interior reflections while preserving the flat base characteristic of historic rose cuts, making it exceptionally versatile for bespoke luxury jewellery settings.`,
     shape: 'Octagon Rose Cut',
+    color: 'D',
+    clarity: 'VVS1',
     is_featured: true,
     is_active: true,
     display_order: 1,
@@ -73,8 +120,8 @@ Each facet is hand-oriented by master diamond cutters to maximize interior refle
       {
         id: 'img-1-1',
         diamond_id: 'diamond-1',
-        image_url: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=1400&q=85',
-        alt_text: 'Rajvi Diamonds Rose Octagone Cut - Primary Angle',
+        image_url: 'https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?auto=format&fit=crop&w=1400&q=85',
+        alt_text: 'Rajvi Diamonds Rose Octagone Cut - Precision Facets',
         is_primary: true,
         display_order: 1,
         created_at: new Date('2024-01-01').toISOString(),
@@ -82,7 +129,7 @@ Each facet is hand-oriented by master diamond cutters to maximize interior refle
       {
         id: 'img-1-2',
         diamond_id: 'diamond-1',
-        image_url: 'https://images.unsplash.com/photo-1598560917505-59a3ad559071?auto=format&fit=crop&w=1400&q=85',
+        image_url: 'https://images.unsplash.com/photo-1554283493-fbe7e5cd03cf?auto=format&fit=crop&w=1400&q=85',
         alt_text: 'Rose Octagone Geometric Facet Reflections',
         is_primary: false,
         display_order: 2,
@@ -91,7 +138,7 @@ Each facet is hand-oriented by master diamond cutters to maximize interior refle
       {
         id: 'img-1-3',
         diamond_id: 'diamond-1',
-        image_url: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1400&q=85',
+        image_url: 'https://images.unsplash.com/photo-1750767323874-5946ad2c7e91?auto=format&fit=crop&w=1400&q=85',
         alt_text: 'Rose Octagone Profile and Crown View',
         is_primary: false,
         display_order: 3,
@@ -161,6 +208,8 @@ Designed specifically for distinctive statement pieces, high jewellery creations
 
 Note: Size availability for the Tulip cut is customized upon inquiry and configured through our master lapidary workshop.`,
     shape: 'Floral Tulip Cut',
+    color: 'E',
+    clarity: 'VS1',
     is_featured: true,
     is_active: true,
     display_order: 2,
@@ -187,7 +236,7 @@ Note: Size availability for the Tulip cut is customized upon inquiry and configu
       {
         id: 'img-2-1',
         diamond_id: 'diamond-2',
-        image_url: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1400&q=85',
+        image_url: 'https://images.unsplash.com/photo-1750767323874-5946ad2c7e91?auto=format&fit=crop&w=1400&q=85',
         alt_text: 'Rajvi Diamonds Tulip Cut Fancy Diamond - Front Face',
         is_primary: true,
         display_order: 1,
@@ -196,7 +245,7 @@ Note: Size availability for the Tulip cut is customized upon inquiry and configu
       {
         id: 'img-2-2',
         diamond_id: 'diamond-2',
-        image_url: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=1400&q=85',
+        image_url: 'https://images.unsplash.com/photo-1554283493-fbe7e5cd03cf?auto=format&fit=crop&w=1400&q=85',
         alt_text: 'Tulip Diamond Floral Symmetry and Dispersion',
         is_primary: false,
         display_order: 2,
@@ -205,7 +254,7 @@ Note: Size availability for the Tulip cut is customized upon inquiry and configu
       {
         id: 'img-2-3',
         diamond_id: 'diamond-2',
-        image_url: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=1400&q=85',
+        image_url: 'https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?auto=format&fit=crop&w=1400&q=85',
         alt_text: 'Tulip Diamond Showcase Setting Angle',
         is_primary: false,
         display_order: 3,
@@ -225,6 +274,8 @@ Note: Size availability for the Tulip cut is customized upon inquiry and configu
     short_description: 'Clean architectural concentric step facets encased within a balanced hexagonal outline.',
     description: `The Hexagon Step Cut embodies modern architectural minimalism. Featuring parallel facets that create an evocative "hall of mirrors" optical effect, this cut celebrates clarity, crisp geometric lines, and pure transparency.`,
     shape: 'Hexagon Step Cut',
+    color: 'F',
+    clarity: 'IF',
     is_featured: true,
     is_active: true,
     display_order: 3,
@@ -250,10 +301,19 @@ Note: Size availability for the Tulip cut is customized upon inquiry and configu
       {
         id: 'img-3-1',
         diamond_id: 'diamond-3',
-        image_url: 'https://images.unsplash.com/photo-1598560917505-59a3ad559071?auto=format&fit=crop&w=1400&q=85',
-        alt_text: 'Rajvi Diamonds Hexagon Step Cut - Face-Up',
+        image_url: 'https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?auto=format&fit=crop&w=1400&q=85',
+        alt_text: 'Rajvi Diamonds Hexagon Step Cut - Face-Up Facets',
         is_primary: true,
         display_order: 1,
+        created_at: new Date('2024-01-03').toISOString(),
+      },
+      {
+        id: 'img-3-2',
+        diamond_id: 'diamond-3',
+        image_url: 'https://images.unsplash.com/photo-1554283493-fbe7e5cd03cf?auto=format&fit=crop&w=1400&q=85',
+        alt_text: 'Hexagon Step Cut Precision Light Refraction',
+        is_primary: false,
+        display_order: 2,
         created_at: new Date('2024-01-03').toISOString(),
       },
     ],
@@ -294,14 +354,15 @@ Note: Size availability for the Tulip cut is customized upon inquiry and configu
 export const initialSiteSettings: SiteSettings = {
   brand_name: 'Rajvi Diamonds',
   tagline: 'The Art of Extraordinary Diamonds',
-  whatsapp_number: '+919876543210',
+  whatsapp_number: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '',
   contact_email: 'inquiry@rajvidiamonds.com',
-  phone_number: '+91 98765 43210',
+  phone_number: '+919123456789',
   instagram_url: 'https://instagram.com/rajvidiamonds',
-  business_address: 'Bharat Diamond Bourse, BKC, Bandra East, Mumbai, Maharashtra 400051, India',
+  business_address: 'C-108, Vrundavan Nager Soc, Near Gitanjli petrol pump, Varachha Road, Surat, Gujarat',
   footer_text: 'Manufacturer and supplier of exceptional fancy diamond cuts. Dedicated to precision craftsmanship, rarity, and enduring trade excellence.',
   hero_heading: 'The Art of Extraordinary Diamonds',
   hero_subtitle: 'Discover exceptional fancy diamond cuts crafted for brilliance.',
+  hero_image_url: 'https://images.unsplash.com/photo-1750767323886-164156e82e62?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
   about_brand_intro: 'Rajvi Diamonds is a dedicated manufacturer and supplier of premier fancy diamond cuts, serving esteemed jewellery houses, private designers, and international diamond connoisseurs.',
   about_story: 'Founded with a profound reverence for rare geometric and artisanal silhouettes, Rajvi Diamonds bridges heritage lapidary techniques with modern dimensional precision. Our master diamond polishers coax unprecedented fire and character from rough stones, producing singular fancy cuts that cannot be replicated by automated mass production.',
   about_expertise: 'Our workshop specializes exclusively in non-traditional fancy shapes, including faceted rose domes, geometric step cuts, and botanical silhouettes. Every cut undergoes rigorous facet angle calibration to harmonize light return and aesthetic individuality.',

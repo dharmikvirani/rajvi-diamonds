@@ -4,26 +4,46 @@ import { DiamondSpecifications } from '@/lib/types';
 interface DiamondSpecsTableProps {
   specifications: DiamondSpecifications;
   shape: string;
+  cutName?: string;
+  size?: string | null;
+  color?: string | null;
+  clarity?: string | null;
 }
 
-export default function DiamondSpecsTable({ specifications, shape }: DiamondSpecsTableProps) {
-  const specsList = [
-    { label: 'Cut & Geometry', value: shape },
-    { label: 'Cut Grade', value: specifications.cut_grade || 'Master Artisan Grade' },
-    { label: 'Symmetry', value: specifications.symmetry || 'Excellent' },
-    { label: 'Polish', value: specifications.polish || 'Excellent' },
-    { label: 'Fluorescence', value: specifications.fluorescence || 'None' },
-    { label: 'Table / Crown Proportions', value: specifications.table_percentage || 'Calibrated Dome' },
-    { label: 'Depth Proportions', value: specifications.depth_percentage || 'Optically Balanced' },
-    { label: 'Facet Configuration', value: specifications.facet_count ? `${specifications.facet_count} Facets` : 'Custom Faceted' },
-    { label: 'Girdle Style', value: specifications.girdle || 'Polished / Faceted' },
-    { label: 'Culet Treatment', value: specifications.culet || 'Precision Finished' },
-    { label: 'Crafting Origin', value: specifications.crafting_origin || 'Rajvi Master Lapidary Studio' },
-  ];
+export default function DiamondSpecsTable({
+  specifications,
+  shape,
+  cutName,
+  size,
+  color,
+  clarity,
+}: DiamondSpecsTableProps) {
+  const primarySpecs: { label: string; value: string }[] = [];
 
-  const customEntries = specifications.custom_attributes
-    ? Object.entries(specifications.custom_attributes)
+  if (cutName) primarySpecs.push({ label: 'Cut', value: cutName });
+  if (shape && shape !== cutName) primarySpecs.push({ label: 'Shape / Geometry', value: shape });
+  if (size) primarySpecs.push({ label: 'Size', value: size });
+  if (color) primarySpecs.push({ label: 'Color', value: color });
+  if (clarity) primarySpecs.push({ label: 'Purity / Clarity', value: clarity });
+
+  const lapidarySpecs = [
+    { label: 'Cut Grade', value: specifications?.cut_grade || 'Master Artisan Grade' },
+    { label: 'Symmetry', value: specifications?.symmetry || 'Excellent' },
+    { label: 'Polish', value: specifications?.polish || 'Excellent' },
+    { label: 'Fluorescence', value: specifications?.fluorescence || 'None' },
+    specifications?.table_percentage ? { label: 'Table / Crown Proportions', value: specifications.table_percentage } : null,
+    specifications?.depth_percentage ? { label: 'Depth Proportions', value: specifications.depth_percentage } : null,
+    specifications?.facet_count ? { label: 'Facet Configuration', value: `${specifications.facet_count} Facets` } : null,
+    specifications?.girdle ? { label: 'Girdle Style', value: specifications.girdle } : null,
+    specifications?.culet ? { label: 'Culet Treatment', value: specifications.culet } : null,
+    { label: 'Crafting Origin', value: specifications?.crafting_origin || 'Rajvi Master Lapidary Studio' },
+  ].filter((item): item is { label: string; value: string } => Boolean(item && item.value && String(item.value).trim() !== ''));
+
+  const customEntries = specifications?.custom_attributes
+    ? Object.entries(specifications.custom_attributes).filter(([_, val]) => val && String(val).trim() !== '')
     : [];
+
+  const allSpecs = [...primarySpecs, ...lapidarySpecs];
 
   return (
     <div className="bg-white border border-rajvi-borderLight rounded-sm p-6 sm:p-8 shadow-sm">
@@ -35,7 +55,7 @@ export default function DiamondSpecsTable({ specifications, shape }: DiamondSpec
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4 text-xs">
-        {specsList.map((item, idx) => (
+        {allSpecs.map((item, idx) => (
           <div
             key={idx}
             className="flex items-center justify-between py-2 border-b border-rajvi-lightGrey/60"

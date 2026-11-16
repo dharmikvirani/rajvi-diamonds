@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { createClient, createAdminClient } from '@/lib/supabase';
 
 const ADMIN_COOKIE_NAME = 'rajvi_admin_session';
-const DEFAULT_FALLBACK_SECRET = 'RajviLuxurySecure2024!';
 
 export async function POST(request: NextRequest) {
   try {
     const { action, email, password } = await request.json();
 
     if (action === 'logout') {
-      const response = NextResponse.json({ success: true, message: 'Logged out' });
+      const response = NextResponse.json({ success: true, message: 'Logged out successfully' });
       response.cookies.delete(ADMIN_COOKIE_NAME);
       return response;
     }
@@ -23,31 +21,9 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Check against configured fallback admin credentials
-      const adminSecret = process.env.ADMIN_SECRET_KEY || DEFAULT_FALLBACK_SECRET;
       const normalizedEmail = email.trim().toLowerCase();
 
-      if (
-        (normalizedEmail === 'admin@rajvidiamonds.com' || normalizedEmail === 'admin') &&
-        password === adminSecret
-      ) {
-        const response = NextResponse.json({
-          success: true,
-          message: 'Authenticated successfully as administrator',
-        });
-
-        response.cookies.set(ADMIN_COOKIE_NAME, adminSecret, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
-          maxAge: 60 * 60 * 24 * 7, // 7 days
-          path: '/',
-        });
-
-        return response;
-      }
-
-      // Check Supabase Auth
+      // 1. Authenticate via Supabase Auth
       const supabase = createClient();
       if (supabase) {
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -67,7 +43,7 @@ export async function POST(request: NextRequest) {
         if (adminDb) {
           const { data: adminRecord, error: adminErr } = await adminDb
             .from('admin_users')
-            .select('*')
+            .select('id, role, is_active')
             .eq('auth_user_id', data.user.id)
             .eq('is_active', true)
             .single();
@@ -96,10 +72,40 @@ export async function POST(request: NextRequest) {
         return response;
       }
 
+      // 2. Controlled Environment Secret Check (Only if ADMIN_SECRET_KEY is explicitly configured in .env)
+      const envSecret = process.env.ADMIN_SECRET_KEY;
+      const isAllowedEmailOrUsername =
+        normalizedEmail === 'admin' ||
+        normalizedEmail === 'admin@rajvidiamonds.com' ||
+        normalizedEmail.includes('@');
+
+      if (
+        envSecret &&
+        envSecret.trim() !== '' &&
+        isAllowedEmailOrUsername &&
+        password === envSecret
+      ) {
+        const response = NextResponse.json({
+          success: true,
+          message: 'Authenticated successfully via environment passkey',
+        });
+
+        response.cookies.set(ADMIN_COOKIE_NAME, envSecret, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          maxAge: 60 * 60 * 24 * 7,
+          path: '/',
+        });
+
+        return response;
+      }
+
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid administrator credentials. (Default local: admin@rajvidiamonds.com / RajviLuxurySecure2024!)',
+          error:
+            'Authentication failed. Please verify your credentials or configure Supabase Auth in your environment.',
         },
         { status: 401 }
       );

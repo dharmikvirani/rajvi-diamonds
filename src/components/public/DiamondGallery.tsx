@@ -22,7 +22,7 @@ export default function DiamondGallery({ images, diamondName }: DiamondGalleryPr
           {
             id: 'fallback-1',
             diamond_id: 'temp',
-            image_url: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=1600&q=85',
+            image_url: 'https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?auto=format&fit=crop&w=1600&q=85',
             alt_text: diamondName,
             is_primary: true,
             display_order: 1,

@@ -14,7 +14,7 @@ export default function DiamondCard({ diamond, theme = 'light' }: DiamondCardPro
   const primaryImage =
     diamond.images.find((img) => img.is_primary) ||
     diamond.images[0] || {
-      image_url: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=1200&q=80',
+      image_url: 'https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?auto=format&fit=crop&w=1200&q=80',
       alt_text: diamond.name,
     };
 
@@ -67,6 +67,13 @@ export default function DiamondCard({ diamond, theme = 'light' }: DiamondCardPro
         <span className="absolute bottom-3 left-3 px-2 py-0.5 text-[10px] tracking-wider uppercase bg-white/90 text-rajvi-charcoal font-medium rounded-sm backdrop-blur-sm">
           {diamond.shape}
         </span>
+
+        {/* Color & Clarity Badge */}
+        {(diamond.color || diamond.clarity) && (
+          <span className="absolute bottom-3 right-3 px-2 py-0.5 text-[10px] tracking-wider uppercase bg-black/80 text-rajvi-goldLight font-medium rounded-sm backdrop-blur-sm border border-rajvi-gold/30">
+            {[diamond.color ? `Color ${diamond.color}` : '', diamond.clarity].filter(Boolean).join(' • ')}
+          </span>
+        )}
       </a>
 
       {/* Card Details */}

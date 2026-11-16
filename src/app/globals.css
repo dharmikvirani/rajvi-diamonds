@@ -20,11 +20,11 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #171614;
+  background: #F8F7F4;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3a362f;
+  background: #DDD9D0;
   border-radius: 4px;
 }
 
@@ -35,17 +35,12 @@
 /* Selection */
 ::selection {
   background: #C6A46A;
-  color: #171614;
-}
-
-/* Luxury Smooth Transitions */
-* {
-  border-color: #2F2B24;
+  color: #FFFFFF;
 }
 
 /* Gold Gradient Text */
 .gold-gradient-text {
-  background: linear-gradient(135deg, #E5D2AD 0%, #C6A46A 50%, #9C7F4E 100%);
+  background: linear-gradient(135deg, #B89254 0%, #C6A46A 50%, #8C6F3D 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

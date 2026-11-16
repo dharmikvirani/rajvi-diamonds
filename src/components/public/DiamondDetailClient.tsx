@@ -52,8 +52,8 @@ export default function DiamondDetailClient({
         {/* Right Column: Diamond Specifications & Inquiries */}
         <div className="lg:col-span-5 flex flex-col justify-between space-y-8">
           <div>
-            {/* Category & Shape Badge */}
-            <div className="flex items-center gap-3 mb-3">
+            {/* Category, Shape, Color & Clarity Badges */}
+            <div className="flex flex-wrap items-center gap-2.5 mb-3">
               {diamond.category && (
                 <span className="text-[11px] uppercase tracking-widest text-rajvi-gold font-semibold">
                   {diamond.category.name}
@@ -63,6 +63,22 @@ export default function DiamondDetailClient({
               <span className="text-[11px] uppercase tracking-widest text-rajvi-textMuted font-medium">
                 {diamond.shape}
               </span>
+              {diamond.color && (
+                <>
+                  <span className="text-rajvi-borderDark/40">|</span>
+                  <span className="px-2 py-0.5 text-[10px] uppercase tracking-wider font-semibold bg-rajvi-offWhite border border-rajvi-borderLight text-rajvi-gold rounded-sm">
+                    Color: {diamond.color}
+                  </span>
+                </>
+              )}
+              {diamond.clarity && (
+                <>
+                  <span className="text-rajvi-borderDark/40">|</span>
+                  <span className="px-2 py-0.5 text-[10px] uppercase tracking-wider font-semibold bg-rajvi-offWhite border border-rajvi-borderLight text-rajvi-gold rounded-sm">
+                    Clarity: {diamond.clarity}
+                  </span>
+                </>
+              )}
             </div>
 
             {/* Diamond Name */}
@@ -97,6 +113,8 @@ export default function DiamondDetailClient({
                 phoneNumber={settings.whatsapp_number}
                 diamondName={diamond.name}
                 selectedSize={formattedSelectedSize}
+                color={diamond.color}
+                clarity={diamond.clarity}
                 pageUrl={pageUrl}
                 variant="primary"
                 className="w-full text-center py-4"
@@ -138,6 +156,10 @@ export default function DiamondDetailClient({
         <DiamondSpecsTable
           specifications={diamond.specifications}
           shape={diamond.shape}
+          cutName={diamond.name}
+          size={formattedSelectedSize}
+          color={diamond.color}
+          clarity={diamond.clarity}
         />
       </div>
 
@@ -161,6 +183,8 @@ export default function DiamondDetailClient({
           <ContactForm
             initialDiamondName={diamond.name}
             initialSize={formattedSelectedSize}
+            initialColor={diamond.color}
+            initialClarity={diamond.clarity}
             initialDiamondId={diamond.id}
             inquiryTypeDefault="Diamond Availability"
           />

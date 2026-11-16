@@ -21,6 +21,8 @@ export function generateWhatsAppUrl(options: {
   phoneNumber: string;
   diamondName?: string;
   selectedSize?: string | number | null;
+  color?: string | null;
+  clarity?: string | null;
   pageUrl?: string;
   customMessage?: string;
 }): string {
@@ -35,14 +37,20 @@ export function generateWhatsAppUrl(options: {
   if (options.customMessage) {
     message = options.customMessage;
   } else if (options.diamondName) {
-    if (options.selectedSize) {
-      const sizeStr = typeof options.selectedSize === 'number'
+    const sizeStr = options.selectedSize
+      ? typeof options.selectedSize === 'number'
         ? formatSizeMm(options.selectedSize)
-        : options.selectedSize;
-      message = `Hello Rajvi Diamonds, I am interested in ${options.diamondName} in ${sizeStr} size. Please share more details.`;
-    } else {
-      message = `Hello Rajvi Diamonds, I am interested in ${options.diamondName}. Please share availability and details.`;
-    }
+        : options.selectedSize
+      : null;
+
+    const specs: string[] = [];
+    if (sizeStr) specs.push(`Size: ${sizeStr}`);
+    if (options.color) specs.push(`Color: ${options.color}`);
+    if (options.clarity) specs.push(`Clarity: ${options.clarity}`);
+
+    const specsSuffix = specs.length > 0 ? ` (${specs.join(', ')})` : '';
+
+    message = `Hello Rajvi Diamonds, I am interested in inquiring about ${options.diamondName}${specsSuffix}. Please share availability and details.`;
 
     if (options.pageUrl) {
       message += `\nReference: ${options.pageUrl}`;

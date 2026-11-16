@@ -35,8 +35,7 @@ export default function AdminLoginPage() {
         throw new Error(data.error || 'Authentication failed. Please verify credentials.');
       }
 
-      router.push('/admin');
-      router.refresh();
+      window.location.href = '/admin';
     } catch (err: any) {
       setError(err.message || 'Authentication error');
     } finally {
@@ -49,12 +48,12 @@ export default function AdminLoginPage() {
       <div className="max-w-md w-full bg-[#181714] border border-rajvi-borderDark/80 p-8 sm:p-10 rounded-sm shadow-luxuryDark">
         {/* Brand Logo */}
         <div className="text-center mb-8">
-          <div className="relative h-12 w-44 mx-auto mb-4">
+          <div className="relative h-16 w-52 sm:w-56 mx-auto mb-4 flex items-center justify-center overflow-hidden">
             <Image
-              src="/rajvi-diamonds-logo.jpg"
+              src="/rajvi-diamonds-logo-light.png"
               alt="Rajvi Diamonds"
-              width={1280}
-              height={853}
+              width={1089}
+              height={840}
               priority
               className="object-contain h-full w-auto mx-auto"
             />
@@ -78,16 +77,17 @@ export default function AdminLoginPage() {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1.5">
-              Admin Email
+              Admin Identifier / Email
             </label>
             <div className="relative">
               <Mail className="w-4 h-4 text-rajvi-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
-                type="email"
+                type="text"
                 placeholder="admin@rajvidiamonds.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="username"
                 className="w-full pl-10 pr-4 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite placeholder:text-rajvi-muted focus:outline-none focus:border-rajvi-gold transition-colors"
               />
             </div>
@@ -129,14 +129,10 @@ export default function AdminLoginPage() {
           </button>
         </form>
 
-        {/* Demo credentials hint for development */}
         <div className="mt-8 pt-6 border-t border-rajvi-borderDark/60 text-center">
-          <p className="text-[11px] text-rajvi-muted mb-2">
-            Local Development Access:
+          <p className="text-[11px] text-rajvi-muted">
+            Protected administrative portal. Authorized personnel only.
           </p>
-          <div className="inline-block p-2.5 bg-[#141311] border border-rajvi-borderDark/60 rounded text-[11px] font-mono text-rajvi-goldLight select-all">
-            admin@rajvidiamonds.com / RajviLuxurySecure2024!
-          </div>
         </div>
       </div>
     </div>

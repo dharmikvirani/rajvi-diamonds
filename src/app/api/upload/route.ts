@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
 import { getAdminSession } from '@/lib/auth';
 import { getCloudinaryConfig, isCloudinaryConfigured } from '@/lib/cloudinary';
 
@@ -36,14 +37,20 @@ export async function POST(request: NextRequest) {
       const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
       const timestamp = Math.round(Date.now() / 1000).toString();
 
-      // Simple upload via unsigned or signed preset
+      // Signed Cloudinary upload
+      const paramsToSign = `folder=rajvi-diamonds&timestamp=${timestamp}`;
+      const signature = crypto
+        .createHash('sha1')
+        .update(paramsToSign + apiSecret)
+        .digest('hex');
+
       const cFormData = new FormData();
       cFormData.append('file', base64Data);
       cFormData.append('folder', 'rajvi-diamonds');
       cFormData.append('api_key', apiKey);
       cFormData.append('timestamp', timestamp);
+      cFormData.append('signature', signature);
 
-      // If unsigned upload or signature is needed
       const uploadRes = await fetch(uploadUrl, {
         method: 'POST',
         body: cFormData,

@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Category, Diamond, DiamondImage, DiamondSize } from '@/lib/types';
+import { Category, Diamond, DiamondColorOption, DiamondClarityOption, DiamondImage, DiamondSize } from '@/lib/types';
+import { initialDiamondColors, initialDiamondClarities } from '@/lib/seedData';
 import {
   Save,
   ArrowLeft,
@@ -14,17 +15,22 @@ import {
   CheckCircle,
   Loader2,
   Sparkles,
+  X,
 } from 'lucide-react';
 import { formatSizeMm } from '@/lib/utils';
 
 interface DiamondEditorFormProps {
   initialDiamond?: Diamond | null;
   categories: Category[];
+  availableColors?: DiamondColorOption[];
+  availableClarities?: DiamondClarityOption[];
 }
 
 export default function DiamondEditorForm({
   initialDiamond,
   categories,
+  availableColors,
+  availableClarities,
 }: DiamondEditorFormProps) {
   const router = useRouter();
   const isEditing = Boolean(initialDiamond?.id);
@@ -35,6 +41,8 @@ export default function DiamondEditorForm({
     slug: initialDiamond?.slug || '',
     category_id: initialDiamond?.category_id || (categories[0]?.id || ''),
     shape: initialDiamond?.shape || '',
+    color: initialDiamond?.color || '',
+    clarity: initialDiamond?.clarity || '',
     short_description: initialDiamond?.short_description || '',
     description: initialDiamond?.description || '',
     is_featured: initialDiamond?.is_featured ?? false,
@@ -43,6 +51,23 @@ export default function DiamondEditorForm({
     seo_title: initialDiamond?.seo_title || '',
     seo_description: initialDiamond?.seo_description || '',
   });
+
+  const [colorsList, setColorsList] = useState<DiamondColorOption[]>(
+    availableColors && availableColors.length > 0 ? availableColors : initialDiamondColors
+  );
+  const [claritiesList, setClaritiesList] = useState<DiamondClarityOption[]>(
+    availableClarities && availableClarities.length > 0 ? availableClarities : initialDiamondClarities
+  );
+
+  const [showAddColorModal, setShowAddColorModal] = useState(false);
+  const [newColorName, setNewColorName] = useState('');
+  const [newColorCategory, setNewColorCategory] = useState<'standard' | 'fancy'>('standard');
+  const [savingColor, setSavingColor] = useState(false);
+
+  const [showAddClarityModal, setShowAddClarityModal] = useState(false);
+  const [newClarityName, setNewClarityName] = useState('');
+  const [newClarityLabel, setNewClarityLabel] = useState('');
+  const [savingClarity, setSavingClarity] = useState(false);
 
   const [specs, setSpecs] = useState({
     cut_grade: initialDiamond?.specifications?.cut_grade || 'Excellent',
@@ -194,6 +219,73 @@ export default function DiamondEditorForm({
     setSizes((prev) => prev.filter((s) => s.id !== sizeId));
   };
 
+  // Add custom color on the fly
+  const handleSaveNewColor = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newColorName.trim()) return;
+    setSavingColor(true);
+    try {
+      const res = await fetch('/api/admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'save_diamond_color',
+          payload: {
+            name: newColorName.trim(),
+            category: newColorCategory,
+            display_order: colorsList.length + 1,
+            is_active: true,
+          },
+        }),
+      });
+      const data = await res.json();
+      if (data.success && data.data) {
+        setColorsList((prev) => [...prev, data.data]);
+        setFormData((prev) => ({ ...prev, color: data.data.name }));
+        setNewColorName('');
+        setShowAddColorModal(false);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSavingColor(false);
+    }
+  };
+
+  // Add custom clarity on the fly
+  const handleSaveNewClarity = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newClarityName.trim()) return;
+    setSavingClarity(true);
+    try {
+      const res = await fetch('/api/admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'save_diamond_clarity',
+          payload: {
+            name: newClarityName.trim(),
+            label: newClarityLabel.trim() || newClarityName.trim(),
+            display_order: claritiesList.length + 1,
+            is_active: true,
+          },
+        }),
+      });
+      const data = await res.json();
+      if (data.success && data.data) {
+        setClaritiesList((prev) => [...prev, data.data]);
+        setFormData((prev) => ({ ...prev, clarity: data.data.name }));
+        setNewClarityName('');
+        setNewClarityLabel('');
+        setShowAddClarityModal(false);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSavingClarity(false);
+    }
+  };
+
   // Form Submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -214,6 +306,8 @@ export default function DiamondEditorForm({
     try {
       const payload: Partial<Diamond> = {
         ...formData,
+        color: formData.color ? formData.color.trim() : null,
+        clarity: formData.clarity ? formData.clarity.trim() : null,
         specifications: {
           ...specs,
           facet_count: specs.facet_count ? parseInt(specs.facet_count) : undefined,
@@ -361,6 +455,84 @@ export default function DiamondEditorForm({
                   required
                   className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
                 />
+              </div>
+            </div>
+
+            {/* Diamond Color & Diamond Purity / Clarity */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-rajvi-borderDark/40">
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold">
+                    Diamond Color
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowAddColorModal(true)}
+                    className="text-[10px] text-rajvi-gold hover:text-rajvi-goldLight font-medium inline-flex items-center gap-1"
+                  >
+                    <Plus className="w-3 h-3" />
+                    <span>Manage / Add</span>
+                  </button>
+                </div>
+                <select
+                  value={formData.color || ''}
+                  onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                  className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                >
+                  <option value="">None / Unspecified (Optional)</option>
+                  <optgroup label="Standard Grades (D – Z)">
+                    {colorsList
+                      .filter((c) => c.category === 'standard')
+                      .map((c) => (
+                        <option key={c.id || c.name} value={c.name}>
+                          Color {c.name}
+                        </option>
+                      ))}
+                  </optgroup>
+                  <optgroup label="Fancy Diamond Colors">
+                    {colorsList
+                      .filter((c) => c.category === 'fancy')
+                      .map((c) => (
+                        <option key={c.id || c.name} value={c.name}>
+                          {c.name}
+                        </option>
+                      ))}
+                  </optgroup>
+                </select>
+                <span className="text-[10px] text-rajvi-muted mt-1 block">
+                  Select diamond color grade (D–Z or Fancy).
+                </span>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold">
+                    Purity / Clarity
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowAddClarityModal(true)}
+                    className="text-[10px] text-rajvi-gold hover:text-rajvi-goldLight font-medium inline-flex items-center gap-1"
+                  >
+                    <Plus className="w-3 h-3" />
+                    <span>Manage / Add</span>
+                  </button>
+                </div>
+                <select
+                  value={formData.clarity || ''}
+                  onChange={(e) => setFormData({ ...formData, clarity: e.target.value })}
+                  className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                >
+                  <option value="">None / Unspecified (Optional)</option>
+                  {claritiesList.map((c) => (
+                    <option key={c.id || c.name} value={c.name}>
+                      {c.name} – {c.label}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-[10px] text-rajvi-muted mt-1 block">
+                  Select diamond clarity grade (FL through I3).
+                </span>
               </div>
             </div>
 
@@ -771,6 +943,135 @@ export default function DiamondEditorForm({
           </div>
         </div>
       </div>
+
+      {/* Add Custom Color Modal */}
+      {showAddColorModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-[#181714] border border-rajvi-gold/40 rounded-sm p-6 max-w-sm w-full space-y-4 shadow-luxuryDark">
+            <div className="flex items-center justify-between border-b border-rajvi-borderDark pb-3">
+              <h4 className="font-serif text-lg text-rajvi-offWhite font-normal">
+                Add Diamond Color Grade
+              </h4>
+              <button
+                type="button"
+                onClick={() => setShowAddColorModal(false)}
+                className="text-rajvi-muted hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div>
+              <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+                Color Name / Grade
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Fancy Vivid Pink, D, O-P"
+                value={newColorName}
+                onChange={(e) => setNewColorName(e.target.value)}
+                className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+                Category
+              </label>
+              <select
+                value={newColorCategory}
+                onChange={(e) => setNewColorCategory(e.target.value as 'standard' | 'fancy')}
+                className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+              >
+                <option value="standard">Standard Alphabetical (D – Z)</option>
+                <option value="fancy">Fancy Color (Yellow, Pink, etc.)</option>
+              </select>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-rajvi-borderDark">
+              <button
+                type="button"
+                onClick={() => setShowAddColorModal(false)}
+                className="px-4 py-2 text-xs text-rajvi-muted hover:text-white"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={savingColor || !newColorName.trim()}
+                onClick={handleSaveNewColor}
+                className="px-4 py-2 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-semibold text-xs uppercase tracking-wider rounded-sm disabled:opacity-50"
+              >
+                {savingColor ? 'Saving...' : 'Add & Select'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Custom Clarity Modal */}
+      {showAddClarityModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-[#181714] border border-rajvi-gold/40 rounded-sm p-6 max-w-sm w-full space-y-4 shadow-luxuryDark">
+            <div className="flex items-center justify-between border-b border-rajvi-borderDark pb-3">
+              <h4 className="font-serif text-lg text-rajvi-offWhite font-normal">
+                Add Purity / Clarity Grade
+              </h4>
+              <button
+                type="button"
+                onClick={() => setShowAddClarityModal(false)}
+                className="text-rajvi-muted hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div>
+              <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+                Clarity Code
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. VVS1, VS2, SI1"
+                value={newClarityName}
+                onChange={(e) => setNewClarityName(e.target.value)}
+                className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+                Full Label Description
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Very Very Slightly Included 1"
+                value={newClarityLabel}
+                onChange={(e) => setNewClarityLabel(e.target.value)}
+                className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-rajvi-borderDark">
+              <button
+                type="button"
+                onClick={() => setShowAddClarityModal(false)}
+                className="px-4 py-2 text-xs text-rajvi-muted hover:text-white"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={savingClarity || !newClarityName.trim()}
+                onClick={handleSaveNewClarity}
+                className="px-4 py-2 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-semibold text-xs uppercase tracking-wider rounded-sm disabled:opacity-50"
+              >
+                {savingClarity ? 'Saving...' : 'Add & Select'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </form>
   );
 }

@@ -1,5 +1,6 @@
 import React from 'react';
-import Link from 'next/navigation';
+import { redirect } from 'next/navigation';
+import { getAdminSession } from '@/lib/auth';
 import { getDashboardStats } from '@/lib/db';
 import StatsCard from '@/components/admin/StatsCard';
 import {
@@ -17,6 +18,11 @@ import { formatDate } from '@/lib/utils';
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboardPage() {
+  const session = await getAdminSession();
+  if (!session.isAdmin) {
+    redirect('/admin/login');
+  }
+
   const stats = await getDashboardStats();
 
   return (

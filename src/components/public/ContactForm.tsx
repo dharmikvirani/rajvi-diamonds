@@ -7,6 +7,8 @@ import { InquiryFormData, validateInquiryForm } from '@/lib/validations';
 interface ContactFormProps {
   initialDiamondName?: string;
   initialSize?: string | null;
+  initialColor?: string | null;
+  initialClarity?: string | null;
   initialDiamondId?: string;
   inquiryTypeDefault?: string;
   className?: string;
@@ -15,10 +17,27 @@ interface ContactFormProps {
 export default function ContactForm({
   initialDiamondName = '',
   initialSize = '',
+  initialColor = '',
+  initialClarity = '',
   initialDiamondId = '',
   inquiryTypeDefault = 'General Inquiry',
   className = '',
 }: ContactFormProps) {
+  const buildInitialMessage = (
+    name?: string,
+    size?: string | null,
+    color?: string | null,
+    clarity?: string | null
+  ) => {
+    if (!name) return '';
+    const specs: string[] = [];
+    if (size) specs.push(`Size: ${size}`);
+    if (color) specs.push(`Color: ${color}`);
+    if (clarity) specs.push(`Clarity: ${clarity}`);
+    const specsSuffix = specs.length > 0 ? ` (${specs.join(', ')})` : '';
+    return `Hello, I am interested in inquiring about the ${name}${specsSuffix} cut. Please provide availability and trade details.`;
+  };
+
   const [formData, setFormData] = useState<InquiryFormData>({
     fullName: '',
     email: '',
@@ -27,10 +46,10 @@ export default function ContactForm({
     inquiryType: inquiryTypeDefault,
     diamondName: initialDiamondName,
     selectedSize: initialSize || '',
+    selectedColor: initialColor || '',
+    selectedClarity: initialClarity || '',
     diamondId: initialDiamondId,
-    message: initialDiamondName
-      ? `Hello, I am interested in inquiring about the ${initialDiamondName}${initialSize ? ` in ${initialSize}` : ''} cut. Please provide availability and trade details.`
-      : '',
+    message: buildInitialMessage(initialDiamondName, initialSize, initialColor, initialClarity),
     honeypot: '',
   });
 
@@ -38,6 +57,19 @@ export default function ContactForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      selectedSize: initialSize || '',
+      selectedColor: initialColor || '',
+      selectedClarity: initialClarity || '',
+      message:
+        prev.message === '' || prev.message.includes('Hello, I am interested in inquiring about')
+          ? buildInitialMessage(initialDiamondName, initialSize, initialColor, initialClarity)
+          : prev.message,
+    }));
+  }, [initialSize, initialDiamondName, initialColor, initialClarity]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -91,6 +123,8 @@ export default function ContactForm({
         inquiryType: 'General Inquiry',
         diamondName: '',
         selectedSize: '',
+        selectedColor: '',
+        selectedClarity: '',
         diamondId: '',
         message: '',
         honeypot: '',
@@ -151,6 +185,37 @@ export default function ContactForm({
           autoComplete="off"
         />
       </div>
+
+      {/* Active Selection Specifications Badge */}
+      {(formData.diamondName || formData.selectedSize || formData.selectedColor || formData.selectedClarity) && (
+        <div className="p-3.5 bg-rajvi-offWhite border border-rajvi-borderLight rounded-sm">
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <span className="text-[10px] uppercase tracking-wider text-rajvi-gold font-bold">
+              Specified Requirements:
+            </span>
+            {formData.diamondName && (
+              <span className="px-2.5 py-1 bg-white border border-rajvi-borderLight text-rajvi-textDark font-medium rounded-sm text-[11px]">
+                {formData.diamondName}
+              </span>
+            )}
+            {formData.selectedSize && (
+              <span className="px-2.5 py-1 bg-white border border-rajvi-borderLight text-rajvi-textDark font-medium rounded-sm text-[11px]">
+                Size: {formData.selectedSize}
+              </span>
+            )}
+            {formData.selectedColor && (
+              <span className="px-2.5 py-1 bg-white border border-rajvi-borderLight text-rajvi-gold font-semibold rounded-sm text-[11px]">
+                Color: {formData.selectedColor}
+              </span>
+            )}
+            {formData.selectedClarity && (
+              <span className="px-2.5 py-1 bg-white border border-rajvi-borderLight text-rajvi-gold font-semibold rounded-sm text-[11px]">
+                Clarity: {formData.selectedClarity}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {/* Full Name */}

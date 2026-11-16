@@ -56,13 +56,13 @@ export default function AdminSidebar({
       {/* Brand & Logo Header */}
       <div className="p-6 border-b border-rajvi-borderDark/60 flex items-center justify-between">
         <a href="/admin" className="flex items-center gap-3">
-          <div className="relative h-9 w-32">
+          <div className="relative h-12 w-48 flex items-center justify-start overflow-hidden">
             <Image
-              src="/rajvi-diamonds-logo.jpg"
+              src="/rajvi-diamonds-logo-light.png"
               alt="Rajvi Diamonds"
-              width={1280}
-              height={853}
-              className="object-contain h-full w-auto"
+              width={1089}
+              height={840}
+              className="object-contain object-left h-full w-auto"
             />
           </div>
         </a>
@@ -97,11 +97,10 @@ export default function AdminSidebar({
               key={item.href}
               href={item.href}
               onClick={onCloseMobile}
-              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-sm text-xs font-medium tracking-wider uppercase transition-colors ${
-                isActive
-                  ? 'bg-rajvi-gold text-rajvi-black font-semibold shadow-sm'
-                  : 'text-rajvi-offWhite/75 hover:bg-rajvi-charcoal hover:text-rajvi-goldLight'
-              }`}
+              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-sm text-xs font-medium tracking-wider uppercase transition-colors ${isActive
+                ? 'bg-rajvi-gold text-rajvi-black font-semibold shadow-sm'
+                : 'text-rajvi-offWhite/75 hover:bg-rajvi-charcoal hover:text-rajvi-goldLight'
+                }`}
             >
               <Icon className="w-4 h-4 shrink-0" />
               <span>{item.label}</span>

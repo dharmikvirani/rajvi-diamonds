@@ -7,6 +7,8 @@ export interface InquiryFormData {
   diamondId?: string;
   diamondName?: string;
   selectedSize?: string;
+  selectedColor?: string;
+  selectedClarity?: string;
   message: string;
   honeypot?: string; // Bot protection
 }

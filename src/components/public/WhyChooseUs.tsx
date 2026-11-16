@@ -36,16 +36,16 @@ export default function WhyChooseUs() {
   ];
 
   return (
-    <section className="bg-rajvi-black py-24 border-t border-rajvi-borderDark/40">
+    <section className="bg-white py-24 border-t border-rajvi-borderLight">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="text-xs uppercase tracking-[0.25em] text-rajvi-gold font-semibold block mb-3">
             Our Hallmarks
           </span>
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-rajvi-offWhite font-normal tracking-tight">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-rajvi-textDark font-normal tracking-tight">
             Why Partner with Rajvi Diamonds
           </h2>
-          <p className="mt-4 text-rajvi-offWhite/70 text-sm sm:text-base leading-relaxed">
+          <p className="mt-4 text-rajvi-textMuted text-sm sm:text-base leading-relaxed">
             Distinguished by rare cut mastery, millimeter precision, and dedicated personalized trade support.
           </p>
         </div>
@@ -56,15 +56,15 @@ export default function WhyChooseUs() {
             return (
               <div
                 key={idx}
-                className="bg-rajvi-cardDark border border-rajvi-borderDark p-8 rounded-sm hover:border-rajvi-gold/40 transition-all duration-300 hover:-translate-y-1 group"
+                className="bg-[#FAF9F6] border border-rajvi-borderLight/80 p-8 rounded-sm hover:border-rajvi-gold/50 shadow-sm hover:shadow-luxury transition-all duration-300 hover:-translate-y-1 group"
               >
-                <div className="w-12 h-12 rounded-sm bg-rajvi-charcoal border border-rajvi-gold/20 flex items-center justify-center mb-6 group-hover:border-rajvi-gold transition-colors">
+                <div className="w-12 h-12 rounded-sm bg-white border border-rajvi-borderLight flex items-center justify-center mb-6 group-hover:border-rajvi-gold transition-colors shadow-sm">
                   <Icon className="w-6 h-6 text-rajvi-gold" />
                 </div>
-                <h3 className="font-serif text-xl text-rajvi-offWhite mb-3 font-normal group-hover:text-rajvi-goldLight transition-colors">
+                <h3 className="font-serif text-xl text-rajvi-textDark mb-3 font-normal group-hover:text-rajvi-gold transition-colors">
                   {item.title}
                 </h3>
-                <p className="text-xs sm:text-sm text-rajvi-offWhite/70 leading-relaxed">
+                <p className="text-xs sm:text-sm text-rajvi-textMuted leading-relaxed">
                   {item.description}
                 </p>
               </div>
@@ -72,22 +72,22 @@ export default function WhyChooseUs() {
           })}
 
           {/* Quick Inquiry Card */}
-          <div className="bg-gradient-to-br from-rajvi-charcoal to-rajvi-cardDark border border-rajvi-gold/30 p-8 rounded-sm flex flex-col justify-between">
+          <div className="bg-gradient-to-br from-[#FAF8F5] to-white border border-rajvi-gold/40 p-8 rounded-sm flex flex-col justify-between shadow-sm">
             <div>
               <span className="text-[11px] uppercase tracking-widest text-rajvi-gold font-semibold block mb-2">
                 Custom Cuts & Projects
               </span>
-              <h3 className="font-serif text-xl text-rajvi-offWhite mb-3 font-normal">
+              <h3 className="font-serif text-xl text-rajvi-textDark mb-3 font-normal">
                 Looking for Bespoke Cut Proportions?
               </h3>
-              <p className="text-xs sm:text-sm text-rajvi-offWhite/70 leading-relaxed">
+              <p className="text-xs sm:text-sm text-rajvi-textMuted leading-relaxed">
                 Connect directly with our master lapidary team to discuss tailored parcels, custom millimeter sizes, or one-of-a-kind shapes.
               </p>
             </div>
             <div className="pt-6">
               <a
                 href="/contact"
-                className="inline-block px-5 py-2.5 bg-rajvi-gold text-rajvi-black text-xs uppercase tracking-widest font-semibold hover:bg-rajvi-goldLight transition-colors"
+                className="inline-block px-5 py-2.5 bg-rajvi-gold text-rajvi-black text-xs uppercase tracking-widest font-semibold hover:bg-rajvi-goldLight transition-colors shadow-sm"
               >
                 Submit Trade Inquiry
               </a>

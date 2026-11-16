@@ -22,7 +22,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
       name: '',
       slug: '',
       description: '',
-      image_url: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=1200&q=80',
+      image_url: 'https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?auto=format&fit=crop&w=1200&q=80',
       is_active: true,
       display_order: categories.length + 1,
     });

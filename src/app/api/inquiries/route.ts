@@ -59,6 +59,8 @@ export async function POST(request: NextRequest) {
       diamond_id: body.diamondId || null,
       diamond_name: body.diamondName?.trim() || undefined,
       selected_size: body.selectedSize?.trim() || null,
+      selected_color: body.selectedColor?.trim() || null,
+      selected_clarity: body.selectedClarity?.trim() || null,
       message: body.message.trim(),
     });
 

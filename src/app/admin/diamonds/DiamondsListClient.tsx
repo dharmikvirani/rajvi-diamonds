@@ -119,6 +119,7 @@ export default function DiamondsListClient({ initialDiamonds }: DiamondsListClie
                 <th className="py-3 px-6">Cut / Image</th>
                 <th className="py-3 px-6">Shape</th>
                 <th className="py-3 px-6">Category</th>
+                <th className="py-3 px-6">Color & Clarity</th>
                 <th className="py-3 px-6">Sizes</th>
                 <th className="py-3 px-6 text-center">Featured</th>
                 <th className="py-3 px-6 text-center">Status</th>
@@ -167,6 +168,26 @@ export default function DiamondsListClient({ initialDiamonds }: DiamondsListClie
                     {/* Category */}
                     <td className="py-3.5 px-6 text-rajvi-goldLight text-[11px]">
                       {diamond.category?.name || 'Unassigned'}
+                    </td>
+
+                    {/* Color & Clarity */}
+                    <td className="py-3.5 px-6">
+                      <div className="flex flex-col gap-0.5 text-[11px]">
+                        {diamond.color ? (
+                          <span className="text-rajvi-gold">
+                            Color: <strong className="text-rajvi-offWhite font-semibold">{diamond.color}</strong>
+                          </span>
+                        ) : (
+                          <span className="text-rajvi-muted text-[10px]">No Color</span>
+                        )}
+                        {diamond.clarity ? (
+                          <span className="text-rajvi-goldLight">
+                            Clarity: <strong className="text-rajvi-offWhite font-semibold">{diamond.clarity}</strong>
+                          </span>
+                        ) : (
+                          <span className="text-rajvi-muted text-[10px]">No Clarity</span>
+                        )}
+                      </div>
                     </td>
 
                     {/* Sizes Count */}

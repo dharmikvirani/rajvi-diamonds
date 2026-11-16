@@ -1,13 +1,15 @@
 'use client';
 
 import React from 'react';
-import { Search, RotateCcw, SlidersHorizontal } from 'lucide-react';
+import { Search, RotateCcw } from 'lucide-react';
 import { Category } from '@/lib/types';
 
 interface DiamondFilterBarProps {
   categories: Category[];
   availableShapes: string[];
   availableSizes: number[];
+  availableColors: string[];
+  availableClarities: string[];
   searchQuery: string;
   onSearchChange: (val: string) => void;
   selectedCategory: string;
@@ -16,6 +18,10 @@ interface DiamondFilterBarProps {
   onShapeChange: (val: string) => void;
   selectedSize: string;
   onSizeChange: (val: string) => void;
+  selectedColor: string;
+  onColorChange: (val: string) => void;
+  selectedClarity: string;
+  onClarityChange: (val: string) => void;
   sortBy: string;
   onSortChange: (val: string) => void;
   featuredOnly: boolean;
@@ -28,6 +34,8 @@ export default function DiamondFilterBar({
   categories,
   availableShapes,
   availableSizes,
+  availableColors,
+  availableClarities,
   searchQuery,
   onSearchChange,
   selectedCategory,
@@ -36,6 +44,10 @@ export default function DiamondFilterBar({
   onShapeChange,
   selectedSize,
   onSizeChange,
+  selectedColor,
+  onColorChange,
+  selectedClarity,
+  onClarityChange,
   sortBy,
   onSortChange,
   featuredOnly,
@@ -48,6 +60,8 @@ export default function DiamondFilterBar({
     selectedCategory !== 'all' ||
     selectedShape !== 'all' ||
     selectedSize !== 'all' ||
+    selectedColor !== 'all' ||
+    selectedClarity !== 'all' ||
     featuredOnly ||
     sortBy !== 'default';
 
@@ -60,7 +74,7 @@ export default function DiamondFilterBar({
           <Search className="w-4 h-4 text-rajvi-textMuted absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search fancy cuts by name or geometry..."
+            placeholder="Search fancy cuts by name, shape, color or clarity..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 text-xs bg-rajvi-offWhite border border-rajvi-borderLight rounded-sm text-rajvi-textDark placeholder:text-rajvi-textMuted focus:outline-none focus:border-rajvi-gold focus:ring-1 focus:ring-rajvi-gold transition-colors"
@@ -70,7 +84,7 @@ export default function DiamondFilterBar({
         {/* Total count & reset button */}
         <div className="flex items-center justify-between md:justify-end gap-4 text-xs">
           <span className="text-rajvi-textMuted font-medium">
-            Showing <strong className="text-rajvi-textDark">{totalResults}</strong> cuts
+            Showing <strong className="text-rajvi-textDark font-semibold">{totalResults}</strong> cuts
           </span>
 
           {hasActiveFilters && (
@@ -85,9 +99,9 @@ export default function DiamondFilterBar({
         </div>
       </div>
 
-      {/* Filter Selectors Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-6">
-        {/* Category Filter */}
+      {/* Filter Selectors Grid (6 Selectors) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 pt-6">
+        {/* 1. Category Filter */}
         <div>
           <label className="block text-[11px] uppercase tracking-wider text-rajvi-textMuted font-semibold mb-1.5">
             Category
@@ -106,10 +120,10 @@ export default function DiamondFilterBar({
           </select>
         </div>
 
-        {/* Shape Filter */}
+        {/* 2. Shape Filter */}
         <div>
           <label className="block text-[11px] uppercase tracking-wider text-rajvi-textMuted font-semibold mb-1.5">
-            Shape / Geometry
+            Shape / Cut
           </label>
           <select
             value={selectedShape}
@@ -125,7 +139,45 @@ export default function DiamondFilterBar({
           </select>
         </div>
 
-        {/* Available Size Filter */}
+        {/* 3. Diamond Color Filter */}
+        <div>
+          <label className="block text-[11px] uppercase tracking-wider text-rajvi-textMuted font-semibold mb-1.5">
+            Diamond Color
+          </label>
+          <select
+            value={selectedColor}
+            onChange={(e) => onColorChange(e.target.value)}
+            className="w-full text-xs py-2 px-3 bg-rajvi-offWhite border border-rajvi-borderLight rounded-sm text-rajvi-textDark focus:outline-none focus:border-rajvi-gold font-medium"
+          >
+            <option value="all">All Colors</option>
+            {availableColors.map((col) => (
+              <option key={col} value={col}>
+                {col.length <= 2 ? `Color ${col}` : col}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* 4. Purity / Clarity Filter */}
+        <div>
+          <label className="block text-[11px] uppercase tracking-wider text-rajvi-textMuted font-semibold mb-1.5">
+            Purity / Clarity
+          </label>
+          <select
+            value={selectedClarity}
+            onChange={(e) => onClarityChange(e.target.value)}
+            className="w-full text-xs py-2 px-3 bg-rajvi-offWhite border border-rajvi-borderLight rounded-sm text-rajvi-textDark focus:outline-none focus:border-rajvi-gold font-medium"
+          >
+            <option value="all">All Clarity Grades</option>
+            {availableClarities.map((clr) => (
+              <option key={clr} value={clr}>
+                {clr}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* 5. Available Size Filter */}
         <div>
           <label className="block text-[11px] uppercase tracking-wider text-rajvi-textMuted font-semibold mb-1.5">
             Available Size
@@ -144,7 +196,7 @@ export default function DiamondFilterBar({
           </select>
         </div>
 
-        {/* Sorting Dropdown */}
+        {/* 6. Sorting Dropdown */}
         <div>
           <label className="block text-[11px] uppercase tracking-wider text-rajvi-textMuted font-semibold mb-1.5">
             Sort Order
@@ -174,7 +226,7 @@ export default function DiamondFilterBar({
         </label>
 
         <span className="text-[11px] text-rajvi-textMuted hidden sm:inline-block">
-          All cuts strictly manufactured for discovery & inquiry. No retail checkout.
+          All cuts strictly manufactured for trade discovery & parcel inquiry.
         </span>
       </div>
     </div>

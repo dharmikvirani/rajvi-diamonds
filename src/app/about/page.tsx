@@ -20,26 +20,26 @@ export default async function AboutPage() {
   const settings = await getSiteSettings();
 
   return (
-    <div className="min-h-screen bg-rajvi-black text-rajvi-offWhite flex flex-col">
+    <div className="min-h-screen bg-rajvi-offWhite text-rajvi-textDark flex flex-col">
       {/* Header */}
       <Header
         whatsappNumber={settings.whatsapp_number}
         brandName={settings.brand_name}
       />
 
-      {/* Hero Section (Dark Luxury Theme) */}
-      <section className="relative py-24 sm:py-32 bg-rajvi-black border-b border-rajvi-borderDark/60 overflow-hidden">
+      {/* Hero Section (Light Luxury Theme) */}
+      <section className="relative py-24 sm:py-32 bg-gradient-to-b from-[#FAF8F5] via-white to-rajvi-offWhite border-b border-rajvi-borderLight overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-rajvi-gold/30 bg-rajvi-charcoal/80 text-rajvi-goldLight text-xs uppercase tracking-[0.2em] font-medium mb-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-rajvi-gold/40 bg-white/90 text-rajvi-goldMuted text-xs uppercase tracking-[0.2em] font-medium mb-6 shadow-sm">
             <Sparkles className="w-3.5 h-3.5 text-rajvi-gold" />
             <span>The Heritage of Artistry</span>
           </div>
 
-          <h1 className="font-serif text-4xl sm:text-6xl font-normal tracking-tight text-rajvi-offWhite mb-6 leading-tight max-w-4xl mx-auto">
+          <h1 className="font-serif text-4xl sm:text-6xl font-normal tracking-tight text-rajvi-textDark mb-6 leading-tight max-w-4xl mx-auto">
             Dedicated Exclusively to the World of <span className="gold-gradient-text italic">Fancy Cut Diamonds</span>
           </h1>
 
-          <p className="text-rajvi-offWhite/80 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed font-light">
+          <p className="text-rajvi-textMuted text-base sm:text-lg max-w-2xl mx-auto leading-relaxed font-light">
             {settings.about_brand_intro}
           </p>
         </div>
@@ -67,61 +67,63 @@ export default async function AboutPage() {
 
             {/* Visual Photography */}
             <div className="lg:col-span-5 relative">
-              <div className="relative aspect-[4/5] rounded-sm overflow-hidden border border-rajvi-borderLight shadow-luxury">
-                <Image
-                  src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1200&q=85"
-                  alt="Diamond Polishing Craft"
-                  fill
-                  className="object-cover object-center"
-                />
+              <div className="relative aspect-[4/5] rounded-sm overflow-hidden border border-rajvi-borderLight shadow-luxury bg-white p-2">
+                <div className="relative w-full h-full rounded-sm overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1750767323874-5946ad2c7e91?auto=format&fit=crop&w=1200&q=85"
+                    alt="Rajvi Diamonds Loose Fancy Diamond Silhouette"
+                    fill
+                    className="object-cover object-center"
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Section 3: Our Expertise & Quality Commitment (Dark Luxury Section) */}
-      <section className="bg-rajvi-charcoal py-24 border-b border-rajvi-borderDark">
+      {/* Section 3: Our Expertise & Quality Commitment */}
+      <section className="bg-[#FAF9F6] py-24 border-b border-rajvi-borderLight">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="text-xs uppercase tracking-[0.25em] text-rajvi-gold font-semibold block mb-3">
               Lapidary Discipline
             </span>
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-rajvi-offWhite font-normal tracking-tight">
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-rajvi-textDark font-normal tracking-tight">
               Our Core Expertise
             </h2>
-            <p className="mt-4 text-rajvi-offWhite/70 text-sm sm:text-base leading-relaxed">
+            <p className="mt-4 text-rajvi-textMuted text-sm sm:text-base leading-relaxed">
               {settings.about_expertise}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-rajvi-cardDark border border-rajvi-borderDark p-8 rounded-sm">
+            <div className="bg-white border border-rajvi-borderLight p-8 rounded-sm shadow-sm hover:shadow-luxury transition-all">
               <Compass className="w-8 h-8 text-rajvi-gold mb-4" />
-              <h3 className="font-serif text-xl text-rajvi-offWhite mb-3 font-normal">
+              <h3 className="font-serif text-xl text-rajvi-textDark mb-3 font-normal">
                 Geometric Facet Alignment
               </h3>
-              <p className="text-xs sm:text-sm text-rajvi-offWhite/70 leading-relaxed">
+              <p className="text-xs sm:text-sm text-rajvi-textMuted leading-relaxed">
                 Precision orientation of facet angles ensures internal light bounce rather than light leakage, creating fire and dispersion unique to non-round fancy cuts.
               </p>
             </div>
 
-            <div className="bg-rajvi-cardDark border border-rajvi-borderDark p-8 rounded-sm">
+            <div className="bg-white border border-rajvi-borderLight p-8 rounded-sm shadow-sm hover:shadow-luxury transition-all">
               <ShieldCheck className="w-8 h-8 text-rajvi-gold mb-4" />
-              <h3 className="font-serif text-xl text-rajvi-offWhite mb-3 font-normal">
+              <h3 className="font-serif text-xl text-rajvi-textDark mb-3 font-normal">
                 Quality Commitment
               </h3>
-              <p className="text-xs sm:text-sm text-rajvi-offWhite/70 leading-relaxed">
+              <p className="text-xs sm:text-sm text-rajvi-textMuted leading-relaxed">
                 {settings.about_quality}
               </p>
             </div>
 
-            <div className="bg-rajvi-cardDark border border-rajvi-borderDark p-8 rounded-sm">
+            <div className="bg-white border border-rajvi-borderLight p-8 rounded-sm shadow-sm hover:shadow-luxury transition-all">
               <HeartHandshake className="w-8 h-8 text-rajvi-gold mb-4" />
-              <h3 className="font-serif text-xl text-rajvi-offWhite mb-3 font-normal">
+              <h3 className="font-serif text-xl text-rajvi-textDark mb-3 font-normal">
                 Our Vision
               </h3>
-              <p className="text-xs sm:text-sm text-rajvi-offWhite/70 leading-relaxed">
+              <p className="text-xs sm:text-sm text-rajvi-textMuted leading-relaxed">
                 {settings.about_vision}
               </p>
             </div>

@@ -213,9 +213,18 @@ export default function InquiriesClient({
                       {inq.inquiry_type}
                     </div>
 
-                    {inq.diamond_name && (
+                    {(inq.diamond_name || inq.selected_color || inq.selected_clarity) && (
                       <div className="text-[10px] text-rajvi-gold mb-1 font-serif">
-                        Cut: {inq.diamond_name} {inq.selected_size ? `(${inq.selected_size})` : ''}
+                        {inq.diamond_name ? `Cut: ${inq.diamond_name}` : ''}
+                        {[
+                          inq.selected_size || '',
+                          inq.selected_color ? `Color ${inq.selected_color}` : '',
+                          inq.selected_clarity || '',
+                        ].filter(Boolean).length > 0 && ` (${[
+                          inq.selected_size || '',
+                          inq.selected_color ? `Color ${inq.selected_color}` : '',
+                          inq.selected_clarity || '',
+                        ].filter(Boolean).join(' • ')})`}
                       </div>
                     )}
 
@@ -303,7 +312,7 @@ export default function InquiriesClient({
               </div>
 
               {/* Inquiry Type & Cut Details */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
                 <div className="p-3 bg-[#1F1E1A] rounded-sm border border-rajvi-borderDark/40">
                   <span className="text-[10px] text-rajvi-muted uppercase block mb-1">
                     Inquiry Intent
@@ -328,6 +337,15 @@ export default function InquiriesClient({
                   </span>
                   <span className="font-semibold text-rajvi-offWhite">
                     {activeInquiry.selected_size || 'Not Specified'}
+                  </span>
+                </div>
+
+                <div className="p-3 bg-[#1F1E1A] rounded-sm border border-rajvi-borderDark/40">
+                  <span className="text-[10px] text-rajvi-muted uppercase block mb-1">
+                    Color & Clarity
+                  </span>
+                  <span className="font-semibold text-rajvi-goldLight">
+                    {[activeInquiry.selected_color ? `Color ${activeInquiry.selected_color}` : '', activeInquiry.selected_clarity].filter(Boolean).join(' • ') || 'Not Specified'}
                   </span>
                 </div>
               </div>

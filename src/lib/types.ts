@@ -59,6 +59,26 @@ export interface DiamondImage {
   created_at: string;
 }
 
+export interface DiamondColorOption {
+  id: string;
+  name: string;
+  category: 'standard' | 'fancy';
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DiamondClarityOption {
+  id: string;
+  name: string;
+  label: string;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface DiamondSize {
   id: string;
   diamond_id: string;
@@ -78,6 +98,8 @@ export interface Diamond {
   short_description: string;
   description: string;
   shape: string;
+  color?: string | null;
+  clarity?: string | null;
   specifications: DiamondSpecifications;
   is_featured: boolean;
   is_active: boolean;
@@ -100,6 +122,8 @@ export interface Inquiry {
   diamond_id?: string | null;
   diamond_name?: string;
   selected_size?: string | null;
+  selected_color?: string | null;
+  selected_clarity?: string | null;
   message: string;
   status: InquiryStatus;
   internal_notes?: string | null;
@@ -118,6 +142,7 @@ export interface SiteSettings {
   footer_text: string;
   hero_heading: string;
   hero_subtitle: string;
+  hero_image_url?: string;
   about_brand_intro: string;
   about_story: string;
   about_expertise: string;
@@ -129,6 +154,8 @@ export interface FilterParams {
   category?: string;
   shape?: string;
   size?: string;
+  color?: string;
+  clarity?: string;
   search?: string;
   featured?: boolean;
   sort?: 'name-asc' | 'name-desc' | 'featured' | 'newest';

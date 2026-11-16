@@ -20,7 +20,7 @@ export default async function HomePage() {
   ]);
 
   return (
-    <main className="min-h-screen bg-rajvi-black flex flex-col">
+    <main className="min-h-screen bg-rajvi-offWhite text-rajvi-textDark flex flex-col">
       {/* Premium Header */}
       <Header
         whatsappNumber={settings.whatsapp_number}
@@ -31,6 +31,7 @@ export default async function HomePage() {
       <HeroSection
         heading={settings.hero_heading}
         subtitle={settings.hero_subtitle}
+        imageUrl={settings.hero_image_url}
         whatsappNumber={settings.whatsapp_number}
       />
 

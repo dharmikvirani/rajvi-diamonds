@@ -7,6 +7,10 @@ import {
   deleteCategory,
   saveDiamondSize,
   deleteDiamondSize,
+  saveDiamondColor,
+  deleteDiamondColor,
+  saveDiamondClarity,
+  deleteDiamondClarity,
   updateInquiryStatus,
   updateSiteSettings,
 } from '@/lib/db';
@@ -65,6 +69,28 @@ export async function POST(request: NextRequest) {
       case 'update_settings': {
         const saved = await updateSiteSettings(payload);
         return NextResponse.json({ success: true, data: saved });
+      }
+
+      // 6. Diamond Colors
+      case 'save_diamond_color': {
+        const saved = await saveDiamondColor(payload);
+        return NextResponse.json({ success: true, data: saved });
+      }
+
+      case 'delete_diamond_color': {
+        await deleteDiamondColor(payload.id);
+        return NextResponse.json({ success: true, id: payload.id });
+      }
+
+      // 7. Diamond Clarities
+      case 'save_diamond_clarity': {
+        const saved = await saveDiamondClarity(payload);
+        return NextResponse.json({ success: true, data: saved });
+      }
+
+      case 'delete_diamond_clarity': {
+        await deleteDiamondClarity(payload.id);
+        return NextResponse.json({ success: true, id: payload.id });
       }
 
       default:

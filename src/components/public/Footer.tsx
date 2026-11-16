@@ -13,27 +13,27 @@ export default function Footer({ settings }: FooterProps) {
   const cleanWhatsAppNumber = (settings.whatsapp_number || '').replace(/[^0-9]/g, '');
 
   return (
-    <footer className="bg-[#11100E] text-rajvi-offWhite border-t border-rajvi-borderDark/80 pt-16 pb-12 mt-auto">
+    <footer className="bg-[#F5F2EB] text-rajvi-textDark border-t border-rajvi-borderLight pt-16 pb-12 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-          {/* Col 1: Brand & Existing Logo */}
+          {/* Col 1: Brand & Existing PNG Logo */}
           <div className="space-y-6">
-            <a href="/" className="inline-block">
-              <div className="relative h-14 w-48 overflow-hidden">
+            <a href="/" className="inline-block group">
+              <div className="relative h-14 sm:h-16 w-44 sm:w-52 flex items-center justify-start overflow-hidden transition-transform duration-300 group-hover:scale-105">
                 <Image
-                  src="/rajvi-diamonds-logo.jpg"
+                  src="/rajvi-diamonds-logo-display.png"
                   alt={settings.brand_name}
-                  width={1280}
-                  height={853}
-                  className="object-contain h-full w-auto"
+                  width={1089}
+                  height={840}
+                  className="object-contain object-left h-full w-auto"
                 />
               </div>
             </a>
-            <p className="text-rajvi-offWhite/70 text-xs sm:text-sm leading-relaxed max-w-sm">
+            <p className="text-rajvi-textMuted text-xs sm:text-sm leading-relaxed max-w-sm">
               {settings.footer_text ||
                 'Manufacturer and supplier of exceptional fancy diamond cuts. Dedicated to precision craftsmanship, rarity, and enduring trade excellence.'}
             </p>
-            <div className="flex items-center gap-3 text-rajvi-gold text-xs tracking-wider uppercase font-semibold">
+            <div className="flex items-center gap-2.5 text-rajvi-goldMuted text-xs tracking-wider uppercase font-semibold">
               <ShieldCheck className="w-4 h-4 text-rajvi-gold" />
               <span>Fancy Diamond Specialist</span>
             </div>
@@ -41,10 +41,10 @@ export default function Footer({ settings }: FooterProps) {
 
           {/* Col 2: Diamond Collections */}
           <div className="space-y-4">
-            <h3 className="text-xs uppercase tracking-widest text-rajvi-gold font-semibold font-serif">
+            <h3 className="text-xs uppercase tracking-widest text-rajvi-textDark font-semibold font-serif">
               Fancy Collections
             </h3>
-            <ul className="space-y-2.5 text-xs text-rajvi-offWhite/70">
+            <ul className="space-y-2.5 text-xs text-rajvi-textMuted">
               <li>
                 <a
                   href="/collections/rose-octagone"
@@ -80,7 +80,7 @@ export default function Footer({ settings }: FooterProps) {
               <li>
                 <a
                   href="/collections"
-                  className="hover:text-rajvi-gold transition-colors block py-0.5 text-rajvi-goldLight/90"
+                  className="hover:text-rajvi-gold transition-colors block py-0.5 text-rajvi-gold font-medium"
                 >
                   View Complete Catalogue →
                 </a>
@@ -90,10 +90,10 @@ export default function Footer({ settings }: FooterProps) {
 
           {/* Col 3: Navigation */}
           <div className="space-y-4">
-            <h3 className="text-xs uppercase tracking-widest text-rajvi-gold font-semibold font-serif">
+            <h3 className="text-xs uppercase tracking-widest text-rajvi-textDark font-semibold font-serif">
               Company
             </h3>
-            <ul className="space-y-2.5 text-xs text-rajvi-offWhite/70">
+            <ul className="space-y-2.5 text-xs text-rajvi-textMuted">
               <li>
                 <a href="/" className="hover:text-rajvi-gold transition-colors block py-0.5">
                   Home
@@ -122,7 +122,7 @@ export default function Footer({ settings }: FooterProps) {
               <li>
                 <a
                   href="/admin"
-                  className="hover:text-rajvi-gold/80 transition-colors block py-0.5 text-rajvi-muted"
+                  className="hover:text-rajvi-gold transition-colors block py-0.5 text-rajvi-textMuted/70"
                 >
                   Admin Portal
                 </a>
@@ -132,17 +132,17 @@ export default function Footer({ settings }: FooterProps) {
 
           {/* Col 4: Contact Information */}
           <div className="space-y-4">
-            <h3 className="text-xs uppercase tracking-widest text-rajvi-gold font-semibold font-serif">
+            <h3 className="text-xs uppercase tracking-widest text-rajvi-textDark font-semibold font-serif">
               Direct Contact
             </h3>
-            <div className="space-y-3 text-xs text-rajvi-offWhite/80">
+            <div className="space-y-3 text-xs text-rajvi-textMuted">
               {settings.contact_email && (
                 <a
                   href={`mailto:${settings.contact_email}`}
                   className="flex items-start gap-2.5 hover:text-rajvi-gold transition-colors"
                 >
                   <Mail className="w-4 h-4 text-rajvi-gold shrink-0 mt-0.5" />
-                  <span>{settings.contact_email}</span>
+                  <span className="text-rajvi-textDark">{settings.contact_email}</span>
                 </a>
               )}
               {settings.phone_number && (
@@ -151,7 +151,7 @@ export default function Footer({ settings }: FooterProps) {
                   className="flex items-start gap-2.5 hover:text-rajvi-gold transition-colors"
                 >
                   <Phone className="w-4 h-4 text-rajvi-gold shrink-0 mt-0.5" />
-                  <span>{settings.phone_number}</span>
+                  <span className="text-rajvi-textDark">{settings.phone_number}</span>
                 </a>
               )}
               {settings.whatsapp_number && (
@@ -162,7 +162,7 @@ export default function Footer({ settings }: FooterProps) {
                   className="flex items-start gap-2.5 hover:text-rajvi-gold transition-colors"
                 >
                   <MessageCircle className="w-4 h-4 text-[#25D366] shrink-0 mt-0.5" />
-                  <span>WhatsApp: {settings.whatsapp_number}</span>
+                  <span className="text-rajvi-textDark font-medium">WhatsApp: {settings.whatsapp_number}</span>
                 </a>
               )}
               {settings.instagram_url && (
@@ -173,11 +173,11 @@ export default function Footer({ settings }: FooterProps) {
                   className="flex items-start gap-2.5 hover:text-rajvi-gold transition-colors"
                 >
                   <Instagram className="w-4 h-4 text-rajvi-gold shrink-0 mt-0.5" />
-                  <span>Instagram @rajvidiamonds</span>
+                  <span className="text-rajvi-textDark">Instagram @rajvidiamonds</span>
                 </a>
               )}
               {settings.business_address && (
-                <div className="flex items-start gap-2.5 text-rajvi-offWhite/60 pt-1">
+                <div className="flex items-start gap-2.5 text-rajvi-textMuted pt-1">
                   <MapPin className="w-4 h-4 text-rajvi-gold shrink-0 mt-0.5" />
                   <span className="leading-relaxed">{settings.business_address}</span>
                 </div>
@@ -187,14 +187,14 @@ export default function Footer({ settings }: FooterProps) {
         </div>
 
         {/* Bottom divider and copyright */}
-        <div className="border-t border-rajvi-borderDark/60 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-rajvi-muted gap-4">
+        <div className="border-t border-rajvi-borderLight pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-rajvi-textMuted gap-4">
           <p>© {currentYear} {settings.brand_name}. All rights reserved.</p>
           <div className="flex items-center space-x-6">
             <a href="/privacy" className="hover:text-rajvi-gold transition-colors">
               Privacy Policy
             </a>
-            <span className="text-rajvi-borderDark">|</span>
-            <span className="text-rajvi-muted">
+            <span className="text-rajvi-borderLight">|</span>
+            <span className="text-rajvi-textMuted">
               Premium Fancy Cut Showcase (B2B & Private Inquiry)
             </span>
           </div>
