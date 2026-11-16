@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-rajvi-black: #171614;
+  --color-rajvi-charcoal: #24221E;
+  --color-rajvi-gold: #C6A46A;
+  --color-rajvi-gold-light: #E5D2AD;
+  --color-rajvi-offwhite: #F8F7F4;
+  --color-rajvi-grey: #EAE8E3;
+  --color-rajvi-text: #24221E;
+  --color-rajvi-muted: #77736C;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #171614;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3a362f;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C6A46A;
+}
+
+/* Selection */
+::selection {
+  background: #C6A46A;
+  color: #171614;
+}
+
+/* Luxury Smooth Transitions */
+* {
+  border-color: #2F2B24;
+}
+
+/* Gold Gradient Text */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #E5D2AD 0%, #C6A46A 50%, #9C7F4E 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Subtle Shimmer */
+@keyframes subtleShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(198, 164, 106, 0) 0%,
+    rgba(198, 164, 106, 0.15) 50%,
+    rgba(198, 164, 106, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: subtleShimmer 4s infinite;
+}
