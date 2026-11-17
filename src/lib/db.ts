@@ -999,7 +999,12 @@ export async function updateInquiryStatus(
   const supabase = createAdminClient();
 
   if (supabase) {
-    const updatePayload: any = { status, updated_at: now };
+    // Map to valid PostgreSQL check constraint: 'New' | 'Contacted' | 'In Progress' | 'Resolved' | 'Archived'
+    let dbStatus: string = status;
+    if (status === 'Converted') dbStatus = 'Resolved';
+    else if (status === 'Closed') dbStatus = 'Archived';
+
+    const updatePayload: any = { status: dbStatus, updated_at: now };
     if (internalNotes !== undefined) {
       updatePayload.internal_notes = internalNotes;
     }
@@ -1012,6 +1017,9 @@ export async function updateInquiryStatus(
       .single();
 
     if (!error && data) return data as Inquiry;
+    if (error) {
+      console.error('Error updating inquiry status in Supabase:', error);
+    }
   }
 
   const store = readLocalStore();

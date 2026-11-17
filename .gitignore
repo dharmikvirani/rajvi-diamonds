@@ -32,6 +32,9 @@ yarn-error.log*
 # local database persistence
 .local-db.json
 
+# local scripts & test runners
+/scripts/
+
 # vercel
 .vercel
 
