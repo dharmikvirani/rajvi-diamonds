@@ -13,7 +13,8 @@ export const metadata: Metadata = {
     'Contact Rajvi Diamonds for fancy cut diamond wholesale orders, bespoke jewellery manufacturing parcels, and calibrated diamond availability.',
 };
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function ContactPage() {
   const settings = await getSiteSettings();

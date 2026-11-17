@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { createAdminClient, createClient, isSupabaseConfigured } from './supabase';
+import { deleteCloudinaryImage } from './cloudinary';
 import {
   Category,
   Diamond,
@@ -87,6 +88,20 @@ function writeLocalStore(store: LocalStoreData): void {
   }
 }
 
+function sortImages(images: DiamondImage[]): DiamondImage[] {
+  if (!images || !Array.isArray(images)) return [];
+  return [...images].sort((a, b) => {
+    if (a.is_primary && !b.is_primary) return -1;
+    if (!a.is_primary && b.is_primary) return 1;
+    return (a.display_order ?? 0) - (b.display_order ?? 0);
+  });
+}
+
+function sortSizes(sizes: DiamondSize[]): DiamondSize[] {
+  if (!sizes || !Array.isArray(sizes)) return [];
+  return [...sizes].sort((a, b) => (Number(a.size_mm) || 0) - (Number(b.size_mm) || 0));
+}
+
 // ----------------- Categories -----------------
 
 export async function getCategories(): Promise<Category[]> {
@@ -95,6 +110,7 @@ export async function getCategories(): Promise<Category[]> {
     const { data, error } = await supabase
       .from('categories')
       .select('*')
+      .eq('is_active', true)
       .order('display_order', { ascending: true });
 
     if (!error && data && data.length > 0) {
@@ -220,11 +236,11 @@ export async function getDiamonds(filters?: FilterParams): Promise<Diamond[]> {
       query = query.eq('is_featured', true);
     }
 
-    if (filters?.category) {
+    if (filters?.category && filters.category !== 'all') {
       query = query.eq('categories.slug', filters.category);
     }
 
-    if (filters?.shape) {
+    if (filters?.shape && filters.shape !== 'all') {
       query = query.ilike('shape', `%${filters.shape}%`);
     }
 
@@ -243,7 +259,33 @@ export async function getDiamonds(filters?: FilterParams): Promise<Diamond[]> {
     const { data, error } = await query.order('display_order', { ascending: true });
 
     if (!error && data && data.length > 0) {
-      return data as Diamond[];
+      let items: Diamond[] = data.map((d: any) => {
+        // Fallback to jsonb images if relational diamond_images is empty
+        const rawImages = (d.images && d.images.length > 0)
+          ? d.images
+          : (Array.isArray(d.images_json) ? d.images_json : []);
+
+        return {
+          ...d,
+          images: sortImages(rawImages),
+          sizes: sortSizes(d.sizes || []),
+        };
+      });
+
+      if (filters?.size && filters.size !== 'all') {
+        const targetSize = parseFloat(filters.size);
+        items = items.filter((d) =>
+          d.sizes.some((s) => s.is_available && Math.abs(s.size_mm - targetSize) < 0.01)
+        );
+      }
+
+      if (filters?.sort === 'name-asc') {
+        items.sort((a, b) => a.name.localeCompare(b.name));
+      } else if (filters?.sort === 'name-desc') {
+        items.sort((a, b) => b.name.localeCompare(a.name));
+      }
+
+      return items;
     }
   }
 
@@ -301,6 +343,8 @@ export async function getDiamonds(filters?: FilterParams): Promise<Diamond[]> {
 
   return results.map((d) => ({
     ...d,
+    images: sortImages(d.images || []),
+    sizes: sortSizes(d.sizes || []),
     category: store.categories.find((c) => c.id === d.category_id),
   }));
 }
@@ -314,12 +358,18 @@ export async function getAllDiamondsAdmin(): Promise<Diamond[]> {
       .order('display_order', { ascending: true });
 
     if (!error && data) {
-      return data as Diamond[];
+      return data.map((d: any) => ({
+        ...d,
+        images: sortImages(d.images || []),
+        sizes: sortSizes(d.sizes || []),
+      })) as Diamond[];
     }
   }
   const store = readLocalStore();
   return store.diamonds.map((d) => ({
     ...d,
+    images: sortImages(d.images || []),
+    sizes: sortSizes(d.sizes || []),
     category: store.categories.find((c) => c.id === d.category_id),
   }));
 }
@@ -335,7 +385,11 @@ export async function getDiamondBySlug(slug: string): Promise<Diamond | null> {
       .single();
 
     if (!error && data) {
-      return data as Diamond;
+      return {
+        ...data,
+        images: sortImages(data.images || []),
+        sizes: sortSizes(data.sizes || []),
+      } as Diamond;
     }
   }
 
@@ -345,6 +399,8 @@ export async function getDiamondBySlug(slug: string): Promise<Diamond | null> {
 
   return {
     ...diamond,
+    images: sortImages(diamond.images || []),
+    sizes: sortSizes(diamond.sizes || []),
     category: store.categories.find((c) => c.id === diamond.category_id),
   };
 }
@@ -359,7 +415,11 @@ export async function getDiamondByIdAdmin(id: string): Promise<Diamond | null> {
       .single();
 
     if (!error && data) {
-      return data as Diamond;
+      return {
+        ...data,
+        images: sortImages(data.images || []),
+        sizes: sortSizes(data.sizes || []),
+      } as Diamond;
     }
   }
 
@@ -369,6 +429,8 @@ export async function getDiamondByIdAdmin(id: string): Promise<Diamond | null> {
 
   return {
     ...diamond,
+    images: sortImages(diamond.images || []),
+    sizes: sortSizes(diamond.sizes || []),
     category: store.categories.find((c) => c.id === diamond.category_id),
   };
 }
@@ -378,56 +440,174 @@ export async function saveDiamond(diamondData: Partial<Diamond>): Promise<Diamon
   const now = new Date().toISOString();
 
   if (supabase) {
+    let savedId = diamondData.id;
+
+    // 1. Upsert diamonds record in Supabase
     if (diamondData.id) {
       const { data, error } = await supabase
         .from('diamonds')
         .update({
-          category_id: diamondData.category_id,
+          category_id: diamondData.category_id || null,
           name: diamondData.name,
+          product_name: diamondData.name,
           slug: diamondData.slug,
-          short_description: diamondData.short_description,
-          description: diamondData.description,
+          short_description: diamondData.short_description || '',
+          description: diamondData.description || '',
           shape: diamondData.shape,
+          diamond_shape: diamondData.shape,
           color: diamondData.color ?? null,
           clarity: diamondData.clarity ?? null,
-          specifications: diamondData.specifications,
+          purity: diamondData.clarity ?? null,
+          specifications: diamondData.specifications || {},
           is_featured: diamondData.is_featured ?? false,
           is_active: diamondData.is_active ?? true,
           seo_title: diamondData.seo_title,
           seo_description: diamondData.seo_description,
           display_order: diamondData.display_order ?? 0,
+          images: Array.isArray(diamondData.images) ? diamondData.images : [],
           updated_at: now,
         })
         .eq('id', diamondData.id)
         .select()
         .single();
 
-      if (!error && data) return data as Diamond;
+      if (error) {
+        console.error('Error updating diamond in Supabase:', error);
+        throw new Error(error.message);
+      }
+      if (data) savedId = data.id;
     } else {
       const { data, error } = await supabase
         .from('diamonds')
         .insert({
-          category_id: diamondData.category_id,
-          name: diamondData.name,
-          slug: diamondData.slug,
-          short_description: diamondData.short_description,
-          description: diamondData.description,
-          shape: diamondData.shape,
+          category_id: diamondData.category_id || null,
+          name: diamondData.name || 'New Diamond Cut',
+          product_name: diamondData.name || 'New Diamond Cut',
+          slug: diamondData.slug || `cut-${Date.now()}`,
+          short_description: diamondData.short_description || '',
+          description: diamondData.description || '',
+          shape: diamondData.shape || 'Fancy Cut',
+          diamond_shape: diamondData.shape || 'Fancy Cut',
           color: diamondData.color ?? null,
           clarity: diamondData.clarity ?? null,
-          specifications: diamondData.specifications,
+          purity: diamondData.clarity ?? null,
+          specifications: diamondData.specifications || {},
           is_featured: diamondData.is_featured ?? false,
           is_active: diamondData.is_active ?? true,
-          seo_title: diamondData.seo_title,
-          seo_description: diamondData.seo_description,
+          seo_title: diamondData.seo_title || '',
+          seo_description: diamondData.seo_description || '',
           display_order: diamondData.display_order ?? 0,
+          images: Array.isArray(diamondData.images) ? diamondData.images : [],
           created_at: now,
           updated_at: now,
         })
         .select()
         .single();
 
-      if (!error && data) return data as Diamond;
+      if (error) {
+        console.error('Error inserting diamond in Supabase:', error);
+        throw new Error(error.message);
+      }
+      if (data) savedId = data.id;
+    }
+
+    // 2. Synchronize diamond_images in Supabase
+    if (savedId && Array.isArray(diamondData.images)) {
+      // Find old images to track replaced Cloudinary public IDs
+      const { data: existingImages } = await supabase
+        .from('diamond_images')
+        .select('cloudinary_public_id')
+        .eq('diamond_id', savedId);
+
+      const oldPublicIds = new Set(
+        (existingImages || [])
+          .map((img: any) => img.cloudinary_public_id)
+          .filter(Boolean)
+      );
+
+      const newPublicIds = new Set(
+        diamondData.images
+          .map((img) => img.cloudinary_public_id)
+          .filter(Boolean)
+      );
+
+      // Delete existing rows for this diamond in Supabase
+      await supabase.from('diamond_images').delete().eq('diamond_id', savedId);
+
+      // Insert fresh image rows
+      if (diamondData.images.length > 0) {
+        const imageRows = diamondData.images.map((img, idx) => ({
+          diamond_id: savedId,
+          image_url: img.image_url,
+          cloudinary_public_id: img.cloudinary_public_id || null,
+          alt_text: img.alt_text || diamondData.name || '',
+          is_primary: idx === 0 ? true : Boolean(img.is_primary),
+          display_order: img.display_order ?? idx + 1,
+          created_at: now,
+        }));
+
+        const { error: insertImgErr } = await supabase.from('diamond_images').insert(imageRows);
+        if (insertImgErr) {
+          console.error('Error inserting diamond_images:', insertImgErr);
+        }
+      }
+
+      // Safe cleanup of replaced Cloudinary images (only AFTER new records are saved)
+      Array.from(oldPublicIds).forEach((oldId) => {
+        if (!newPublicIds.has(oldId)) {
+          deleteCloudinaryImage(oldId).catch((e) =>
+            console.error('Cloudinary cleanup error for replaced image:', e)
+          );
+        }
+      });
+    }
+
+    // 3. Synchronize diamond_sizes in Supabase
+    if (savedId && Array.isArray(diamondData.sizes)) {
+      await supabase.from('diamond_sizes').delete().eq('diamond_id', savedId);
+
+      if (diamondData.sizes.length > 0) {
+        const sizeRows = diamondData.sizes.map((s, idx) => ({
+          diamond_id: savedId,
+          size_mm: Number(s.size_mm),
+          is_available: s.is_available ?? true,
+          display_order: s.display_order ?? idx + 1,
+          created_at: now,
+          updated_at: now,
+        }));
+
+        const { error: sizeErr } = await supabase.from('diamond_sizes').insert(sizeRows);
+        if (sizeErr) {
+          console.error('Error inserting diamond_sizes:', sizeErr);
+        }
+      }
+    }
+
+    // 4. Fetch the complete updated diamond with all relations
+    const { data: fullDiamond, error: fetchErr } = await supabase
+      .from('diamonds')
+      .select('*, category:categories(*), images:diamond_images(*), sizes:diamond_sizes(*)')
+      .eq('id', savedId)
+      .single();
+
+    if (!fetchErr && fullDiamond) {
+      const formatted: Diamond = {
+        ...fullDiamond,
+        images: sortImages(fullDiamond.images || []),
+        sizes: sortSizes(fullDiamond.sizes || []),
+      };
+
+      // Also sync to local store cache
+      const store = readLocalStore();
+      const localIdx = store.diamonds.findIndex((d) => d.id === savedId);
+      if (localIdx >= 0) {
+        store.diamonds[localIdx] = formatted;
+      } else {
+        store.diamonds.push(formatted);
+      }
+      writeLocalStore(store);
+
+      return formatted;
     }
   }
 
@@ -439,8 +619,8 @@ export async function saveDiamond(diamondData: Partial<Diamond>): Promise<Diamon
       store.diamonds[idx] = {
         ...store.diamonds[idx],
         ...diamondData,
-        images: diamondData.images || store.diamonds[idx].images,
-        sizes: diamondData.sizes || store.diamonds[idx].sizes,
+        images: sortImages(diamondData.images || store.diamonds[idx].images || []),
+        sizes: sortSizes(diamondData.sizes || store.diamonds[idx].sizes || []),
         updated_at: now,
       } as Diamond;
       writeLocalStore(store);
@@ -464,8 +644,8 @@ export async function saveDiamond(diamondData: Partial<Diamond>): Promise<Diamon
     seo_title: diamondData.seo_title || '',
     seo_description: diamondData.seo_description || '',
     display_order: diamondData.display_order ?? store.diamonds.length + 1,
-    images: diamondData.images || [],
-    sizes: diamondData.sizes || [],
+    images: sortImages(diamondData.images || []),
+    sizes: sortSizes(diamondData.sizes || []),
     created_at: now,
     updated_at: now,
   };
@@ -477,9 +657,29 @@ export async function saveDiamond(diamondData: Partial<Diamond>): Promise<Diamon
 export async function deleteDiamond(id: string): Promise<boolean> {
   const supabase = createAdminClient();
   if (supabase) {
+    // 1. Fetch any images with cloudinary_public_id to clean up
+    const { data: images } = await supabase
+      .from('diamond_images')
+      .select('cloudinary_public_id')
+      .eq('diamond_id', id);
+
+    if (images && images.length > 0) {
+      for (const img of images) {
+        if (img.cloudinary_public_id) {
+          deleteCloudinaryImage(img.cloudinary_public_id).catch((e) =>
+            console.error('Cloudinary delete error on diamond delete:', e)
+          );
+        }
+      }
+    }
+
+    // 2. Delete diamond from Supabase (cascades to diamond_images and diamond_sizes)
     const { error } = await supabase.from('diamonds').delete().eq('id', id);
-    if (!error) return true;
+    if (error) {
+      console.error('Error deleting diamond from Supabase:', error);
+    }
   }
+
   const store = readLocalStore();
   store.diamonds = store.diamonds.filter((d) => d.id !== id);
   writeLocalStore(store);

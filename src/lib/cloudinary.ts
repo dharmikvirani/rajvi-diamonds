@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 export const getCloudinaryConfig = () => {
   return {
     cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME || '',
@@ -7,8 +9,14 @@ export const getCloudinaryConfig = () => {
 };
 
 export const isCloudinaryConfigured = (): boolean => {
-  const { cloudName } = getCloudinaryConfig();
-  return Boolean(cloudName && !cloudName.includes('your-cloudinary'));
+  const { cloudName, apiKey, apiSecret } = getCloudinaryConfig();
+  return Boolean(
+    cloudName &&
+    apiKey &&
+    apiSecret &&
+    !cloudName.includes('your-cloudinary') &&
+    !cloudName.includes('your-cloud-name')
+  );
 };
 
 /**
@@ -36,3 +44,38 @@ export const getOptimizedImageUrl = (
 
   return url;
 };
+
+/**
+ * Deletes an image from Cloudinary using server-side signed API
+ */
+export async function deleteCloudinaryImage(publicId: string): Promise<boolean> {
+  try {
+    if (!publicId || !publicId.trim()) return false;
+    const { cloudName, apiKey, apiSecret } = getCloudinaryConfig();
+    if (!cloudName || !apiKey || !apiSecret) return false;
+
+    const timestamp = Math.round(Date.now() / 1000).toString();
+    const paramsToSign = `public_id=${publicId}&timestamp=${timestamp}`;
+    const signature = crypto
+      .createHash('sha1')
+      .update(paramsToSign + apiSecret)
+      .digest('hex');
+
+    const formData = new FormData();
+    formData.append('public_id', publicId);
+    formData.append('api_key', apiKey);
+    formData.append('timestamp', timestamp);
+    formData.append('signature', signature);
+
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await res.json();
+    return data.result === 'ok';
+  } catch (err) {
+    console.error('Error deleting Cloudinary image:', err);
+    return false;
+  }
+}

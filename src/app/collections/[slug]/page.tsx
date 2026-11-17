@@ -13,7 +13,8 @@ interface DiamondDetailPageProps {
   };
 }
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function generateMetadata({ params }: DiamondDetailPageProps): Promise<Metadata> {
   const diamond = await getDiamondBySlug(params.slug);

@@ -10,7 +10,8 @@ import InquiryCTA from '@/components/public/InquiryCTA';
 import WhatsAppButton from '@/components/public/WhatsAppButton';
 import { getCategories, getDiamonds, getSiteSettings } from '@/lib/db';
 
-export const revalidate = 60; // Refresh data periodically
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function HomePage() {
   const [settings, categories, featuredDiamonds] = await Promise.all([
