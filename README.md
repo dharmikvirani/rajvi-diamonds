@@ -190,34 +190,106 @@ ADMIN_SECRET_KEY=your-secure-admin-passkey-min-16-characters
 
 ---
 
-## 7. Admin Portal Access
+## 7. Admin Portal & Architecture
 
-- **Admin Login Route:** [http://localhost:3000/admin/login](http://localhost:3000/admin/login)
-- **Authentication Methods:**
-  - **Supabase Auth:** Authenticate using an email/password configured in Supabase Auth and registered in `admin_users`.
-  - **Passkey Fallback:** Authenticate using the administrator email and the private `ADMIN_SECRET_KEY` defined in `.env.local`.
+The administrative dashboard is located at `/admin` (protected by middleware and server session validation).
 
-### Setting up Supabase Auth Admin:
-1. In your Supabase Dashboard, go to **Authentication -> Users** and click **Add User**.
-2. Create an admin user with your chosen email and password.
-3. In the SQL Editor, link that user into the `admin_users` table:
-   ```sql
-   INSERT INTO admin_users (auth_user_id, full_name, role, is_active)
-   VALUES ('<supabase-auth-user-uuid>', 'Rajvi Administrator', 'admin', true);
-   ```
-4. You can now log into `/admin/login` using your Supabase credentials!
+### Key Modules & Capabilities:
+- **Dashboard Overview (`/admin`):**
+  - Real-time KPI statistics queried directly from Supabase (Active Cuts, Featured Cuts, Cut Categories, Total Inquiries, Pending Inquiries).
+  - Quick action shortcuts and recent activity feed.
+- **Diamond Inventory Management (`/admin/diamonds`):**
+  - Full CRUD operations: create, edit, activate/deactivate, and delete diamond cuts.
+  - Multi-image batch upload with direct server-side signed Cloudinary upload handling.
+  - Interactive gallery management: set primary cover image, remove images, and reorder photos via "Move Left" / "Move Right" controls.
+  - Multi-color grades selection (D, E, F, G, H, Fancy Intense Yellow, etc.).
+  - Multi-clarity grades selection (FL, IF, VVS1, VVS2, VS1, VS2, SI1).
+  - Millimeter size mapping and custom lapidary specifications stored in PostgreSQL JSONB.
+  - Automatic cache invalidation (`revalidatePath`) ensuring instant updates on the live public catalogue.
+- **Category Management (`/admin/categories`):**
+  - Full category CRUD for diamond cut families.
+  - Direct Cloudinary image upload for category cover banners with live preview.
+- **Calibrated Sizes & Dimensions (`/admin/sizes`):**
+  - Manage millimeter dimensions (e.g. 4.0 mm, 4.5 mm, 5.0 mm) and carat weight brackets.
+  - Safe deletion dialogs preventing accidental record loss.
+- **Trade Inquiries & CRM (`/admin/inquiries`):**
+  - Full customer trade inquiries list with filtering by status.
+  - Detailed modal view displaying customer contact info, inquiry type, requested diamond cut, selected millimeter size, color, clarity, and initial message.
+  - Direct 1-click WhatsApp messaging pre-populated with customer and diamond details.
+  - CSV export functionality (`Export to CSV`) for sales pipeline management and spreadsheets.
+  - Internal private notes persistence for admin follow-ups.
+  - Spam and test inquiry deletion capability.
+- **Site Settings (`/admin/settings`):**
+  - Live configuration of business contact info, physical atelier address in Surat, official WhatsApp number, and hero banner copy.
 
 ---
 
-## 8. Deployment to Vercel
+## 8. Inquiry Status Lifecycle & Database Mapping
 
-1. **Push the repository to GitHub / GitLab:**
+To balance luxury B2B jewelry CRM terminology with existing database constraints, the application implements transparent bi-directional mapping:
+
+| UI / Admin CRM Display | Supabase Database Value (`inquiries.status`) | Meaning |
+| :--- | :--- | :--- |
+| **New** | `'New'` | Fresh customer inquiry awaiting initial response. |
+| **Contacted** | `'Contacted'` | Sales team has reached out to the client via WhatsApp/Email. |
+| **In Progress** | `'In Progress'` | Price quotations, parcel availability, or custom cutting is being discussed. |
+| **Converted** | `'Resolved'` | Deal successfully closed or client quotation confirmed. Satisfies Supabase DB constraint `CHECK (status IN ('New', 'Contacted', 'In Progress', 'Resolved', 'Archived'))`. |
+| **Closed** | `'Archived'` | Inquiry completed, declined, or archived for bookkeeping. |
+
+All database queries, mutations, and CSV exports automatically handle this mapping in `src/lib/db.ts` without breaking database integrity.
+
+---
+
+## 9. Security & Cloud Integrations
+
+- **Dual Authentication:**
+  - Supabase Auth: Authenticate using Supabase users linked to `admin_users`.
+  - Passkey Fallback: Authenticate using administrator email and `ADMIN_SECRET_KEY` via HMAC-SHA256 signed session cookies.
+- **Rate Limiting:**
+  - `/api/admin/auth`: Enforces brute-force defense (max 10 login attempts per minute per IP).
+  - `/api/inquiries`: Public honeypot field protection + IP rate limiting (max 5 submissions per minute).
+- **Cloudinary Signed Asset Management:**
+  - All image uploads to Cloudinary are signed server-side using SHA-1 timestamps in `/api/upload`.
+  - Cloudinary API Secret is strictly kept on the server and is never exposed to client-side bundles.
+  - When replacing diamond or category images, old assets are cleaned up safely from Cloudinary only *after* the new database record is successfully committed.
+
+---
+
+## 10. Automated End-to-End QA Test Suite
+
+The repository includes a comprehensive, automated end-to-end QA audit script covering all 24 critical production assertions.
+
+### Running the Test Suite:
+
+```bash
+# Run against the live production deployment
+node scripts/e2e_qa_audit.mjs
+
+# Or run against a specific custom target URL
+BASE_URL=https://rajvi-diamonds.vercel.app node scripts/e2e_qa_audit.mjs
+```
+
+### Test Coverage (24/24 Assertions):
+1. **Admin Authentication Flow:** Bad credential rejection, Master Passkey HMAC login, session issuance, and logout clearing.
+2. **Access Control & Route Protection:** Unauthorized `/admin` redirection, unauthorized `/api/admin` rejection, unauthorized `/api/upload` rejection, and authenticated dashboard access.
+3. **Cloudinary Asset Uploads:** Single image upload, secondary gallery view upload, and Cloudinary CDN reachability (HTTP 200).
+4. **Diamond Product CRUD:** Diamond creation (`save_diamond`), Supabase persistence verification, public website live rendering, gallery reordering, and automated teardown cleanup.
+5. **Category Management:** Category creation with cover image upload, and deletion cleanup.
+6. **Inquiry Lifecycle & Storage:** Customer submission, Supabase storage, status update to `Converted` (mapped to `Resolved`), and deletion.
+7. **Dashboard KPIs:** Real-time Supabase count verification.
+8. **Client Security Scan:** Verifies no secrets (`ADMIN_SECRET_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `CLOUDINARY_API_SECRET`) are leaked in client JavaScript bundles.
+9. **Public Image Audit:** Confirms zero broken images on all public catalog routes.
+10. **Inquiry CSV Export & Action Integrity:** Verifies CSV export format and required CRM action handlers.
+
+---
+
+## 11. Deployment to Vercel
+
+1. **Push the repository to GitHub:**
    ```bash
-   git init
    git add .
    git commit -m "feat: complete production Rajvi Diamonds platform"
-   git remote add origin <your-repo-url>
-   git push -u origin main
+   git push origin main
    ```
 2. **Import into Vercel:**
    - Go to [vercel.com/new](https://vercel.com/new).
@@ -231,7 +303,7 @@ ADMIN_SECRET_KEY=your-secure-admin-passkey-min-16-characters
 
 ---
 
-## 9. Checklist of Owner-Provided Assets & Credentials
+## 12. Checklist of Owner-Provided Assets & Credentials
 
 To switch from the local fallback store to your live production cloud services:
 
