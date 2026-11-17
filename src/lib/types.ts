@@ -45,7 +45,12 @@ export interface DiamondSpecifications {
   culet?: string;
   girdle?: string;
   crafting_origin?: string;
+  available_colors?: string[];
+  available_clarities?: string[];
+  availability_status?: string;
+  video_url?: string | null;
   custom_attributes?: Record<string, string>;
+  [key: string]: any;
 }
 
 export interface DiamondImage {
@@ -56,6 +61,7 @@ export interface DiamondImage {
   alt_text: string;
   is_primary: boolean;
   display_order: number;
+  view_tag?: 'front' | 'side' | 'close_up' | 'table' | 'hand' | 'video' | 'general' | string;
   created_at: string;
 }
 
@@ -100,6 +106,10 @@ export interface Diamond {
   shape: string;
   color?: string | null;
   clarity?: string | null;
+  available_colors?: string[];
+  available_clarities?: string[];
+  availability_status?: 'Available' | 'Made to Order' | 'Available on Inquiry';
+  video_url?: string | null;
   specifications: DiamondSpecifications;
   is_featured: boolean;
   is_active: boolean;
@@ -156,6 +166,7 @@ export interface FilterParams {
   size?: string;
   color?: string;
   clarity?: string;
+  availability?: string;
   search?: string;
   featured?: boolean;
   sort?: 'name-asc' | 'name-desc' | 'featured' | 'newest';

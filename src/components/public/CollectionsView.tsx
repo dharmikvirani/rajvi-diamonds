@@ -23,6 +23,7 @@ export default function CollectionsView({
   const [selectedSize, setSelectedSize] = useState('all');
   const [selectedColor, setSelectedColor] = useState('all');
   const [selectedClarity, setSelectedClarity] = useState('all');
+  const [selectedAvailability, setSelectedAvailability] = useState('all');
   const [sortBy, setSortBy] = useState('default');
   const [featuredOnly, setFeaturedOnly] = useState(false);
   const [visibleCount, setVisibleCount] = useState(12);
@@ -47,20 +48,30 @@ export default function CollectionsView({
     return Array.from(set).sort((a, b) => a - b);
   }, [initialDiamonds]);
 
-  // Extract distinct colors
+  // Extract distinct colors (supporting multiple colors per diamond)
   const availableColors = useMemo(() => {
     const set = new Set<string>();
     initialDiamonds.forEach((d) => {
-      if (d.color && d.color.trim()) set.add(d.color.trim());
+      if (Array.isArray(d.available_colors)) {
+        d.available_colors.forEach((c) => c && set.add(c.trim()));
+      }
+      if (d.color && d.color.trim()) {
+        d.color.split(',').forEach((c) => c && set.add(c.trim()));
+      }
     });
     return Array.from(set).sort();
   }, [initialDiamonds]);
 
-  // Extract distinct clarities
+  // Extract distinct clarities (supporting multiple clarities per diamond)
   const availableClarities = useMemo(() => {
     const set = new Set<string>();
     initialDiamonds.forEach((d) => {
-      if (d.clarity && d.clarity.trim()) set.add(d.clarity.trim());
+      if (Array.isArray(d.available_clarities)) {
+        d.available_clarities.forEach((c) => c && set.add(c.trim()));
+      }
+      if (d.clarity && d.clarity.trim()) {
+        d.clarity.split(',').forEach((c) => c && set.add(c.trim()));
+      }
     });
     return Array.from(set).sort();
   }, [initialDiamonds]);
@@ -78,7 +89,9 @@ export default function CollectionsView({
           d.short_description.toLowerCase().includes(q) ||
           d.shape.toLowerCase().includes(q) ||
           (d.color && d.color.toLowerCase().includes(q)) ||
-          (d.clarity && d.clarity.toLowerCase().includes(q))
+          (d.clarity && d.clarity.toLowerCase().includes(q)) ||
+          (d.available_colors && d.available_colors.some((c) => c.toLowerCase().includes(q))) ||
+          (d.available_clarities && d.available_clarities.some((c) => c.toLowerCase().includes(q)))
       );
     }
 
@@ -103,14 +116,32 @@ export default function CollectionsView({
       );
     }
 
-    // Color filter
+    // Color filter (supports multi-color grades)
     if (selectedColor !== 'all') {
-      result = result.filter((d) => d.color?.toLowerCase() === selectedColor.toLowerCase());
+      const qColor = selectedColor.toLowerCase();
+      result = result.filter(
+        (d) =>
+          d.color?.toLowerCase() === qColor ||
+          (d.available_colors && d.available_colors.some((c) => c.toLowerCase() === qColor))
+      );
     }
 
-    // Clarity filter
+    // Clarity filter (supports multi-clarity grades)
     if (selectedClarity !== 'all') {
-      result = result.filter((d) => d.clarity?.toLowerCase() === selectedClarity.toLowerCase());
+      const qClarity = selectedClarity.toLowerCase();
+      result = result.filter(
+        (d) =>
+          d.clarity?.toLowerCase() === qClarity ||
+          (d.available_clarities && d.available_clarities.some((c) => c.toLowerCase() === qClarity))
+      );
+    }
+
+    // Availability status filter
+    if (selectedAvailability !== 'all') {
+      const qAvail = selectedAvailability.toLowerCase();
+      result = result.filter(
+        (d) => d.availability_status?.toLowerCase() === qAvail
+      );
     }
 
     // Featured only
@@ -136,6 +167,7 @@ export default function CollectionsView({
     selectedSize,
     selectedColor,
     selectedClarity,
+    selectedAvailability,
     featuredOnly,
     sortBy,
     categories,
@@ -151,6 +183,7 @@ export default function CollectionsView({
     setSelectedSize('all');
     setSelectedColor('all');
     setSelectedClarity('all');
+    setSelectedAvailability('all');
     setFeaturedOnly(false);
     setSortBy('default');
   };
@@ -176,6 +209,8 @@ export default function CollectionsView({
         onColorChange={setSelectedColor}
         selectedClarity={selectedClarity}
         onClarityChange={setSelectedClarity}
+        selectedAvailability={selectedAvailability}
+        onAvailabilityChange={setSelectedAvailability}
         sortBy={sortBy}
         onSortChange={setSortBy}
         featuredOnly={featuredOnly}
@@ -184,7 +219,7 @@ export default function CollectionsView({
         totalResults={filteredDiamonds.length}
       />
 
-      {/* Results Diamond Grid */}
+      {/* Diamonds Grid */}
       {displayedDiamonds.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {displayedDiamonds.map((diamond) => (
@@ -192,33 +227,42 @@ export default function CollectionsView({
           ))}
         </div>
       ) : (
-        <div className="text-center py-24 bg-white border border-rajvi-borderLight rounded-sm p-8 shadow-sm">
-          <div className="w-12 h-12 mx-auto rounded-full bg-rajvi-offWhite flex items-center justify-center mb-4">
-            <PackageSearch className="w-6 h-6 text-rajvi-gold" />
+        /* Empty Results State */
+        <div className="text-center py-20 bg-white border border-rajvi-borderLight/80 rounded-sm p-8 shadow-sm">
+          <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-rajvi-offWhite border border-rajvi-gold/30 flex items-center justify-center text-rajvi-gold">
+            <PackageSearch className="w-7 h-7" />
           </div>
-          <h3 className="font-serif text-xl text-rajvi-textDark font-normal mb-2">
-            No Fancy Cuts Match Your Specific Filter Criteria
+          <h3 className="font-serif text-xl sm:text-2xl text-rajvi-textDark font-normal mb-2">
+            No Fancy Cuts Match Your Filter Criteria
           </h3>
           <p className="text-xs sm:text-sm text-rajvi-textMuted max-w-md mx-auto mb-6">
-            We accommodate bespoke millimeter dimensions, antique rose domes, and custom diamond parcel inquiries directly via our master lapidary workshop.
+            We specialize in bespoke parcel manufacturing in Surat. If your required shape, millimeter or purity is not listed, our lapidary specialists can craft it to exact specification.
           </p>
-          <button
-            onClick={handleResetFilters}
-            className="px-6 py-2.5 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-semibold text-xs uppercase tracking-wider transition-colors shadow-sm"
-          >
-            Reset All Filters
-          </button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button
+              onClick={handleResetFilters}
+              className="px-6 py-3 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-semibold text-xs uppercase tracking-widest transition-colors shadow-sm"
+            >
+              Reset All Filters
+            </button>
+            <a
+              href="/contact"
+              className="px-6 py-3 bg-white border border-rajvi-borderLight hover:border-rajvi-gold text-rajvi-textDark hover:text-rajvi-gold font-semibold text-xs uppercase tracking-widest transition-colors shadow-sm"
+            >
+              Inquire Custom Cutting
+            </a>
+          </div>
         </div>
       )}
 
       {/* Load More Button */}
       {hasMore && (
-        <div className="text-center mt-16 pt-8 border-t border-rajvi-borderLight">
+        <div className="text-center mt-12">
           <button
             onClick={() => setVisibleCount((prev) => prev + 12)}
-            className="px-8 py-3.5 bg-white border border-rajvi-gold hover:bg-rajvi-gold hover:text-white text-rajvi-gold font-semibold text-xs uppercase tracking-widest transition-all shadow-sm"
+            className="px-8 py-3.5 bg-white border border-rajvi-borderLight hover:border-rajvi-gold text-rajvi-textDark hover:text-rajvi-gold text-xs uppercase tracking-widest font-semibold transition-colors shadow-sm"
           >
-            Load More Cuts ({filteredDiamonds.length - visibleCount} remaining)
+            Load More Cuts ({filteredDiamonds.length - visibleCount} Remaining)
           </button>
         </div>
       )}

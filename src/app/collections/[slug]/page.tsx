@@ -80,8 +80,34 @@ export default async function DiamondDetailPage({ params }: DiamondDetailPagePro
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rajvidiamonds.com';
 
+  const productSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: diamond.name,
+    image: (diamond.images || []).map((i) => i.image_url),
+    description: diamond.short_description || diamond.description,
+    category: diamond.category?.name || 'Fancy Cut Diamonds',
+    brand: {
+      '@type': 'Brand',
+      name: 'Rajvi Diamonds',
+    },
+    offers: {
+      '@type': 'AggregateOffer',
+      priceCurrency: 'USD',
+      availability:
+        diamond.availability_status === 'Made to Order'
+          ? 'https://schema.org/PreOrder'
+          : 'https://schema.org/InStock',
+      url: `${siteUrl}/collections/${diamond.slug}`,
+    },
+  };
+
   return (
     <div className="min-h-screen bg-rajvi-offWhite text-rajvi-textDark flex flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
       {/* Header */}
       <Header
         whatsappNumber={settings.whatsapp_number}

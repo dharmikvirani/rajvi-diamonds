@@ -52,6 +52,29 @@ export default function DiamondEditorForm({
     seo_description: initialDiamond?.seo_description || '',
   });
 
+  // Multi-variant states
+  const [selectedColors, setSelectedColors] = useState<string[]>(
+    initialDiamond?.available_colors && initialDiamond.available_colors.length > 0
+      ? initialDiamond.available_colors
+      : initialDiamond?.color
+      ? [initialDiamond.color]
+      : []
+  );
+
+  const [selectedClarities, setSelectedClarities] = useState<string[]>(
+    initialDiamond?.available_clarities && initialDiamond.available_clarities.length > 0
+      ? initialDiamond.available_clarities
+      : initialDiamond?.clarity
+      ? [initialDiamond.clarity]
+      : []
+  );
+
+  const [availabilityStatus, setAvailabilityStatus] = useState<
+    'Available' | 'Made to Order' | 'Available on Inquiry'
+  >(initialDiamond?.availability_status || 'Available');
+
+  const [videoUrl, setVideoUrl] = useState<string>(initialDiamond?.video_url || '');
+
   const [colorsList, setColorsList] = useState<DiamondColorOption[]>(
     availableColors && availableColors.length > 0 ? availableColors : initialDiamondColors
   );
@@ -286,6 +309,25 @@ export default function DiamondEditorForm({
     }
   };
 
+  // Multi-variant handlers
+  const handleToggleColor = (col: string) => {
+    setSelectedColors((prev) =>
+      prev.includes(col) ? prev.filter((c) => c !== col) : [...prev, col]
+    );
+  };
+
+  const handleToggleClarity = (clr: string) => {
+    setSelectedClarities((prev) =>
+      prev.includes(clr) ? prev.filter((c) => c !== clr) : [...prev, clr]
+    );
+  };
+
+  const handleSetImageViewTag = (idx: number, view_tag: string) => {
+    setImages((prev) =>
+      prev.map((img, i) => (i === idx ? { ...img, view_tag } : img))
+    );
+  };
+
   // Form Submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -306,10 +348,18 @@ export default function DiamondEditorForm({
     try {
       const payload: Partial<Diamond> = {
         ...formData,
-        color: formData.color ? formData.color.trim() : null,
-        clarity: formData.clarity ? formData.clarity.trim() : null,
+        color: selectedColors[0] || (formData.color ? formData.color.trim() : null),
+        clarity: selectedClarities[0] || (formData.clarity ? formData.clarity.trim() : null),
+        available_colors: selectedColors,
+        available_clarities: selectedClarities,
+        availability_status: availabilityStatus,
+        video_url: videoUrl.trim() || null,
         specifications: {
           ...specs,
+          available_colors: selectedColors,
+          available_clarities: selectedClarities,
+          availability_status: availabilityStatus,
+          video_url: videoUrl.trim() || null,
           facet_count: specs.facet_count ? parseInt(specs.facet_count) : undefined,
         },
         images,
@@ -456,83 +506,162 @@ export default function DiamondEditorForm({
                   className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
                 />
               </div>
+
+              {/* Availability Status */}
+              <div>
+                <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+                  Availability Status
+                </label>
+                <select
+                  value={availabilityStatus}
+                  onChange={(e) =>
+                    setAvailabilityStatus(e.target.value as any)
+                  }
+                  className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold font-medium"
+                >
+                  <option value="Available">Available (In Stock Parcel)</option>
+                  <option value="Made to Order">Made to Order (Bespoke Cut)</option>
+                  <option value="Available on Inquiry">Available on Inquiry</option>
+                </select>
+              </div>
+
+              {/* Video URL */}
+              <div>
+                <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+                  Diamond 360° Spin Video URL (Optional)
+                </label>
+                <input
+                  type="url"
+                  placeholder="e.g. Cloudinary video or YouTube/Vimeo link"
+                  value={videoUrl}
+                  onChange={(e) => setVideoUrl(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                />
+              </div>
             </div>
 
-            {/* Diamond Color & Diamond Purity / Clarity */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-rajvi-borderDark/40">
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold">
-                    Diamond Color
-                  </label>
+            {/* Multiple Available Colors & Presets */}
+            <div className="pt-3 border-t border-rajvi-borderDark/40 space-y-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold">
+                  Supported Color Grades ({selectedColors.length} Selected)
+                </label>
+                <div className="flex items-center gap-1.5 text-[10px]">
+                  <span className="text-rajvi-muted">Presets:</span>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedColors(['D', 'E', 'F'])}
+                    className="px-1.5 py-0.5 bg-[#1F1E1A] hover:bg-rajvi-gold hover:text-black text-rajvi-gold border border-rajvi-borderDark rounded-sm transition-colors"
+                  >
+                    D – F
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedColors(['D', 'E', 'F', 'G', 'H'])}
+                    className="px-1.5 py-0.5 bg-[#1F1E1A] hover:bg-rajvi-gold hover:text-black text-rajvi-gold border border-rajvi-borderDark rounded-sm transition-colors"
+                  >
+                    D – H
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedColors([])}
+                    className="px-1.5 py-0.5 bg-[#1F1E1A] hover:bg-red-500 hover:text-white text-rajvi-muted border border-rajvi-borderDark rounded-sm transition-colors"
+                  >
+                    Clear
+                  </button>
                   <button
                     type="button"
                     onClick={() => setShowAddColorModal(true)}
-                    className="text-[10px] text-rajvi-gold hover:text-rajvi-goldLight font-medium inline-flex items-center gap-1"
+                    className="text-rajvi-gold hover:text-rajvi-goldLight ml-1 inline-flex items-center gap-0.5"
                   >
                     <Plus className="w-3 h-3" />
-                    <span>Manage / Add</span>
+                    <span>Add New</span>
                   </button>
                 </div>
-                <select
-                  value={formData.color || ''}
-                  onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
-                >
-                  <option value="">None / Unspecified (Optional)</option>
-                  <optgroup label="Standard Grades (D – Z)">
-                    {colorsList
-                      .filter((c) => c.category === 'standard')
-                      .map((c) => (
-                        <option key={c.id || c.name} value={c.name}>
-                          Color {c.name}
-                        </option>
-                      ))}
-                  </optgroup>
-                  <optgroup label="Fancy Diamond Colors">
-                    {colorsList
-                      .filter((c) => c.category === 'fancy')
-                      .map((c) => (
-                        <option key={c.id || c.name} value={c.name}>
-                          {c.name}
-                        </option>
-                      ))}
-                  </optgroup>
-                </select>
-                <span className="text-[10px] text-rajvi-muted mt-1 block">
-                  Select diamond color grade (D–Z or Fancy).
-                </span>
               </div>
 
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold">
-                    Purity / Clarity
-                  </label>
+              {/* Color Chips */}
+              <div className="flex flex-wrap gap-1.5 p-2 bg-[#141311] border border-rajvi-borderDark/60 rounded-sm">
+                {colorsList.map((c) => {
+                  const isChecked = selectedColors.includes(c.name);
+                  return (
+                    <button
+                      key={c.id || c.name}
+                      type="button"
+                      onClick={() => handleToggleColor(c.name)}
+                      className={`px-2.5 py-1 text-xs rounded-sm transition-all border font-medium ${
+                        isChecked
+                          ? 'bg-rajvi-gold text-black border-rajvi-gold font-semibold shadow-sm scale-105'
+                          : 'bg-[#1F1E1A] text-rajvi-offWhite/80 border-rajvi-borderDark hover:border-rajvi-gold/50'
+                      }`}
+                    >
+                      {c.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Multiple Available Clarities & Presets */}
+            <div className="pt-3 border-t border-rajvi-borderDark/40 space-y-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold">
+                  Supported Clarity / Purity Grades ({selectedClarities.length} Selected)
+                </label>
+                <div className="flex items-center gap-1.5 text-[10px]">
+                  <span className="text-rajvi-muted">Presets:</span>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedClarities(['FL', 'IF', 'VVS1', 'VVS2'])}
+                    className="px-1.5 py-0.5 bg-[#1F1E1A] hover:bg-rajvi-gold hover:text-black text-rajvi-gold border border-rajvi-borderDark rounded-sm transition-colors"
+                  >
+                    FL – VVS2
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedClarities(['VVS1', 'VVS2', 'VS1', 'VS2'])}
+                    className="px-1.5 py-0.5 bg-[#1F1E1A] hover:bg-rajvi-gold hover:text-black text-rajvi-gold border border-rajvi-borderDark rounded-sm transition-colors"
+                  >
+                    VVS – VS
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedClarities([])}
+                    className="px-1.5 py-0.5 bg-[#1F1E1A] hover:bg-red-500 hover:text-white text-rajvi-muted border border-rajvi-borderDark rounded-sm transition-colors"
+                  >
+                    Clear
+                  </button>
                   <button
                     type="button"
                     onClick={() => setShowAddClarityModal(true)}
-                    className="text-[10px] text-rajvi-gold hover:text-rajvi-goldLight font-medium inline-flex items-center gap-1"
+                    className="text-rajvi-gold hover:text-rajvi-goldLight ml-1 inline-flex items-center gap-0.5"
                   >
                     <Plus className="w-3 h-3" />
-                    <span>Manage / Add</span>
+                    <span>Add New</span>
                   </button>
                 </div>
-                <select
-                  value={formData.clarity || ''}
-                  onChange={(e) => setFormData({ ...formData, clarity: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
-                >
-                  <option value="">None / Unspecified (Optional)</option>
-                  {claritiesList.map((c) => (
-                    <option key={c.id || c.name} value={c.name}>
-                      {c.name} – {c.label}
-                    </option>
-                  ))}
-                </select>
-                <span className="text-[10px] text-rajvi-muted mt-1 block">
-                  Select diamond clarity grade (FL through I3).
-                </span>
+              </div>
+
+              {/* Clarity Chips */}
+              <div className="flex flex-wrap gap-1.5 p-2 bg-[#141311] border border-rajvi-borderDark/60 rounded-sm">
+                {claritiesList.map((c) => {
+                  const isChecked = selectedClarities.includes(c.name);
+                  return (
+                    <button
+                      key={c.id || c.name}
+                      type="button"
+                      onClick={() => handleToggleClarity(c.name)}
+                      className={`px-2.5 py-1 text-xs rounded-sm transition-all border font-medium ${
+                        isChecked
+                          ? 'bg-rajvi-gold text-black border-rajvi-gold font-semibold shadow-sm scale-105'
+                          : 'bg-[#1F1E1A] text-rajvi-offWhite/80 border-rajvi-borderDark hover:border-rajvi-gold/50'
+                      }`}
+                      title={c.label}
+                    >
+                      {c.name}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -608,6 +737,22 @@ export default function DiamondEditorForm({
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
+                    </div>
+
+                    {/* View Perspective Selector */}
+                    <div className="mt-1.5 pt-1.5 border-t border-rajvi-borderDark/60">
+                      <select
+                        value={img.view_tag || (idx === 0 ? 'front' : idx === 1 ? 'side' : idx === 2 ? 'close_up' : 'general')}
+                        onChange={(e) => handleSetImageViewTag(idx, e.target.value)}
+                        className="w-full text-[10px] py-1 px-1.5 bg-[#151411] border border-rajvi-borderDark rounded-sm text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                      >
+                        <option value="front">Front Face</option>
+                        <option value="side">Side Profile</option>
+                        <option value="close_up">Close-Up Facets</option>
+                        <option value="table">Table & Crown</option>
+                        <option value="hand">Hand Scale</option>
+                        <option value="general">General View</option>
+                      </select>
                     </div>
                   </div>
                 ))}

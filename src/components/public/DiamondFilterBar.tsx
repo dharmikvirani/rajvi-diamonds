@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Search, RotateCcw } from 'lucide-react';
+import { Search, RotateCcw, X, Filter } from 'lucide-react';
 import { Category } from '@/lib/types';
 
 interface DiamondFilterBarProps {
@@ -22,6 +22,8 @@ interface DiamondFilterBarProps {
   onColorChange: (val: string) => void;
   selectedClarity: string;
   onClarityChange: (val: string) => void;
+  selectedAvailability: string;
+  onAvailabilityChange: (val: string) => void;
   sortBy: string;
   onSortChange: (val: string) => void;
   featuredOnly: boolean;
@@ -48,6 +50,8 @@ export default function DiamondFilterBar({
   onColorChange,
   selectedClarity,
   onClarityChange,
+  selectedAvailability,
+  onAvailabilityChange,
   sortBy,
   onSortChange,
   featuredOnly,
@@ -62,6 +66,7 @@ export default function DiamondFilterBar({
     selectedSize !== 'all' ||
     selectedColor !== 'all' ||
     selectedClarity !== 'all' ||
+    selectedAvailability !== 'all' ||
     featuredOnly ||
     sortBy !== 'default';
 
@@ -93,14 +98,14 @@ export default function DiamondFilterBar({
               className="inline-flex items-center gap-1.5 text-rajvi-gold hover:text-rajvi-goldMuted font-semibold uppercase tracking-wider text-[11px] transition-colors"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span>Clear All</span>
+              <span>Reset Filters</span>
             </button>
           )}
         </div>
       </div>
 
-      {/* Filter Selectors Grid (6 Selectors) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 pt-6">
+      {/* Filter Selectors Grid (7 Selectors) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4 pt-6">
         {/* 1. Category Filter */}
         <div>
           <label className="block text-[11px] uppercase tracking-wider text-rajvi-textMuted font-semibold mb-1.5">
@@ -111,7 +116,7 @@ export default function DiamondFilterBar({
             onChange={(e) => onCategoryChange(e.target.value)}
             className="w-full text-xs py-2 px-3 bg-rajvi-offWhite border border-rajvi-borderLight rounded-sm text-rajvi-textDark focus:outline-none focus:border-rajvi-gold"
           >
-            <option value="all">All Cut Families</option>
+            <option value="all">All Families</option>
             {categories.map((c) => (
               <option key={c.id} value={c.slug}>
                 {c.name}
@@ -168,7 +173,7 @@ export default function DiamondFilterBar({
             onChange={(e) => onClarityChange(e.target.value)}
             className="w-full text-xs py-2 px-3 bg-rajvi-offWhite border border-rajvi-borderLight rounded-sm text-rajvi-textDark focus:outline-none focus:border-rajvi-gold font-medium"
           >
-            <option value="all">All Clarity Grades</option>
+            <option value="all">All Clarity</option>
             {availableClarities.map((clr) => (
               <option key={clr} value={clr}>
                 {clr}
@@ -196,7 +201,23 @@ export default function DiamondFilterBar({
           </select>
         </div>
 
-        {/* 6. Sorting Dropdown */}
+        {/* 6. Availability Status Filter */}
+        <div>
+          <label className="block text-[11px] uppercase tracking-wider text-rajvi-textMuted font-semibold mb-1.5">
+            Availability
+          </label>
+          <select
+            value={selectedAvailability}
+            onChange={(e) => onAvailabilityChange(e.target.value)}
+            className="w-full text-xs py-2 px-3 bg-rajvi-offWhite border border-rajvi-borderLight rounded-sm text-rajvi-textDark focus:outline-none focus:border-rajvi-gold"
+          >
+            <option value="all">All Statuses</option>
+            <option value="Available">Available In Stock</option>
+            <option value="Made to Order">Made to Order</option>
+          </select>
+        </div>
+
+        {/* 7. Sorting Dropdown */}
         <div>
           <label className="block text-[11px] uppercase tracking-wider text-rajvi-textMuted font-semibold mb-1.5">
             Sort Order
@@ -212,6 +233,70 @@ export default function DiamondFilterBar({
           </select>
         </div>
       </div>
+
+      {/* Active Filter Pills Bar (When filters are selected) */}
+      {hasActiveFilters && (
+        <div className="mt-4 pt-4 border-t border-rajvi-lightGrey flex flex-wrap items-center gap-2">
+          <span className="text-[11px] uppercase tracking-wider text-rajvi-textMuted font-semibold mr-1 flex items-center gap-1">
+            <Filter className="w-3 h-3 text-rajvi-gold" />
+            <span>Active Filters:</span>
+          </span>
+
+          {selectedCategory !== 'all' && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] bg-rajvi-offWhite border border-rajvi-borderLight text-rajvi-textDark">
+              <span>Category: {categories.find((c) => c.slug === selectedCategory)?.name || selectedCategory}</span>
+              <button onClick={() => onCategoryChange('all')} className="hover:text-red-500">
+                <X className="w-3 h-3" />
+              </button>
+            </span>
+          )}
+
+          {selectedShape !== 'all' && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] bg-rajvi-offWhite border border-rajvi-borderLight text-rajvi-textDark">
+              <span>Shape: {selectedShape}</span>
+              <button onClick={() => onShapeChange('all')} className="hover:text-red-500">
+                <X className="w-3 h-3" />
+              </button>
+            </span>
+          )}
+
+          {selectedColor !== 'all' && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] bg-rajvi-offWhite border border-rajvi-borderLight text-rajvi-textDark">
+              <span>Color: {selectedColor}</span>
+              <button onClick={() => onColorChange('all')} className="hover:text-red-500">
+                <X className="w-3 h-3" />
+              </button>
+            </span>
+          )}
+
+          {selectedClarity !== 'all' && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] bg-rajvi-offWhite border border-rajvi-borderLight text-rajvi-textDark">
+              <span>Clarity: {selectedClarity}</span>
+              <button onClick={() => onClarityChange('all')} className="hover:text-red-500">
+                <X className="w-3 h-3" />
+              </button>
+            </span>
+          )}
+
+          {selectedSize !== 'all' && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] bg-rajvi-offWhite border border-rajvi-borderLight text-rajvi-textDark">
+              <span>Size: {selectedSize} mm</span>
+              <button onClick={() => onSizeChange('all')} className="hover:text-red-500">
+                <X className="w-3 h-3" />
+              </button>
+            </span>
+          )}
+
+          {selectedAvailability !== 'all' && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] bg-rajvi-offWhite border border-rajvi-borderLight text-rajvi-textDark">
+              <span>Status: {selectedAvailability}</span>
+              <button onClick={() => onAvailabilityChange('all')} className="hover:text-red-500">
+                <X className="w-3 h-3" />
+              </button>
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Featured Only Toggle Pill */}
       <div className="mt-4 pt-4 border-t border-rajvi-lightGrey flex items-center justify-between">

@@ -102,6 +102,76 @@ function sortSizes(sizes: DiamondSize[]): DiamondSize[] {
   return [...sizes].sort((a, b) => (Number(a.size_mm) || 0) - (Number(b.size_mm) || 0));
 }
 
+export function formatDiamondRow(d: any): Diamond {
+  if (!d) return d;
+  const specs = d.specifications || {};
+
+  // Find images: prefer relational diamond_images, fallback to JSONB
+  const jsonbImages: any[] = Array.isArray(d.images) ? d.images : [];
+  const relationalImages: any[] = Array.isArray(d.diamond_images) ? d.diamond_images : [];
+  const baseImages = relationalImages.length > 0 ? relationalImages : jsonbImages;
+
+  // Enrich images with view_tag if present in jsonb
+  const enrichedImages = baseImages.map((img: any, idx: number) => {
+    const matchingJson = jsonbImages.find(
+      (j: any) => j.image_url === img.image_url || (j.id && j.id === img.id)
+    );
+    return {
+      id: img.id || `img-${idx}`,
+      diamond_id: d.id,
+      image_url: img.image_url,
+      cloudinary_public_id: img.cloudinary_public_id || null,
+      alt_text: img.alt_text || d.name || '',
+      is_primary: Boolean(img.is_primary ?? idx === 0),
+      display_order: img.display_order ?? idx + 1,
+      view_tag: img.view_tag || matchingJson?.view_tag || 'general',
+      created_at: img.created_at || new Date().toISOString(),
+    };
+  });
+
+  // Extract multiple colors
+  let availableColors: string[] = [];
+  if (Array.isArray(d.available_colors) && d.available_colors.length > 0) {
+    availableColors = d.available_colors;
+  } else if (Array.isArray(specs.available_colors) && specs.available_colors.length > 0) {
+    availableColors = specs.available_colors;
+  } else if (d.color && typeof d.color === 'string') {
+    availableColors = d.color.includes(',')
+      ? d.color.split(',').map((c: string) => c.trim()).filter(Boolean)
+      : [d.color.trim()];
+  }
+
+  // Extract multiple clarities
+  let availableClarities: string[] = [];
+  if (Array.isArray(d.available_clarities) && d.available_clarities.length > 0) {
+    availableClarities = d.available_clarities;
+  } else if (Array.isArray(specs.available_clarities) && specs.available_clarities.length > 0) {
+    availableClarities = specs.available_clarities;
+  } else if (d.clarity && typeof d.clarity === 'string') {
+    availableClarities = d.clarity.includes(',')
+      ? d.clarity.split(',').map((c: string) => c.trim()).filter(Boolean)
+      : [d.clarity.trim()];
+  }
+
+  const availabilityStatus =
+    d.availability_status ||
+    specs.availability_status ||
+    (d.sizes && d.sizes.some((s: any) => s.is_available) ? 'Available' : 'Made to Order');
+
+  const videoUrl = d.video_url || specs.video_url || null;
+
+  return {
+    ...d,
+    available_colors: availableColors,
+    available_clarities: availableClarities,
+    availability_status: availabilityStatus,
+    video_url: videoUrl,
+    specifications: specs,
+    images: sortImages(enrichedImages),
+    sizes: sortSizes(d.sizes || []),
+  };
+}
+
 // ----------------- Categories -----------------
 
 export async function getCategories(): Promise<Category[]> {
@@ -244,14 +314,6 @@ export async function getDiamonds(filters?: FilterParams): Promise<Diamond[]> {
       query = query.ilike('shape', `%${filters.shape}%`);
     }
 
-    if (filters?.color && filters.color !== 'all') {
-      query = query.eq('color', filters.color);
-    }
-
-    if (filters?.clarity && filters.clarity !== 'all') {
-      query = query.eq('clarity', filters.clarity);
-    }
-
     if (filters?.search) {
       query = query.or(`name.ilike.%${filters.search}%,short_description.ilike.%${filters.search}%`);
     }
@@ -259,18 +321,30 @@ export async function getDiamonds(filters?: FilterParams): Promise<Diamond[]> {
     const { data, error } = await query.order('display_order', { ascending: true });
 
     if (!error && data && data.length > 0) {
-      let items: Diamond[] = data.map((d: any) => {
-        // Fallback to jsonb images if relational diamond_images is empty
-        const rawImages = (d.images && d.images.length > 0)
-          ? d.images
-          : (Array.isArray(d.images_json) ? d.images_json : []);
+      let items: Diamond[] = data.map(formatDiamondRow);
 
-        return {
-          ...d,
-          images: sortImages(rawImages),
-          sizes: sortSizes(d.sizes || []),
-        };
-      });
+      if (filters?.color && filters.color !== 'all') {
+        const qColor = filters.color.toLowerCase();
+        items = items.filter(
+          (d) =>
+            d.color?.toLowerCase() === qColor ||
+            d.available_colors?.some((c) => c.toLowerCase() === qColor)
+        );
+      }
+
+      if (filters?.clarity && filters.clarity !== 'all') {
+        const qClarity = filters.clarity.toLowerCase();
+        items = items.filter(
+          (d) =>
+            d.clarity?.toLowerCase() === qClarity ||
+            d.available_clarities?.some((c) => c.toLowerCase() === qClarity)
+        );
+      }
+
+      if (filters?.availability && filters.availability !== 'all') {
+        const qAvail = filters.availability.toLowerCase();
+        items = items.filter((d) => d.availability_status?.toLowerCase() === qAvail);
+      }
 
       if (filters?.size && filters.size !== 'all') {
         const targetSize = parseFloat(filters.size);
@@ -291,7 +365,7 @@ export async function getDiamonds(filters?: FilterParams): Promise<Diamond[]> {
 
   // Local persistent fallback filtering
   const store = readLocalStore();
-  let results = store.diamonds.filter((d) => d.is_active);
+  let results = store.diamonds.filter((d) => d.is_active).map(formatDiamondRow);
 
   if (filters?.featured) {
     results = results.filter((d) => d.is_featured);
@@ -309,11 +383,26 @@ export async function getDiamonds(filters?: FilterParams): Promise<Diamond[]> {
   }
 
   if (filters?.color && filters.color !== 'all') {
-    results = results.filter((d) => d.color?.toLowerCase() === filters.color!.toLowerCase());
+    const qColor = filters.color.toLowerCase();
+    results = results.filter(
+      (d) =>
+        d.color?.toLowerCase() === qColor ||
+        d.available_colors?.some((c) => c.toLowerCase() === qColor)
+    );
   }
 
   if (filters?.clarity && filters.clarity !== 'all') {
-    results = results.filter((d) => d.clarity?.toLowerCase() === filters.clarity!.toLowerCase());
+    const qClarity = filters.clarity.toLowerCase();
+    results = results.filter(
+      (d) =>
+        d.clarity?.toLowerCase() === qClarity ||
+        d.available_clarities?.some((c) => c.toLowerCase() === qClarity)
+    );
+  }
+
+  if (filters?.availability && filters.availability !== 'all') {
+    const qAvail = filters.availability.toLowerCase();
+    results = results.filter((d) => d.availability_status?.toLowerCase() === qAvail);
   }
 
   if (filters?.size && filters.size !== 'all') {
@@ -343,8 +432,6 @@ export async function getDiamonds(filters?: FilterParams): Promise<Diamond[]> {
 
   return results.map((d) => ({
     ...d,
-    images: sortImages(d.images || []),
-    sizes: sortSizes(d.sizes || []),
     category: store.categories.find((c) => c.id === d.category_id),
   }));
 }
@@ -358,18 +445,12 @@ export async function getAllDiamondsAdmin(): Promise<Diamond[]> {
       .order('display_order', { ascending: true });
 
     if (!error && data) {
-      return data.map((d: any) => ({
-        ...d,
-        images: sortImages(d.images || []),
-        sizes: sortSizes(d.sizes || []),
-      })) as Diamond[];
+      return data.map(formatDiamondRow) as Diamond[];
     }
   }
   const store = readLocalStore();
   return store.diamonds.map((d) => ({
-    ...d,
-    images: sortImages(d.images || []),
-    sizes: sortSizes(d.sizes || []),
+    ...formatDiamondRow(d),
     category: store.categories.find((c) => c.id === d.category_id),
   }));
 }
@@ -385,11 +466,7 @@ export async function getDiamondBySlug(slug: string): Promise<Diamond | null> {
       .single();
 
     if (!error && data) {
-      return {
-        ...data,
-        images: sortImages(data.images || []),
-        sizes: sortSizes(data.sizes || []),
-      } as Diamond;
+      return formatDiamondRow(data);
     }
   }
 
@@ -398,9 +475,7 @@ export async function getDiamondBySlug(slug: string): Promise<Diamond | null> {
   if (!diamond) return null;
 
   return {
-    ...diamond,
-    images: sortImages(diamond.images || []),
-    sizes: sortSizes(diamond.sizes || []),
+    ...formatDiamondRow(diamond),
     category: store.categories.find((c) => c.id === diamond.category_id),
   };
 }
@@ -415,11 +490,7 @@ export async function getDiamondByIdAdmin(id: string): Promise<Diamond | null> {
       .single();
 
     if (!error && data) {
-      return {
-        ...data,
-        images: sortImages(data.images || []),
-        sizes: sortSizes(data.sizes || []),
-      } as Diamond;
+      return formatDiamondRow(data);
     }
   }
 
@@ -428,9 +499,7 @@ export async function getDiamondByIdAdmin(id: string): Promise<Diamond | null> {
   if (!diamond) return null;
 
   return {
-    ...diamond,
-    images: sortImages(diamond.images || []),
-    sizes: sortSizes(diamond.sizes || []),
+    ...formatDiamondRow(diamond),
     category: store.categories.find((c) => c.id === diamond.category_id),
   };
 }
@@ -438,6 +507,33 @@ export async function getDiamondByIdAdmin(id: string): Promise<Diamond | null> {
 export async function saveDiamond(diamondData: Partial<Diamond>): Promise<Diamond> {
   const supabase = createAdminClient();
   const now = new Date().toISOString();
+
+  // Merge specifications with multi-variant options
+  const mergedSpecs = {
+    ...(diamondData.specifications || {}),
+    available_colors:
+      diamondData.available_colors ||
+      diamondData.specifications?.available_colors ||
+      (diamondData.color ? [diamondData.color] : []),
+    available_clarities:
+      diamondData.available_clarities ||
+      diamondData.specifications?.available_clarities ||
+      (diamondData.clarity ? [diamondData.clarity] : []),
+    availability_status:
+      diamondData.availability_status ||
+      diamondData.specifications?.availability_status ||
+      'Available',
+    video_url: diamondData.video_url || diamondData.specifications?.video_url || null,
+  };
+
+  const primaryColor =
+    diamondData.color ||
+    (mergedSpecs.available_colors && mergedSpecs.available_colors[0]) ||
+    null;
+  const primaryClarity =
+    diamondData.clarity ||
+    (mergedSpecs.available_clarities && mergedSpecs.available_clarities[0]) ||
+    null;
 
   if (supabase) {
     let savedId = diamondData.id;
@@ -455,10 +551,10 @@ export async function saveDiamond(diamondData: Partial<Diamond>): Promise<Diamon
           description: diamondData.description || '',
           shape: diamondData.shape,
           diamond_shape: diamondData.shape,
-          color: diamondData.color ?? null,
-          clarity: diamondData.clarity ?? null,
-          purity: diamondData.clarity ?? null,
-          specifications: diamondData.specifications || {},
+          color: primaryColor,
+          clarity: primaryClarity,
+          purity: primaryClarity,
+          specifications: mergedSpecs,
           is_featured: diamondData.is_featured ?? false,
           is_active: diamondData.is_active ?? true,
           seo_title: diamondData.seo_title,
@@ -488,10 +584,10 @@ export async function saveDiamond(diamondData: Partial<Diamond>): Promise<Diamon
           description: diamondData.description || '',
           shape: diamondData.shape || 'Fancy Cut',
           diamond_shape: diamondData.shape || 'Fancy Cut',
-          color: diamondData.color ?? null,
-          clarity: diamondData.clarity ?? null,
-          purity: diamondData.clarity ?? null,
-          specifications: diamondData.specifications || {},
+          color: primaryColor,
+          clarity: primaryClarity,
+          purity: primaryClarity,
+          specifications: mergedSpecs,
           is_featured: diamondData.is_featured ?? false,
           is_active: diamondData.is_active ?? true,
           seo_title: diamondData.seo_title || '',
@@ -591,11 +687,7 @@ export async function saveDiamond(diamondData: Partial<Diamond>): Promise<Diamon
       .single();
 
     if (!fetchErr && fullDiamond) {
-      const formatted: Diamond = {
-        ...fullDiamond,
-        images: sortImages(fullDiamond.images || []),
-        sizes: sortSizes(fullDiamond.sizes || []),
-      };
+      const formatted: Diamond = formatDiamondRow(fullDiamond);
 
       // Also sync to local store cache
       const store = readLocalStore();

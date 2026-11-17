@@ -92,13 +92,40 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const settings = await getSiteSettings();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rajvi-diamonds.vercel.app';
+
+  const organizationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'JewelryStore',
+    name: settings.brand_name || 'Rajvi Diamonds',
+    url: siteUrl,
+    logo: `${siteUrl}/rajvi-diamonds-logo.png`,
+    description: settings.hero_subtitle,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Surat',
+      addressRegion: 'Gujarat',
+      addressCountry: 'IN',
+    },
+    telephone: settings.phone_number || settings.whatsapp_number,
+    email: settings.contact_email,
+    sameAs: [settings.instagram_url].filter(Boolean),
+  };
+
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+      </head>
       <body className="bg-rajvi-offWhite text-rajvi-textDark font-sans antialiased selection:bg-rajvi-gold selection:text-rajvi-black min-h-screen flex flex-col">
         {children}
       </body>

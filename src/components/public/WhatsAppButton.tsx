@@ -11,6 +11,7 @@ interface WhatsAppButtonProps {
   color?: string | null;
   clarity?: string | null;
   pageUrl?: string;
+  customMessage?: string;
   variant?: 'floating' | 'primary' | 'outline' | 'header';
   className?: string;
   label?: string;
@@ -23,6 +24,7 @@ export default function WhatsAppButton({
   color,
   clarity,
   pageUrl,
+  customMessage,
   variant = 'primary',
   className = '',
   label,
@@ -74,6 +76,7 @@ export default function WhatsAppButton({
     color,
     clarity,
     pageUrl,
+    customMessage,
   });
 
   if (variant === 'floating') {

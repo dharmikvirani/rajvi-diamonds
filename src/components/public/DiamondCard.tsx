@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { ArrowUpRight, Sparkles } from 'lucide-react';
+import { ArrowUpRight, Sparkles, CheckCircle2, Clock } from 'lucide-react';
 import { Diamond } from '@/lib/types';
 import { formatSizeMm } from '@/lib/utils';
 
@@ -10,17 +10,24 @@ interface DiamondCardProps {
 }
 
 export default function DiamondCard({ diamond, theme = 'light' }: DiamondCardProps) {
-  // Get primary image or first available
+  // Primary image
   const primaryImage =
     diamond.images.find((img) => img.is_primary) ||
     diamond.images[0] || {
-      image_url: 'https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?auto=format&fit=crop&w=1200&q=80',
+      image_url:
+        'https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?auto=format&fit=crop&w=1200&q=80',
       alt_text: diamond.name,
     };
 
-  // Compute available size range
+  // Secondary image for smooth luxury hover reveal
+  const secondaryImage =
+    diamond.images.length > 1
+      ? diamond.images.find((img) => img.id !== primaryImage.id) || diamond.images[1]
+      : null;
+
+  // Available size range calculation
   const availableSizes = diamond.sizes.filter((s) => s.is_available);
-  let sizeRangeText = 'Available upon inquiry';
+  let sizeRangeText = 'Bespoke / Upon Request';
   if (availableSizes.length === 1) {
     sizeRangeText = `${formatSizeMm(availableSizes[0].size_mm)}`;
   } else if (availableSizes.length > 1) {
@@ -29,6 +36,45 @@ export default function DiamondCard({ diamond, theme = 'light' }: DiamondCardPro
     const max = formatSizeMm(sorted[sorted.length - 1].size_mm);
     sizeRangeText = `${min} – ${max}`;
   }
+
+  // Format multi-color display
+  const colors =
+    diamond.available_colors && diamond.available_colors.length > 0
+      ? diamond.available_colors
+      : diamond.color
+      ? [diamond.color]
+      : [];
+
+  let colorText = '';
+  if (colors.length === 1) {
+    colorText = `Color ${colors[0]}`;
+  } else if (colors.length > 1) {
+    colorText =
+      colors.length <= 3
+        ? `Colors ${colors.join(', ')}`
+        : `Colors ${colors[0]} – ${colors[colors.length - 1]}`;
+  }
+
+  // Format multi-clarity display
+  const clarities =
+    diamond.available_clarities && diamond.available_clarities.length > 0
+      ? diamond.available_clarities
+      : diamond.clarity
+      ? [diamond.clarity]
+      : [];
+
+  let clarityText = '';
+  if (clarities.length === 1) {
+    clarityText = clarities[0];
+  } else if (clarities.length > 1) {
+    clarityText =
+      clarities.length <= 3
+        ? clarities.join(', ')
+        : `${clarities[0]} – ${clarities[clarities.length - 1]}`;
+  }
+
+  const availability = diamond.availability_status || (availableSizes.length > 0 ? 'Available' : 'Made to Order');
+  const isAvailableNow = availability === 'Available';
 
   const isDark = theme === 'dark';
 
@@ -40,38 +86,72 @@ export default function DiamondCard({ diamond, theme = 'light' }: DiamondCardPro
           : 'bg-white border border-rajvi-borderLight hover:border-rajvi-gold/50 shadow-sm hover:shadow-luxury'
       }`}
     >
-      {/* Image Container */}
+      {/* Image Container with Luxury Dual-Image Hover */}
       <a
         href={`/collections/${diamond.slug}`}
-        className="relative aspect-square w-full overflow-hidden bg-rajvi-charcoal/10"
+        className="relative aspect-square w-full overflow-hidden bg-rajvi-charcoal/5 block"
+        aria-label={`View ${diamond.name} fancy cut details`}
       >
+        {/* Primary View */}
         <Image
           src={primaryImage.image_url}
           alt={primaryImage.alt_text || diamond.name}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+          className={`object-cover object-center transition-all duration-700 ${
+            secondaryImage
+              ? 'group-hover:opacity-0 group-hover:scale-105'
+              : 'group-hover:scale-105'
+          }`}
         />
-        {/* Subtle overlay */}
-        <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+        {/* Secondary View on Hover (if available) */}
+        {secondaryImage && (
+          <Image
+            src={secondaryImage.image_url}
+            alt={secondaryImage.alt_text || `${diamond.name} Perspective`}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover object-center absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105"
+          />
+        )}
+
+        {/* Subtle Luxury Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300" />
 
         {/* Featured Badge */}
         {diamond.is_featured && (
-          <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] uppercase tracking-wider font-semibold bg-rajvi-black/85 backdrop-blur-sm text-rajvi-goldLight border border-rajvi-gold/30 rounded-sm">
+          <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] uppercase tracking-wider font-semibold bg-rajvi-black/85 backdrop-blur-sm text-rajvi-goldLight border border-rajvi-gold/30 rounded-sm shadow-sm">
             <Sparkles className="w-3 h-3 text-rajvi-gold" />
             <span>Featured Cut</span>
           </span>
         )}
 
+        {/* Availability Badge */}
+        <span
+          className={`absolute top-3 right-3 inline-flex items-center gap-1 px-2.5 py-1 text-[10px] tracking-wider uppercase font-semibold rounded-sm backdrop-blur-sm shadow-sm ${
+            isAvailableNow
+              ? 'bg-emerald-950/80 text-emerald-200 border border-emerald-500/40'
+              : 'bg-black/75 text-amber-200 border border-amber-500/30'
+          }`}
+        >
+          {isAvailableNow ? (
+            <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+          ) : (
+            <Clock className="w-3 h-3 text-amber-400" />
+          )}
+          <span>{availability}</span>
+        </span>
+
         {/* Shape Tag */}
-        <span className="absolute bottom-3 left-3 px-2 py-0.5 text-[10px] tracking-wider uppercase bg-white/90 text-rajvi-charcoal font-medium rounded-sm backdrop-blur-sm">
+        <span className="absolute bottom-3 left-3 px-2 py-0.5 text-[10px] tracking-wider uppercase bg-white/90 text-rajvi-charcoal font-medium rounded-sm backdrop-blur-sm shadow-sm">
           {diamond.shape}
         </span>
 
-        {/* Color & Clarity Badge */}
-        {(diamond.color || diamond.clarity) && (
-          <span className="absolute bottom-3 right-3 px-2 py-0.5 text-[10px] tracking-wider uppercase bg-black/80 text-rajvi-goldLight font-medium rounded-sm backdrop-blur-sm border border-rajvi-gold/30">
-            {[diamond.color ? `Color ${diamond.color}` : '', diamond.clarity].filter(Boolean).join(' • ')}
+        {/* Multiple Color & Clarity Badge */}
+        {(colorText || clarityText) && (
+          <span className="absolute bottom-3 right-3 px-2.5 py-0.5 text-[10px] tracking-wider uppercase bg-black/85 text-rajvi-goldLight font-medium rounded-sm backdrop-blur-sm border border-rajvi-gold/30 shadow-sm">
+            {[colorText, clarityText].filter(Boolean).join(' • ')}
           </span>
         )}
       </a>
@@ -89,7 +169,9 @@ export default function DiamondCard({ diamond, theme = 'light' }: DiamondCardPro
           {/* Diamond Name */}
           <h3
             className={`font-serif text-xl sm:text-2xl font-normal mb-2 transition-colors ${
-              isDark ? 'text-rajvi-offWhite group-hover:text-rajvi-goldLight' : 'text-rajvi-textDark group-hover:text-rajvi-gold'
+              isDark
+                ? 'text-rajvi-offWhite group-hover:text-rajvi-goldLight'
+                : 'text-rajvi-textDark group-hover:text-rajvi-gold'
             }`}
           >
             <a href={`/collections/${diamond.slug}`}>{diamond.name}</a>
@@ -103,6 +185,20 @@ export default function DiamondCard({ diamond, theme = 'light' }: DiamondCardPro
           >
             {diamond.short_description}
           </p>
+
+          {/* Specifications Pills Row */}
+          <div className="flex flex-wrap items-center gap-1.5 mb-4">
+            {colors.length > 0 && (
+              <span className="text-[10px] px-2 py-0.5 rounded-sm bg-rajvi-offWhite border border-rajvi-borderLight text-rajvi-textDark font-medium">
+                Color: {colors.join(', ')}
+              </span>
+            )}
+            {clarities.length > 0 && (
+              <span className="text-[10px] px-2 py-0.5 rounded-sm bg-rajvi-offWhite border border-rajvi-borderLight text-rajvi-textDark font-medium">
+                Clarity: {clarities.join(', ')}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Bottom Specs & Action */}

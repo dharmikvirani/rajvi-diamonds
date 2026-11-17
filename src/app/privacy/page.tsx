@@ -5,6 +5,9 @@ import Footer from '@/components/public/Footer';
 import WhatsAppButton from '@/components/public/WhatsAppButton';
 import { getSiteSettings } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: 'Privacy Policy | Rajvi Diamonds',
   description: 'Rajvi Diamonds privacy policy, inquiry data handling, and confidentiality commitments for trade clients.',

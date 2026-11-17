@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Send, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { Send, CheckCircle2, AlertCircle, Loader2, MessageCircle } from 'lucide-react';
 import { InquiryFormData, validateInquiryForm } from '@/lib/validations';
+import { generateWhatsAppUrl } from '@/lib/utils';
 
 interface ContactFormProps {
   initialDiamondName?: string;
@@ -11,6 +12,7 @@ interface ContactFormProps {
   initialClarity?: string | null;
   initialDiamondId?: string;
   inquiryTypeDefault?: string;
+  whatsappNumber?: string;
   className?: string;
 }
 
@@ -21,6 +23,7 @@ export default function ContactForm({
   initialClarity = '',
   initialDiamondId = '',
   inquiryTypeDefault = 'General Inquiry',
+  whatsappNumber = '+919924151515',
   className = '',
 }: ContactFormProps) {
   const buildInitialMessage = (
@@ -137,6 +140,17 @@ export default function ContactForm({
   };
 
   if (isSuccess) {
+    const waUrl = generateWhatsAppUrl({
+      phoneNumber: whatsappNumber,
+      diamondName: initialDiamondName || formData.diamondName,
+      selectedSize: initialSize || formData.selectedSize,
+      color: initialColor || formData.selectedColor,
+      clarity: initialClarity || formData.selectedClarity,
+      customMessage: `Hello Rajvi Diamonds, I have submitted an inquiry for ${
+        initialDiamondName || formData.diamondName || 'Fancy Diamond Cuts'
+      }. Please share availability and trade details.`,
+    });
+
     return (
       <div className={`bg-white border border-rajvi-borderLight rounded-sm p-8 text-center shadow-sm ${className}`}>
         <div className="w-16 h-16 rounded-full bg-[#EAF7EE] text-[#228B22] flex items-center justify-center mx-auto mb-4">
@@ -146,14 +160,25 @@ export default function ContactForm({
           Inquiry Successfully Received
         </h3>
         <p className="text-xs sm:text-sm text-rajvi-textMuted max-w-md mx-auto leading-relaxed mb-6">
-          Thank you for reaching out to Rajvi Diamonds. Our client relationships team will review your requirements and respond promptly with detailed cut availability and specifications.
+          Thank you for reaching out to Rajvi Diamonds. Our lapidary specialists in Surat will review your requirements and respond promptly with detailed cut availability and specifications.
         </p>
-        <button
-          onClick={() => setIsSuccess(false)}
-          className="px-6 py-2.5 bg-rajvi-gold text-rajvi-black text-xs uppercase tracking-widest font-semibold hover:bg-rajvi-goldLight transition-colors"
-        >
-          Send Another Inquiry
-        </button>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <a
+            href={waUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs uppercase tracking-widest font-semibold transition-colors shadow-sm"
+          >
+            <MessageCircle className="w-4 h-4 fill-current" />
+            <span>Connect on WhatsApp as Well</span>
+          </a>
+          <button
+            onClick={() => setIsSuccess(false)}
+            className="w-full sm:w-auto px-6 py-3 bg-rajvi-gold text-rajvi-black text-xs uppercase tracking-widest font-semibold hover:bg-rajvi-goldLight transition-colors"
+          >
+            Send Another Inquiry
+          </button>
+        </div>
       </div>
     );
   }
