@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Diamond } from '@/lib/types';
 import {
   Plus,
@@ -13,14 +14,17 @@ import {
   Sparkles,
   ExternalLink,
   Loader2,
+  Gem,
 } from 'lucide-react';
 import ConfirmationModal from '@/components/admin/ConfirmationModal';
+import { useToast } from '@/components/admin/AdminToast';
 
 interface DiamondsListClientProps {
   initialDiamonds: Diamond[];
 }
 
 export default function DiamondsListClient({ initialDiamonds }: DiamondsListClientProps) {
+  const { showToast } = useToast();
   const [diamonds, setDiamonds] = useState<Diamond[]>(initialDiamonds);
   const [search, setSearch] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<Diamond | null>(null);
@@ -54,9 +58,13 @@ export default function DiamondsListClient({ initialDiamonds }: DiamondsListClie
         setDiamonds((prev) =>
           prev.map((d) => (d.id === diamond.id ? { ...d, [field]: updatedValue } : d))
         );
+        const label = field === 'is_active' ? (updatedValue ? 'Active (Live)' : 'Disabled') : (updatedValue ? 'Featured on Showcase' : 'Unfeatured');
+        showToast(`"${diamond.name}" set to ${label}.`, 'success');
+      } else {
+        throw new Error(data.error || 'Failed to update status');
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      showToast(err.message || 'Status update error', 'error');
     } finally {
       setLoadingId(null);
     }
@@ -78,9 +86,12 @@ export default function DiamondsListClient({ initialDiamonds }: DiamondsListClie
       const data = await res.json();
       if (data.success) {
         setDiamonds((prev) => prev.filter((d) => d.id !== deleteTarget.id));
+        showToast(`"${deleteTarget.name}" permanently deleted.`, 'info');
+      } else {
+        throw new Error(data.error || 'Failed to delete diamond');
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      showToast(err.message || 'Delete failed', 'error');
     } finally {
       setDeleteTarget(null);
     }
@@ -101,13 +112,13 @@ export default function DiamondsListClient({ initialDiamonds }: DiamondsListClie
           />
         </div>
 
-        <a
+        <Link
           href="/admin/diamonds/new"
           className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black text-xs uppercase tracking-wider font-semibold rounded-sm transition-colors"
         >
           <Plus className="w-4 h-4" />
           <span>Add New Diamond Cut</span>
-        </a>
+        </Link>
       </div>
 
       {/* Diamond Cut Records Table */}
@@ -250,13 +261,13 @@ export default function DiamondsListClient({ initialDiamonds }: DiamondsListClie
                           <ExternalLink className="w-4 h-4" />
                         </a>
 
-                        <a
+                        <Link
                           href={`/admin/diamonds/${diamond.id}`}
                           title="Edit Diamond"
                           className="text-rajvi-offWhite/80 hover:text-rajvi-gold transition-colors"
                         >
                           <Edit className="w-4 h-4" />
-                        </a>
+                        </Link>
 
                         <button
                           onClick={() => setDeleteTarget(diamond)}
@@ -270,6 +281,35 @@ export default function DiamondsListClient({ initialDiamonds }: DiamondsListClie
                   </tr>
                 );
               })}
+
+              {filtered.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="py-16 px-6 text-center">
+                    <div className="max-w-xs mx-auto flex flex-col items-center">
+                      <div className="w-12 h-12 rounded-full bg-rajvi-charcoal flex items-center justify-center mb-3 text-rajvi-gold border border-rajvi-borderDark">
+                        <Gem className="w-6 h-6" />
+                      </div>
+                      <h4 className="font-serif text-base text-rajvi-offWhite font-normal">
+                        No diamond cuts found
+                      </h4>
+                      <p className="text-xs text-rajvi-muted mt-1 leading-relaxed">
+                        {search
+                          ? `No diamond cuts match "${search}". Try clearing your search.`
+                          : 'No diamond cuts are recorded in your inventory yet.'}
+                      </p>
+                      {search && (
+                        <button
+                          type="button"
+                          onClick={() => setSearch('')}
+                          className="mt-3 text-xs text-rajvi-gold hover:text-rajvi-goldLight underline font-medium"
+                        >
+                          Clear Search Filter
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

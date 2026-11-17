@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Category, Diamond, DiamondColorOption, DiamondClarityOption, DiamondImage, DiamondSize } from '@/lib/types';
 import { initialDiamondColors, initialDiamondClarities } from '@/lib/seedData';
@@ -16,8 +17,12 @@ import {
   Loader2,
   Sparkles,
   X,
+  ChevronLeft,
+  ChevronRight,
+  RefreshCw,
 } from 'lucide-react';
 import { formatSizeMm } from '@/lib/utils';
+import { useToast } from '@/components/admin/AdminToast';
 
 interface DiamondEditorFormProps {
   initialDiamond?: Diamond | null;
@@ -33,6 +38,7 @@ export default function DiamondEditorForm({
   availableClarities,
 }: DiamondEditorFormProps) {
   const router = useRouter();
+  const { showToast } = useToast();
   const isEditing = Boolean(initialDiamond?.id);
 
   const [formData, setFormData] = useState({
@@ -110,6 +116,7 @@ export default function DiamondEditorForm({
   const [newImageUrl, setNewImageUrl] = useState('');
   const [newImageAlt, setNewImageAlt] = useState('');
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<string | null>(null);
 
   // Sizes state
   const [sizes, setSizes] = useState<DiamondSize[]>(initialDiamond?.sizes || []);
@@ -137,49 +144,125 @@ export default function DiamondEditorForm({
       alt_text: newImageAlt.trim() || formData.name,
       is_primary: images.length === 0,
       display_order: images.length + 1,
+      view_tag: images.length === 0 ? 'front' : 'general',
       created_at: new Date().toISOString(),
     };
     setImages((prev) => [...prev, newImg]);
     setNewImageUrl('');
     setNewImageAlt('');
+    showToast('Image URL added to gallery.', 'info');
   };
 
-  // Upload image file
+  // Upload single or multiple image files
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploadingImage(true);
+    setUploadProgress(`0 of ${files.length} uploaded`);
+    try {
+      const newImgs: DiamondImage[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        setUploadProgress(`Uploading ${i + 1} of ${files.length}...`);
+        const data = new FormData();
+        data.append('file', file);
+
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: data,
+        });
+
+        const resJson = await res.json();
+        if (!res.ok || !resJson.success) {
+          throw new Error(resJson.error || `Failed to upload image "${file.name}"`);
+        }
+
+        const viewTag =
+          images.length === 0 && i === 0
+            ? 'front'
+            : images.length === 0 && i === 1
+            ? 'side'
+            : images.length === 0 && i === 2
+            ? 'close_up'
+            : 'general';
+
+        newImgs.push({
+          id: `img-${Date.now()}-${i}`,
+          diamond_id: formData.id || 'temp',
+          image_url: resJson.imageUrl,
+          cloudinary_public_id: resJson.publicId,
+          alt_text: formData.name,
+          is_primary: images.length === 0 && i === 0,
+          display_order: images.length + i + 1,
+          view_tag: viewTag,
+          created_at: new Date().toISOString(),
+        });
+      }
+
+      setImages((prev) => [...prev, ...newImgs]);
+      showToast(`Successfully uploaded ${files.length} photo${files.length > 1 ? 's' : ''}.`, 'success');
+    } catch (err: any) {
+      showToast(err.message || 'Image upload failed', 'error');
+    } finally {
+      setUploadingImage(false);
+      setUploadProgress(null);
+      if (e.target) e.target.value = '';
+    }
+  };
+
+  // Direct Replace single image file
+  const handleReplaceImage = async (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setUploadingImage(true);
+    setUploadProgress('Replacing image...');
     try {
       const data = new FormData();
       data.append('file', file);
 
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: data,
-      });
-
+      const res = await fetch('/api/upload', { method: 'POST', body: data });
       const resJson = await res.json();
       if (!res.ok || !resJson.success) {
-        throw new Error(resJson.error || 'Failed to upload image');
+        throw new Error(resJson.error || 'Failed to upload replacement image');
       }
 
-      const newImg: DiamondImage = {
-        id: `img-${Date.now()}`,
-        diamond_id: formData.id || 'temp',
-        image_url: resJson.imageUrl,
-        cloudinary_public_id: resJson.publicId,
-        alt_text: formData.name,
-        is_primary: images.length === 0,
-        display_order: images.length + 1,
-        created_at: new Date().toISOString(),
-      };
-      setImages((prev) => [...prev, newImg]);
+      setImages((prev) =>
+        prev.map((img, idx) =>
+          idx === index
+            ? {
+                ...img,
+                image_url: resJson.imageUrl,
+                cloudinary_public_id: resJson.publicId,
+              }
+            : img
+        )
+      );
+      showToast('Image successfully replaced.', 'success');
     } catch (err: any) {
-      alert(`Upload error: ${err.message}`);
+      showToast(err.message || 'Replacement failed', 'error');
     } finally {
       setUploadingImage(false);
+      setUploadProgress(null);
+      if (e.target) e.target.value = '';
     }
+  };
+
+  // Move image left/right in gallery order
+  const handleMoveImage = (fromIdx: number, direction: 'left' | 'right') => {
+    const toIdx = direction === 'left' ? fromIdx - 1 : fromIdx + 1;
+    if (toIdx < 0 || toIdx >= images.length) return;
+    setImages((prev) => {
+      const updated = [...prev];
+      const temp = updated[fromIdx];
+      updated[fromIdx] = updated[toIdx];
+      updated[toIdx] = temp;
+      return updated.map((img, idx) => ({
+        ...img,
+        display_order: idx + 1,
+      }));
+    });
   };
 
   // Set Primary Image
@@ -190,6 +273,7 @@ export default function DiamondEditorForm({
         is_primary: idx === index,
       }))
     );
+    showToast('Primary gallery image updated.', 'info');
   };
 
   // Delete Image
@@ -201,18 +285,19 @@ export default function DiamondEditorForm({
       }
       return filtered;
     });
+    showToast('Image removed from draft gallery.', 'info');
   };
 
   // Add Size
   const handleAddSize = () => {
     const val = parseFloat(newSizeMm);
     if (isNaN(val) || val <= 0) {
-      alert('Please enter a valid positive millimeter number (e.g. 4.5)');
+      showToast('Please enter a valid positive millimeter number (e.g. 4.5)', 'error');
       return;
     }
 
     if (sizes.some((s) => Math.abs(s.size_mm - val) < 0.001)) {
-      alert(`Size ${val} mm already exists.`);
+      showToast(`Size ${val} mm already exists.`, 'error');
       return;
     }
 
@@ -228,6 +313,7 @@ export default function DiamondEditorForm({
 
     setSizes((prev) => [...prev, newSize].sort((a, b) => a.size_mm - b.size_mm));
     setNewSizeMm('');
+    showToast(`Added ${val} mm to size options.`, 'success');
   };
 
   // Toggle size availability
@@ -393,12 +479,12 @@ export default function DiamondEditorForm({
     <form onSubmit={handleSubmit} className="space-y-8 pb-16">
       <div className="flex items-center justify-between pb-4 border-b border-rajvi-borderDark/60">
         <div className="flex items-center gap-3">
-          <a
+          <Link
             href="/admin/diamonds"
             className="p-2 rounded-sm bg-rajvi-charcoal hover:bg-rajvi-borderDark text-rajvi-offWhite transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-          </a>
+          </Link>
           <div>
             <h2 className="font-serif text-xl sm:text-2xl text-rajvi-offWhite font-normal">
               {isEditing ? `Edit Diamond Cut: ${formData.name}` : 'Create New Diamond Cut'}
@@ -704,7 +790,7 @@ export default function DiamondEditorForm({
                 {images.map((img, idx) => (
                   <div
                     key={img.id || idx}
-                    className={`relative rounded-sm overflow-hidden border p-1 group bg-[#1F1E1A] ${
+                    className={`relative rounded-sm overflow-hidden border p-1 group bg-[#1F1E1A] transition-all ${
                       img.is_primary ? 'border-rajvi-gold shadow-sm' : 'border-rajvi-borderDark'
                     }`}
                   >
@@ -715,6 +801,47 @@ export default function DiamondEditorForm({
                         fill
                         className="object-cover rounded-sm"
                       />
+
+                      {/* Reorder Buttons Overlay */}
+                      <div className="absolute top-1 left-1 right-1 flex items-center justify-between opacity-90 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-1 bg-black/70 backdrop-blur-sm rounded-sm p-0.5 border border-white/10">
+                          <button
+                            type="button"
+                            onClick={() => handleMoveImage(idx, 'left')}
+                            disabled={idx === 0}
+                            title="Move Earlier in Gallery"
+                            className="p-1 text-white hover:text-rajvi-gold disabled:opacity-30 disabled:hover:text-white transition-colors"
+                          >
+                            <ChevronLeft className="w-3 h-3" />
+                          </button>
+                          <span className="text-[9px] font-mono font-semibold px-1 text-rajvi-goldLight">
+                            #{idx + 1}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleMoveImage(idx, 'right')}
+                            disabled={idx === images.length - 1}
+                            title="Move Later in Gallery"
+                            className="p-1 text-white hover:text-rajvi-gold disabled:opacity-30 disabled:hover:text-white transition-colors"
+                          >
+                            <ChevronRight className="w-3 h-3" />
+                          </button>
+                        </div>
+
+                        {/* Replace Image Button */}
+                        <label
+                          className="cursor-pointer p-1 bg-black/70 hover:bg-rajvi-gold hover:text-rajvi-black text-white/90 rounded-sm border border-white/10 transition-colors"
+                          title="Replace Photo"
+                        >
+                          <RefreshCw className="w-3 h-3" />
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleReplaceImage(idx, e)}
+                            className="hidden"
+                          />
+                        </label>
+                      </div>
                     </div>
 
                     <div className="pt-2 flex items-center justify-between text-[10px]">
@@ -798,21 +925,26 @@ export default function DiamondEditorForm({
               </div>
             </div>
 
-            {/* Direct File Upload to Cloudinary / Server */}
-            <div className="pt-2 flex items-center gap-3">
-              <label className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 bg-[#1F1E1A] border border-rajvi-borderDark hover:border-rajvi-gold rounded-sm text-xs text-rajvi-offWhite font-medium transition-colors">
-                <Upload className="w-3.5 h-3.5 text-rajvi-gold" />
-                <span>{uploadingImage ? 'Uploading Image...' : 'Upload Image File'}</span>
+            {/* Direct Multi-File Upload to Cloudinary / Server */}
+            <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-3">
+              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-[#1F1E1A] border border-rajvi-borderDark hover:border-rajvi-gold rounded-sm text-xs text-rajvi-offWhite font-semibold transition-colors shadow-sm">
+                <Upload className="w-4 h-4 text-rajvi-gold" />
+                <span>
+                  {uploadingImage
+                    ? uploadProgress || 'Uploading Photos...'
+                    : 'Upload Photos (Single or Batch)'}
+                </span>
                 <input
                   type="file"
                   accept="image/*"
+                  multiple
                   disabled={uploadingImage}
                   onChange={handleFileUpload}
                   className="hidden"
                 />
               </label>
-              <span className="text-[10px] text-rajvi-muted">
-                Accepts JPG, PNG, WebP
+              <span className="text-[11px] text-rajvi-muted">
+                Accepts JPG, PNG, WebP • Multi-select enabled • Automatic view perspective tagging
               </span>
             </div>
           </div>

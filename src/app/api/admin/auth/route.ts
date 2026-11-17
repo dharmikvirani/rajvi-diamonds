@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, createAdminClient } from '@/lib/supabase';
+import { signAdminToken } from '@/lib/auth';
 
 const ADMIN_COOKIE_NAME = 'rajvi_admin_session';
+
+// Rate limiting map for admin login attempts (IP -> timestamps)
+const loginAttemptMap = new Map<string, number[]>();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const MAX_LOGIN_ATTEMPTS = 5;
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,7 +20,30 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'login') {
+      // 1. IP Rate Limiting Check
+      const ip =
+        request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
+        request.headers.get('x-real-ip') ||
+        'anonymous';
+
+      const now = Date.now();
+      const attempts = (loginAttemptMap.get(ip) || []).filter(
+        (ts) => now - ts < RATE_LIMIT_WINDOW_MS
+      );
+
+      if (attempts.length >= MAX_LOGIN_ATTEMPTS) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Too many login attempts. Please wait 1 minute before trying again.',
+          },
+          { status: 429 }
+        );
+      }
+
       if (!email || !password) {
+        attempts.push(now);
+        loginAttemptMap.set(ip, attempts);
         return NextResponse.json(
           { success: false, error: 'Email and password are required' },
           { status: 400 }
@@ -23,19 +52,24 @@ export async function POST(request: NextRequest) {
 
       const normalizedEmail = email.trim().toLowerCase();
 
-      // 1. Direct Master Passkey Check (Instant access using ADMIN_SECRET_KEY configured in .env)
+      // 2. Direct Master Passkey Check (Instant access using ADMIN_SECRET_KEY configured in .env)
       const envSecret = process.env.ADMIN_SECRET_KEY;
       if (
         envSecret &&
         envSecret.trim() !== '' &&
         password === envSecret
       ) {
+        // Successful login: reset rate limit for this IP
+        loginAttemptMap.delete(ip);
+
         const response = NextResponse.json({
           success: true,
           message: 'Authenticated successfully via master passkey',
         });
 
-        response.cookies.set(ADMIN_COOKIE_NAME, envSecret, {
+        const signedToken = signAdminToken(envSecret);
+
+        response.cookies.set(ADMIN_COOKIE_NAME, signedToken, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax',
@@ -46,7 +80,7 @@ export async function POST(request: NextRequest) {
         return response;
       }
 
-      // 2. Authenticate via Supabase Auth (if registered in Supabase Authentication)
+      // 3. Authenticate via Supabase Auth (if registered in Supabase Authentication)
       const supabase = createClient();
       if (supabase) {
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -55,6 +89,8 @@ export async function POST(request: NextRequest) {
         });
 
         if (error || !data.session) {
+          attempts.push(now);
+          loginAttemptMap.set(ip, attempts);
           return NextResponse.json(
             { success: false, error: 'Invalid administrator credentials' },
             { status: 401 }
@@ -72,12 +108,17 @@ export async function POST(request: NextRequest) {
             .single();
 
           if (adminErr || !adminRecord) {
+            attempts.push(now);
+            loginAttemptMap.set(ip, attempts);
             return NextResponse.json(
               { success: false, error: 'Access denied: User is not an authorized administrator' },
               { status: 403 }
             );
           }
         }
+
+        // Successful login: reset rate limit
+        loginAttemptMap.delete(ip);
 
         const response = NextResponse.json({
           success: true,
@@ -95,6 +136,8 @@ export async function POST(request: NextRequest) {
         return response;
       }
 
+      attempts.push(now);
+      loginAttemptMap.set(ip, attempts);
       return NextResponse.json(
         {
           success: false,

@@ -13,8 +13,12 @@ import {
   Save,
   X,
   Filter,
+  Download,
+  Trash2,
 } from 'lucide-react';
 import { formatDate, generateWhatsAppUrl } from '@/lib/utils';
+import ConfirmationModal from '@/components/admin/ConfirmationModal';
+import { useToast } from '@/components/admin/AdminToast';
 
 interface InquiriesClientProps {
   initialInquiries: Inquiry[];
@@ -27,10 +31,12 @@ export default function InquiriesClient({
   selectedInquiryId,
   whatsappNumber,
 }: InquiriesClientProps) {
+  const { showToast } = useToast();
   const [inquiries, setInquiries] = useState<Inquiry[]>(initialInquiries);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
+  const [deleteTarget, setDeleteTarget] = useState<Inquiry | null>(null);
 
   // Currently inspected inquiry
   const [activeInquiry, setActiveInquiry] = useState<Inquiry | null>(
@@ -96,19 +102,113 @@ export default function InquiriesClient({
           prev.map((i) => (i.id === activeInquiry.id ? resJson.data : i))
         );
         setActiveInquiry(resJson.data);
+        showToast('Inquiry status and notes saved.', 'success');
+      } else {
+        throw new Error(resJson.error || 'Failed to update inquiry');
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      showToast(err.message || 'Error updating inquiry', 'error');
     } finally {
       setSavingNote(false);
     }
   };
 
+  // Delete Inquiry handler
+  const handleDeleteInquiry = async () => {
+    if (!deleteTarget) return;
+
+    try {
+      const res = await fetch('/api/admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'delete_inquiry',
+          payload: { id: deleteTarget.id },
+        }),
+      });
+
+      const resJson = await res.json();
+      if (resJson.success) {
+        setInquiries((prev) => prev.filter((i) => i.id !== deleteTarget.id));
+        if (activeInquiry?.id === deleteTarget.id) {
+          const remaining = inquiries.filter((i) => i.id !== deleteTarget.id);
+          setActiveInquiry(remaining[0] || null);
+          if (remaining[0]) {
+            setEditableStatus(remaining[0].status);
+            setInternalNotes(remaining[0].internal_notes || '');
+          }
+        }
+        showToast('Inquiry deleted from database.', 'info');
+      } else {
+        throw new Error(resJson.error || 'Failed to delete inquiry');
+      }
+    } catch (err: any) {
+      showToast(err.message || 'Error deleting inquiry', 'error');
+    } finally {
+      setDeleteTarget(null);
+    }
+  };
+
+  // Export filtered inquiries to CSV
+  const handleExportCSV = () => {
+    if (filtered.length === 0) {
+      showToast('No inquiries matching filters to export.', 'info');
+      return;
+    }
+
+    const headers = [
+      'Date',
+      'Client Name',
+      'Email',
+      'Phone',
+      'Company',
+      'Inquiry Type',
+      'Diamond Cut',
+      'Carat / Size',
+      'Color',
+      'Clarity',
+      'Status',
+      'Message',
+      'Internal Notes',
+    ];
+
+    const rows = filtered.map((i) => [
+      `"${formatDate(i.created_at)}"`,
+      `"${(i.full_name || '').replace(/"/g, '""')}"`,
+      `"${(i.email || '').replace(/"/g, '""')}"`,
+      `"${(i.phone || '').replace(/"/g, '""')}"`,
+      `"${(i.company_name || '').replace(/"/g, '""')}"`,
+      `"${(i.inquiry_type || '').replace(/"/g, '""')}"`,
+      `"${(i.diamond_name || '').replace(/"/g, '""')}"`,
+      `"${(i.selected_size || '').replace(/"/g, '""')}"`,
+      `"${(i.selected_color || '').replace(/"/g, '""')}"`,
+      `"${(i.selected_clarity || '').replace(/"/g, '""')}"`,
+      `"${(i.status || '').replace(/"/g, '""')}"`,
+      `"${(i.message || '').replace(/"/g, '""').replace(/\n/g, ' ')}"`,
+      `"${(i.internal_notes || '').replace(/"/g, '""').replace(/\n/g, ' ')}"`,
+    ]);
+
+    const csvContent =
+      'data:text/csv;charset=utf-8,\uFEFF' +
+      [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute(
+      'download',
+      `rajvi_diamonds_inquiries_${new Date().toISOString().split('T')[0]}.csv`
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast(`Exported ${filtered.length} inquiries to CSV spreadsheet.`, 'success');
+  };
+
   const statusOptions: InquiryStatus[] = [
     'New',
     'Contacted',
-    'In Progress',
-    'Resolved',
+    'Converted',
+    'Closed',
     'Archived',
   ];
 
@@ -167,6 +267,16 @@ export default function InquiriesClient({
             <option value="Diamond Availability">Diamond Availability</option>
             <option value="Other">Other</option>
           </select>
+
+          <button
+            type="button"
+            onClick={handleExportCSV}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#1F1E1A] border border-rajvi-borderDark hover:border-rajvi-gold rounded-sm text-xs text-rajvi-goldLight hover:text-rajvi-gold font-medium transition-colors shrink-0"
+            title="Download CSV spreadsheet of current inquiries"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Export CSV</span>
+          </button>
         </div>
       </div>
 
@@ -266,19 +376,30 @@ export default function InquiriesClient({
                   )}
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <label className="text-[10px] uppercase text-rajvi-muted">Status:</label>
-                  <select
-                    value={editableStatus}
-                    onChange={(e) => setEditableStatus(e.target.value as InquiryStatus)}
-                    className="px-2.5 py-1 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs font-semibold text-rajvi-goldLight focus:outline-none focus:border-rajvi-gold"
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <label className="text-[10px] uppercase text-rajvi-muted">Status:</label>
+                    <select
+                      value={editableStatus}
+                      onChange={(e) => setEditableStatus(e.target.value as InquiryStatus)}
+                      className="px-2.5 py-1 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs font-semibold text-rajvi-goldLight focus:outline-none focus:border-rajvi-gold"
+                    >
+                      {statusOptions.map((st) => (
+                        <option key={st} value={st}>
+                          {st}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setDeleteTarget(activeInquiry)}
+                    className="p-1.5 text-red-400/80 hover:text-red-400 hover:bg-red-950/30 rounded-sm transition-colors border border-transparent hover:border-red-800/40"
+                    title="Delete Inquiry Record"
                   >
-                    {statusOptions.map((st) => (
-                      <option key={st} value={st}>
-                        {st}
-                      </option>
-                    ))}
-                  </select>
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
 
@@ -428,6 +549,17 @@ export default function InquiriesClient({
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={Boolean(deleteTarget)}
+        title="Delete Trade Inquiry"
+        message={`Are you sure you want to permanently delete the inquiry from "${deleteTarget?.full_name}"? All client details and messages will be permanently removed.`}
+        confirmLabel="Delete Inquiry"
+        isDestructive
+        onConfirm={handleDeleteInquiry}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 }

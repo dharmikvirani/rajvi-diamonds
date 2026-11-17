@@ -1030,6 +1030,21 @@ export async function updateInquiryStatus(
   throw new Error('Inquiry not found');
 }
 
+export async function deleteInquiry(id: string): Promise<boolean> {
+  const supabase = createAdminClient();
+  if (supabase) {
+    const { error } = await supabase.from('inquiries').delete().eq('id', id);
+    if (error) {
+      console.error('Error deleting inquiry from Supabase:', error);
+    }
+  }
+
+  const store = readLocalStore();
+  store.inquiries = store.inquiries.filter((i) => i.id !== id);
+  writeLocalStore(store);
+  return true;
+}
+
 // ----------------- Site Settings -----------------
 
 export async function getSiteSettings(): Promise<SiteSettings> {
@@ -1085,16 +1100,27 @@ export async function getDashboardStats() {
   ]);
 
   const activeDiamonds = diamonds.filter((d) => d.is_active).length;
+  const inactiveDiamonds = diamonds.length - activeDiamonds;
   const featuredDiamonds = diamonds.filter((d) => d.is_featured).length;
+
   const newInquiries = inquiries.filter((i) => i.status === 'New').length;
+  const contactedInquiries = inquiries.filter(
+    (i) => i.status === 'Contacted' || i.status === 'In Progress'
+  ).length;
+  const convertedInquiries = inquiries.filter(
+    (i) => i.status === 'Converted' || i.status === 'Resolved'
+  ).length;
 
   return {
     totalDiamonds: diamonds.length,
     activeDiamonds,
+    inactiveDiamonds,
     featuredDiamonds,
     totalCategories: categories.length,
     totalInquiries: inquiries.length,
     newInquiries,
+    contactedInquiries,
+    convertedInquiries,
     recentInquiries: inquiries.slice(0, 5),
   };
 }

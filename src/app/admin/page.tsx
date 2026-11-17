@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getAdminSession } from '@/lib/auth';
 import { getDashboardStats } from '@/lib/db';
@@ -39,13 +40,13 @@ export default async function AdminDashboardPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          <a
+          <Link
             href="/admin/diamonds/new"
             className="inline-flex items-center gap-2 px-4 py-2.5 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black text-xs uppercase tracking-wider font-semibold rounded-sm transition-colors"
           >
             <Plus className="w-4 h-4" />
             <span>Add Diamond Cut</span>
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -54,7 +55,7 @@ export default async function AdminDashboardPage() {
         <StatsCard
           label="Active Diamond Cuts"
           value={stats.activeDiamonds}
-          subValue={`${stats.totalDiamonds} total cuts recorded`}
+          subValue={`${stats.inactiveDiamonds} disabled • ${stats.totalDiamonds} total recorded`}
           icon={Gem}
           badge={`${stats.activeDiamonds} Live`}
         />
@@ -76,7 +77,7 @@ export default async function AdminDashboardPage() {
         <StatsCard
           label="Customer Inquiries"
           value={stats.totalInquiries}
-          subValue={`${stats.newInquiries} pending review`}
+          subValue={`${stats.newInquiries} New • ${stats.contactedInquiries} Contacted • ${stats.convertedInquiries} Converted`}
           icon={Inbox}
           badge={stats.newInquiries > 0 ? `${stats.newInquiries} New` : undefined}
         />
@@ -94,13 +95,13 @@ export default async function AdminDashboardPage() {
             </p>
           </div>
 
-          <a
+          <Link
             href="/admin/inquiries"
             className="inline-flex items-center gap-1.5 text-xs text-rajvi-gold hover:text-rajvi-goldLight font-semibold uppercase tracking-wider transition-colors"
           >
             <span>View All</span>
             <ArrowRight className="w-3.5 h-3.5" />
-          </a>
+          </Link>
         </div>
 
         {stats.recentInquiries.length > 0 ? (
@@ -121,8 +122,8 @@ export default async function AdminDashboardPage() {
                   let statusBadgeClass = 'bg-blue-950/40 text-blue-400 border-blue-800/40';
                   if (inq.status === 'New') {
                     statusBadgeClass = 'bg-emerald-950/40 text-emerald-400 border-emerald-800/40';
-                  } else if (inq.status === 'Resolved') {
-                    statusBadgeClass = 'bg-gray-800 text-gray-300 border-gray-700';
+                  } else if (inq.status === 'Resolved' || inq.status === 'Converted') {
+                    statusBadgeClass = 'bg-amber-950/40 text-amber-300 border-amber-800/40';
                   }
 
                   return (
@@ -155,13 +156,13 @@ export default async function AdminDashboardPage() {
                         {formatDate(inq.created_at)}
                       </td>
                       <td className="py-3.5 px-6 text-right">
-                        <a
+                        <Link
                           href={`/admin/inquiries?id=${inq.id}`}
                           className="inline-flex items-center gap-1 text-rajvi-gold hover:text-rajvi-goldLight font-medium"
                         >
                           <Eye className="w-3.5 h-3.5" />
                           <span>Review</span>
-                        </a>
+                        </Link>
                       </td>
                     </tr>
                   );
@@ -178,7 +179,7 @@ export default async function AdminDashboardPage() {
 
       {/* Quick Access Tiles */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <a
+        <Link
           href="/admin/diamonds"
           className="p-6 bg-[#181714] border border-rajvi-borderDark/80 rounded-sm hover:border-rajvi-gold/40 transition-all group"
         >
@@ -189,9 +190,9 @@ export default async function AdminDashboardPage() {
           <p className="text-xs text-rajvi-muted">
             Update specifications, images, active statuses, and millimeter calibrations.
           </p>
-        </a>
+        </Link>
 
-        <a
+        <Link
           href="/admin/categories"
           className="p-6 bg-[#181714] border border-rajvi-borderDark/80 rounded-sm hover:border-rajvi-gold/40 transition-all group"
         >
@@ -202,9 +203,9 @@ export default async function AdminDashboardPage() {
           <p className="text-xs text-rajvi-muted">
             Create and organize fancy cut categories and display orders.
           </p>
-        </a>
+        </Link>
 
-        <a
+        <Link
           href="/admin/settings"
           className="p-6 bg-[#181714] border border-rajvi-borderDark/80 rounded-sm hover:border-rajvi-gold/40 transition-all group"
         >
@@ -215,7 +216,7 @@ export default async function AdminDashboardPage() {
           <p className="text-xs text-rajvi-muted">
             Update WhatsApp number, address, hero slogans, and story details.
           </p>
-        </a>
+        </Link>
       </div>
     </div>
   );

@@ -8,6 +8,8 @@ export type InquiryType =
 export type InquiryStatus =
   | 'New'
   | 'Contacted'
+  | 'Converted'
+  | 'Closed'
   | 'In Progress'
   | 'Resolved'
   | 'Archived';

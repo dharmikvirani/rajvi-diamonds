@@ -3,19 +3,22 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { Category } from '@/lib/types';
-import { Plus, Edit, Trash2, CheckCircle, XCircle, Save, X, Loader2 } from 'lucide-react';
+import { Plus, Edit, Trash2, CheckCircle, XCircle, Save, X, Loader2, Upload } from 'lucide-react';
 import ConfirmationModal from '@/components/admin/ConfirmationModal';
+import { useToast } from '@/components/admin/AdminToast';
 
 interface CategoriesClientProps {
   initialCategories: Category[];
 }
 
 export default function CategoriesClient({ initialCategories }: CategoriesClientProps) {
+  const { showToast } = useToast();
   const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [editingCategory, setEditingCategory] = useState<Partial<Category> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Category | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const handleOpenNew = () => {
     setEditingCategory({
@@ -45,6 +48,27 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
     });
   };
 
+  const handleCategoryImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const data = new FormData();
+      data.append('file', file);
+      const res = await fetch('/api/upload', { method: 'POST', body: data });
+      const resJson = await res.json();
+      if (!res.ok || !resJson.success) throw new Error(resJson.error || 'Upload failed');
+      setEditingCategory((prev) => (prev ? { ...prev, image_url: resJson.imageUrl } : null));
+      showToast('Category cover photo uploaded to Cloudinary.', 'success');
+    } catch (err: any) {
+      showToast(err.message || 'Image upload failed', 'error');
+    } finally {
+      setUploadingImage(false);
+      if (e.target) e.target.value = '';
+    }
+  };
+
   const handleSaveCategory = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingCategory?.name) return;
@@ -66,14 +90,18 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
           setCategories((prev) =>
             prev.map((c) => (c.id === editingCategory.id ? data.data : c))
           );
+          showToast(`Category "${editingCategory.name}" updated.`, 'success');
         } else {
           setCategories((prev) => [...prev, data.data]);
+          showToast(`Category "${editingCategory.name}" created.`, 'success');
         }
         setIsModalOpen(false);
         setEditingCategory(null);
+      } else {
+        throw new Error(data.error || 'Failed to save category');
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      showToast(err.message || 'Error saving category', 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -95,9 +123,12 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
       const data = await res.json();
       if (data.success) {
         setCategories((prev) => prev.filter((c) => c.id !== deleteTarget.id));
+        showToast(`Category "${deleteTarget.name}" deleted.`, 'info');
+      } else {
+        throw new Error(data.error || 'Failed to delete category');
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      showToast(err.message || 'Error deleting category', 'error');
     } finally {
       setDeleteTarget(null);
     }
@@ -254,14 +285,38 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
 
               <div>
                 <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
-                  Image URL
+                  Category Cover Image
                 </label>
-                <input
-                  type="url"
-                  value={editingCategory.image_url || ''}
-                  onChange={(e) => setEditingCategory({ ...editingCategory, image_url: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
-                />
+                <div className="flex gap-2 items-center">
+                  <input
+                    type="url"
+                    value={editingCategory.image_url || ''}
+                    onChange={(e) => setEditingCategory({ ...editingCategory, image_url: e.target.value })}
+                    placeholder="https://... or upload photo"
+                    className="flex-1 px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                  />
+                  <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark hover:border-rajvi-gold rounded-sm text-xs text-rajvi-gold font-medium transition-colors shrink-0">
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>{uploadingImage ? 'Uploading...' : 'Upload'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      disabled={uploadingImage}
+                      onChange={handleCategoryImageUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+                {editingCategory.image_url && (
+                  <div className="mt-2 relative w-24 h-16 rounded-sm overflow-hidden border border-rajvi-borderDark">
+                    <Image
+                      src={editingCategory.image_url}
+                      alt="Category preview"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4 pt-2">

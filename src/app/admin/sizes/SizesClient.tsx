@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Diamond, DiamondSize } from '@/lib/types';
 import { Ruler, Plus, Trash2, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { formatSizeMm } from '@/lib/utils';
+import ConfirmationModal from '@/components/admin/ConfirmationModal';
 
 interface SizesClientProps {
   diamonds: Diamond[];
@@ -17,6 +18,7 @@ export default function SizesClient({ diamonds }: SizesClientProps) {
   const [newSizeValue, setNewSizeValue] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<DiamondSize | null>(null);
 
   const currentDiamond = diamondsState.find((d) => d.id === selectedDiamondId);
 
@@ -257,8 +259,8 @@ export default function SizesClient({ diamonds }: SizesClientProps) {
                       <td className="py-3.5 px-6 text-right">
                         <button
                           type="button"
-                          onClick={() => handleDeleteSize(size.id)}
-                          className="text-red-400 hover:text-red-300 p-1"
+                          onClick={() => setDeleteTarget(size)}
+                          className="text-red-400 hover:text-red-300 p-1 transition-colors"
                           title="Delete Size"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -321,6 +323,21 @@ export default function SizesClient({ diamonds }: SizesClientProps) {
           </div>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={Boolean(deleteTarget)}
+        title="Delete Calibrated Size"
+        message={`Are you sure you want to delete size ${formatSizeMm(deleteTarget?.size_mm || 0)} for ${currentDiamond?.name}? This size will no longer be available for inquiry selection.`}
+        confirmLabel="Delete Size"
+        isDestructive
+        onConfirm={async () => {
+          if (!deleteTarget) return;
+          await handleDeleteSize(deleteTarget.id);
+          setDeleteTarget(null);
+        }}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 }

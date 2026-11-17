@@ -13,6 +13,7 @@ import {
   saveDiamondClarity,
   deleteDiamondClarity,
   updateInquiryStatus,
+  deleteInquiry,
   updateSiteSettings,
 } from '@/lib/db';
 
@@ -75,6 +76,13 @@ export async function POST(request: NextRequest) {
         const saved = await updateInquiryStatus(payload.id, payload.status, payload.internalNotes);
         revalidatePath('/admin/inquiries', 'page');
         return NextResponse.json({ success: true, data: saved });
+      }
+
+      case 'delete_inquiry': {
+        const targetId = typeof payload === 'string' ? payload : (payload?.id ?? body.id);
+        await deleteInquiry(targetId);
+        revalidatePath('/admin/inquiries', 'page');
+        return NextResponse.json({ success: true, id: targetId });
       }
 
       // 5. Site Settings

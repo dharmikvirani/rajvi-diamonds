@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import AdminHeader from '@/components/admin/AdminHeader';
+import { ToastProvider } from '@/components/admin/AdminToast';
 
 interface AdminLayoutClientProps {
   children: React.ReactNode;
@@ -45,24 +46,26 @@ export default function AdminLayoutClient({
   else if (pathname?.includes('/admin/settings')) pageTitle = 'Brand & Business Settings';
 
   return (
-    <div className="min-h-screen bg-[#141311] text-rajvi-offWhite flex">
-      {/* Sidebar */}
-      <AdminSidebar
-        mobileOpen={mobileMenuOpen}
-        onCloseMobile={() => setMobileMenuOpen(false)}
-      />
-
-      {/* Main Container */}
-      <div className="flex-1 flex flex-col min-w-0">
-        <AdminHeader
-          onOpenMobileMenu={() => setMobileMenuOpen(true)}
-          title={pageTitle}
-          adminEmail={adminEmail}
+    <ToastProvider>
+      <div className="min-h-screen bg-[#141311] text-rajvi-offWhite flex">
+        {/* Sidebar */}
+        <AdminSidebar
+          mobileOpen={mobileMenuOpen}
+          onCloseMobile={() => setMobileMenuOpen(false)}
         />
-        <main className="flex-1 p-6 sm:p-8 max-w-7xl w-full mx-auto overflow-y-auto">
-          {children}
-        </main>
+
+        {/* Main Container */}
+        <div className="flex-1 flex flex-col min-w-0">
+          <AdminHeader
+            onOpenMobileMenu={() => setMobileMenuOpen(true)}
+            title={pageTitle}
+            adminEmail={adminEmail}
+          />
+          <main className="flex-1 p-6 sm:p-8 max-w-7xl w-full mx-auto overflow-y-auto">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </ToastProvider>
   );
 }

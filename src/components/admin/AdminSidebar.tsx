@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/navigation';
+import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -55,7 +55,7 @@ export default function AdminSidebar({
     <div className="flex flex-col h-full bg-[#12110F] text-rajvi-offWhite border-r border-rajvi-borderDark/80 w-64">
       {/* Brand & Logo Header */}
       <div className="p-6 border-b border-rajvi-borderDark/60 flex items-center justify-between">
-        <a href="/admin" className="flex items-center gap-3">
+        <Link href="/admin" className="flex items-center gap-3">
           <div className="relative h-12 w-48 flex items-center justify-start overflow-hidden">
             <Image
               src="/rajvi-diamonds-logo-light.png"
@@ -65,7 +65,7 @@ export default function AdminSidebar({
               className="object-contain object-left h-full w-auto"
             />
           </div>
-        </a>
+        </Link>
 
         {onCloseMobile && (
           <button
@@ -93,7 +93,7 @@ export default function AdminSidebar({
               : pathname?.startsWith(item.href);
 
           return (
-            <a
+            <Link
               key={item.href}
               href={item.href}
               onClick={onCloseMobile}
@@ -104,7 +104,7 @@ export default function AdminSidebar({
             >
               <Icon className="w-4 h-4 shrink-0" />
               <span>{item.label}</span>
-            </a>
+            </Link>
           );
         })}
       </nav>
