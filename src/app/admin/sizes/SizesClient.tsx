@@ -150,28 +150,28 @@ export default function SizesClient({ diamonds }: SizesClientProps) {
 
   return (
     <div className="space-y-6">
-      <div className="pb-4 border-b border-rajvi-borderDark/60">
-        <span className="text-[10px] uppercase tracking-widest text-rajvi-gold font-semibold block">
+      <div className="pb-5 border-b border-rajvi-borderDark/60">
+        <span className="text-[11px] font-sans uppercase tracking-[0.2em] text-rajvi-gold font-medium block mb-1">
           Lapidary Calibrations
         </span>
-        <h2 className="font-serif text-2xl font-normal text-rajvi-offWhite">
+        <h2 className="font-serif text-2xl sm:text-3xl font-normal text-rajvi-offWhite tracking-tight sm:tracking-normal">
           Size & Millimeter Dimension Management
         </h2>
-        <p className="text-xs text-rajvi-offWhite/60 mt-1">
+        <p className="text-[13px] font-sans text-rajvi-offWhite/65 mt-1.5">
           Configure available millimeter size tiers per fancy cut. Supports decimal measurements (e.g. 4.5 mm, 5.5 mm).
         </p>
       </div>
 
       {/* Select Diamond Cut Selector */}
-      <div className="bg-[#181714] border border-rajvi-borderDark/80 p-6 rounded-sm shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-[#181714] border border-rajvi-borderDark/80 p-6 sm:p-7 rounded-sm shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+          <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
             Selected Diamond Cut
           </label>
           <select
             value={selectedDiamondId}
             onChange={(e) => setSelectedDiamondId(e.target.value)}
-            className="px-3.5 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold font-serif min-w-[240px]"
+            className="px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold min-w-[280px] transition-colors"
           >
             {diamondsState.map((d) => (
               <option key={d.id} value={d.id}>
@@ -182,11 +182,11 @@ export default function SizesClient({ diamonds }: SizesClientProps) {
         </div>
 
         {currentDiamond && (
-          <div className="text-right">
-            <span className="text-xs text-rajvi-gold block font-serif">
+          <div className="text-left sm:text-right">
+            <span className="text-[15px] text-rajvi-gold block font-serif">
               {currentDiamond.shape}
             </span>
-            <span className="text-[11px] text-rajvi-muted">
+            <span className="text-[12px] font-sans text-rajvi-offWhite/60 mt-0.5 block">
               {currentDiamond.sizes.filter((s) => s.is_available).length} active sizes currently live
             </span>
           </div>
@@ -194,7 +194,7 @@ export default function SizesClient({ diamonds }: SizesClientProps) {
       </div>
 
       {errorMessage && (
-        <div className="p-4 bg-red-950/40 border border-red-800 text-red-300 rounded-sm text-xs flex items-center gap-2">
+        <div className="p-4 bg-red-950/40 border border-red-800 text-red-300 rounded-sm text-[13px] font-sans flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{errorMessage}</span>
         </div>
@@ -204,40 +204,40 @@ export default function SizesClient({ diamonds }: SizesClientProps) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Table of Sizes */}
         <div className="lg:col-span-8 bg-[#181714] border border-rajvi-borderDark/80 rounded-sm overflow-hidden shadow-sm">
-          <div className="p-4 border-b border-rajvi-borderDark/60 flex items-center justify-between">
-            <h3 className="font-serif text-base text-rajvi-offWhite font-normal">
+          <div className="p-5 sm:p-6 border-b border-rajvi-borderDark/60 flex items-center justify-between">
+            <h3 className="font-serif text-lg font-normal text-rajvi-offWhite">
               Configured Sizes for {currentDiamond?.name}
             </h3>
-            <span className="text-[11px] text-rajvi-muted font-mono">
+            <span className="text-[12px] font-mono text-rajvi-offWhite/60">
               Total: {currentDiamond?.sizes.length || 0}
             </span>
           </div>
 
           {currentDiamond && currentDiamond.sizes.length > 0 ? (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-[#1F1E1A] text-rajvi-offWhite/60 uppercase tracking-wider text-[10px] font-semibold">
+              <table className="w-full text-left text-[13px] font-sans">
+                <thead className="bg-[#1F1E1A] text-rajvi-offWhite/70 uppercase tracking-wider text-[11px] font-semibold">
                   <tr>
-                    <th className="py-3 px-6">Size (mm)</th>
-                    <th className="py-3 px-6">Measurement Note</th>
-                    <th className="py-3 px-6 text-center">Live Availability</th>
-                    <th className="py-3 px-6 text-right">Delete</th>
+                    <th className="py-3.5 px-6">Size (mm)</th>
+                    <th className="py-3.5 px-6">Measurement Note</th>
+                    <th className="py-3.5 px-6 text-center">Live Availability</th>
+                    <th className="py-3.5 px-6 text-right">Delete</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-rajvi-borderDark/40 text-rajvi-offWhite/80">
+                <tbody className="divide-y divide-rajvi-borderDark/40 text-rajvi-offWhite/85">
                   {currentDiamond.sizes.map((size) => (
                     <tr key={size.id} className="hover:bg-rajvi-charcoal/30 transition-colors">
-                      <td className="py-3.5 px-6 font-semibold font-serif text-sm text-rajvi-goldLight">
+                      <td className="py-4 px-6 font-semibold font-serif text-[15px] text-rajvi-goldLight">
                         {formatSizeMm(size.size_mm)}
                       </td>
-                      <td className="py-3.5 px-6 text-rajvi-offWhite/60 text-[11px]">
+                      <td className="py-4 px-6 text-rajvi-offWhite/60 text-[12px]">
                         Exact calibrated diameter
                       </td>
-                      <td className="py-3.5 px-6 text-center">
+                      <td className="py-4 px-6 text-center">
                         <button
                           type="button"
                           onClick={() => handleToggleAvailable(size)}
-                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-sm text-[10px] uppercase font-semibold transition-colors ${
+                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-sm text-[11px] font-sans uppercase font-semibold transition-colors ${
                             size.is_available
                               ? 'bg-emerald-950/40 text-emerald-400 border border-emerald-800/40'
                               : 'bg-red-950/40 text-red-400 border border-red-800/40'
@@ -245,22 +245,22 @@ export default function SizesClient({ diamonds }: SizesClientProps) {
                         >
                           {size.is_available ? (
                             <>
-                              <CheckCircle className="w-3 h-3" />
+                              <CheckCircle className="w-3.5 h-3.5" />
                               <span>Active</span>
                             </>
                           ) : (
                             <>
-                              <XCircle className="w-3 h-3" />
+                              <XCircle className="w-3.5 h-3.5" />
                               <span>Disabled</span>
                             </>
                           )}
                         </button>
                       </td>
-                      <td className="py-3.5 px-6 text-right">
+                      <td className="py-4 px-6 text-right">
                         <button
                           type="button"
                           onClick={() => setDeleteTarget(size)}
-                          className="text-red-400 hover:text-red-300 p-1 transition-colors"
+                          className="text-red-400/80 hover:text-red-400 p-1 transition-colors"
                           title="Delete Size"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -272,24 +272,24 @@ export default function SizesClient({ diamonds }: SizesClientProps) {
               </table>
             </div>
           ) : (
-            <div className="p-12 text-center text-xs text-rajvi-muted">
+            <div className="p-12 text-center text-[13px] font-sans text-rajvi-offWhite/60">
               No calibrated sizes recorded for {currentDiamond?.name}. Use the form on the right to add millimeter sizes.
             </div>
           )}
         </div>
 
         {/* Add Size Form */}
-        <div className="lg:col-span-4 bg-[#181714] border border-rajvi-borderDark/80 p-6 rounded-sm shadow-sm space-y-4 h-fit">
-          <div className="flex items-center gap-2 border-b border-rajvi-borderDark/60 pb-3">
+        <div className="lg:col-span-4 bg-[#181714] border border-rajvi-borderDark/80 p-6 sm:p-7 rounded-sm shadow-sm space-y-5 h-fit">
+          <div className="flex items-center gap-2.5 border-b border-rajvi-borderDark/60 pb-3">
             <Ruler className="w-4 h-4 text-rajvi-gold" />
-            <h3 className="font-serif text-base text-rajvi-offWhite font-normal">
+            <h3 className="font-serif text-lg font-normal text-rajvi-offWhite">
               Add Calibrated Size
             </h3>
           </div>
 
           <form onSubmit={handleAddSize} className="space-y-4">
             <div>
-              <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+              <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                 Size Value (mm) <span className="text-red-500">*</span>
               </label>
               <input
@@ -301,9 +301,9 @@ export default function SizesClient({ diamonds }: SizesClientProps) {
                 value={newSizeValue}
                 onChange={(e) => setNewSizeValue(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold font-mono"
+                className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-mono text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
               />
-              <span className="text-[10px] text-rajvi-muted mt-1 block">
+              <span className="text-[11px] font-sans text-rajvi-offWhite/50 mt-1 block">
                 Supports decimal increments (e.g. 4.5 mm)
               </span>
             </div>
@@ -311,14 +311,14 @@ export default function SizesClient({ diamonds }: SizesClientProps) {
             <button
               type="submit"
               disabled={loading || !currentDiamond}
-              className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-semibold text-xs uppercase tracking-wider rounded-sm transition-colors shadow-goldGlow disabled:opacity-50"
+              className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-semibold text-[13px] font-sans uppercase tracking-wider rounded-sm transition-colors shadow-sm disabled:opacity-50"
             >
               <Plus className="w-4 h-4" />
               <span>{loading ? 'Adding Size...' : `Add Size to ${currentDiamond?.name}`}</span>
             </button>
           </form>
 
-          <div className="p-3 bg-[#1F1E1A] border border-rajvi-borderDark/60 rounded-sm text-[11px] text-rajvi-muted leading-relaxed">
+          <div className="p-3.5 bg-[#1F1E1A] border border-rajvi-borderDark/60 rounded-sm text-[12px] font-sans text-rajvi-offWhite/65 leading-relaxed">
             Note: As per brand guidelines, sizes are not preselected automatically on client-facing product pages to ensure availability is verified with the workshop.
           </div>
         </div>

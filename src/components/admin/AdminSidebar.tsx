@@ -78,13 +78,13 @@ export default function AdminSidebar({
       </div>
 
       <div className="px-6 py-2">
-        <span className="text-[10px] uppercase tracking-widest text-rajvi-gold font-semibold">
+        <span className="text-[11px] font-sans uppercase tracking-[0.2em] text-rajvi-gold font-medium">
           Admin Portal
         </span>
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 px-4 py-4 space-y-1.5 overflow-y-auto">
+      <nav className="flex-1 px-3.5 py-4 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive =
@@ -97,12 +97,12 @@ export default function AdminSidebar({
               key={item.href}
               href={item.href}
               onClick={onCloseMobile}
-              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-sm text-xs font-medium tracking-wider uppercase transition-colors ${isActive
+              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-sm text-[13px] font-sans font-medium transition-all ${isActive
                 ? 'bg-rajvi-gold text-rajvi-black font-semibold shadow-sm'
-                : 'text-rajvi-offWhite/75 hover:bg-rajvi-charcoal hover:text-rajvi-goldLight'
+                : 'text-rajvi-offWhite/80 hover:bg-[#1E1C18] hover:text-rajvi-goldLight'
                 }`}
             >
-              <Icon className="w-4 h-4 shrink-0" />
+              <Icon className="w-[18px] h-[18px] shrink-0" />
               <span>{item.label}</span>
             </Link>
           );
@@ -110,19 +110,19 @@ export default function AdminSidebar({
       </nav>
 
       {/* Bottom Actions */}
-      <div className="p-4 border-t border-rajvi-borderDark/60 space-y-2">
+      <div className="p-4 border-t border-rajvi-borderDark/60 space-y-1.5">
         <a
           href="/"
           target="_blank"
-          className="flex items-center justify-between px-3.5 py-2 rounded-sm text-xs text-rajvi-offWhite/60 hover:text-rajvi-gold transition-colors"
+          className="flex items-center justify-between px-3.5 py-2 rounded-sm text-[12px] font-sans text-rajvi-offWhite/70 hover:text-rajvi-gold hover:bg-[#1E1C18]/60 transition-colors"
         >
-          <span className="text-[11px] uppercase tracking-wider">View Public Site</span>
-          <ExternalLink className="w-3.5 h-3.5" />
+          <span className="tracking-wide">View Public Site</span>
+          <ExternalLink className="w-4 h-4 text-rajvi-offWhite/50" />
         </a>
 
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-950/20 rounded-sm transition-colors uppercase tracking-wider font-semibold"
+          className="w-full flex items-center gap-2.5 px-3.5 py-2 text-[13px] font-sans text-red-400 hover:text-red-300 hover:bg-red-950/20 rounded-sm transition-colors font-medium"
         >
           <LogOut className="w-4 h-4" />
           <span>Sign Out</span>

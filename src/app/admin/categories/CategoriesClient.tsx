@@ -136,19 +136,19 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between pb-4 border-b border-rajvi-borderDark/60">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-rajvi-borderDark/60">
         <div>
-          <span className="text-[10px] uppercase tracking-widest text-rajvi-gold font-semibold block">
+          <span className="text-[11px] font-sans uppercase tracking-[0.2em] text-rajvi-gold font-medium block mb-1">
             Classification
           </span>
-          <h2 className="font-serif text-2xl font-normal text-rajvi-offWhite">
+          <h2 className="font-serif text-2xl sm:text-3xl font-normal text-rajvi-offWhite tracking-tight sm:tracking-normal">
             Cut Categories
           </h2>
         </div>
 
         <button
           onClick={handleOpenNew}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-semibold text-xs uppercase tracking-wider rounded-sm transition-colors"
+          className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-semibold text-[13px] font-sans uppercase tracking-wider rounded-sm transition-colors shadow-sm"
         >
           <Plus className="w-4 h-4" />
           <span>New Category</span>
@@ -156,11 +156,11 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
       </div>
 
       {/* Categories Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
         {categories.map((cat) => (
           <div
             key={cat.id}
-            className="bg-[#181714] border border-rajvi-borderDark/80 rounded-sm overflow-hidden flex flex-col justify-between shadow-sm"
+            className="bg-[#181714] border border-rajvi-borderDark/80 rounded-sm overflow-hidden flex flex-col justify-between shadow-sm hover:border-rajvi-gold/30 transition-all"
           >
             <div className="relative aspect-[16/9] w-full bg-[#1F1E1A]">
               {cat.image_url && (
@@ -173,7 +173,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
               )}
               <div className="absolute top-3 right-3">
                 <span
-                  className={`px-2 py-0.5 rounded-sm text-[10px] uppercase font-semibold ${
+                  className={`px-2.5 py-1 rounded-sm text-[11px] font-sans uppercase font-semibold ${
                     cat.is_active
                       ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800/40 backdrop-blur-sm'
                       : 'bg-red-950/80 text-red-400 border border-red-800/40 backdrop-blur-sm'
@@ -184,36 +184,36 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
               </div>
             </div>
 
-            <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+            <div className="p-6 sm:p-7 flex-1 flex flex-col justify-between space-y-4">
               <div>
-                <span className="text-[10px] uppercase tracking-widest text-rajvi-gold font-semibold">
+                <span className="text-[11px] font-sans uppercase tracking-widest text-rajvi-gold font-medium">
                   Order #{cat.display_order}
                 </span>
                 <h3 className="font-serif text-xl text-rajvi-offWhite font-normal mt-1">
                   {cat.name}
                 </h3>
-                <span className="text-xs text-rajvi-muted font-mono block mb-2">
+                <span className="text-[12px] font-mono text-rajvi-offWhite/50 block mb-2 mt-0.5">
                   /{cat.slug}
                 </span>
-                <p className="text-xs text-rajvi-offWhite/70 leading-relaxed line-clamp-3">
+                <p className="text-[13px] font-sans text-rajvi-offWhite/75 leading-relaxed line-clamp-3">
                   {cat.description}
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-rajvi-borderDark/60 flex items-center justify-end gap-3 text-xs">
+              <div className="pt-4 border-t border-rajvi-borderDark/60 flex items-center justify-end gap-3.5 text-[13px] font-sans">
                 <button
                   onClick={() => handleOpenEdit(cat)}
-                  className="inline-flex items-center gap-1.5 text-rajvi-gold hover:text-rajvi-goldLight font-medium"
+                  className="inline-flex items-center gap-1.5 text-rajvi-gold hover:text-rajvi-goldLight font-medium transition-colors"
                 >
-                  <Edit className="w-3.5 h-3.5" />
+                  <Edit className="w-4 h-4" />
                   <span>Edit</span>
                 </button>
 
                 <button
                   onClick={() => setDeleteTarget(cat)}
-                  className="inline-flex items-center gap-1.5 text-red-400 hover:text-red-300 font-medium"
+                  className="inline-flex items-center gap-1.5 text-red-400 hover:text-red-300 font-medium transition-colors"
                 >
-                  <Trash2 className="w-3.5 h-3.5" />
+                  <Trash2 className="w-4 h-4" />
                   <span>Delete</span>
                 </button>
               </div>
@@ -232,12 +232,12 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
 
           <div className="relative bg-[#1A1815] border border-rajvi-borderDark text-rajvi-offWhite max-w-lg w-full p-6 sm:p-8 rounded-sm shadow-luxuryDark z-10 animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-4 border-b border-rajvi-borderDark/60 mb-6">
-              <h3 className="font-serif text-xl font-normal text-rajvi-offWhite">
+              <h3 className="font-serif text-xl sm:text-2xl font-normal text-rajvi-offWhite">
                 {editingCategory.id ? 'Edit Category' : 'Create Category'}
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-rajvi-offWhite/60 hover:text-white"
+                className="text-rajvi-offWhite/60 hover:text-white transition-colors p-1"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -245,7 +245,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
 
             <form onSubmit={handleSaveCategory} className="space-y-4">
               <div>
-                <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   Category Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -254,12 +254,12 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                   value={editingCategory.name || ''}
                   onChange={(e) => handleNameChange(e.target.value)}
                   required
-                  className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                  className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   Slug
                 </label>
                 <input
@@ -267,24 +267,24 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                   value={editingCategory.slug || ''}
                   onChange={(e) => setEditingCategory({ ...editingCategory, slug: e.target.value })}
                   required
-                  className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite font-mono focus:outline-none focus:border-rajvi-gold"
+                  className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-mono text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   Description
                 </label>
                 <textarea
                   rows={3}
                   value={editingCategory.description || ''}
                   onChange={(e) => setEditingCategory({ ...editingCategory, description: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                  className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors leading-relaxed"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   Category Cover Image
                 </label>
                 <div className="flex gap-2 items-center">
@@ -293,10 +293,10 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                     value={editingCategory.image_url || ''}
                     onChange={(e) => setEditingCategory({ ...editingCategory, image_url: e.target.value })}
                     placeholder="https://... or upload photo"
-                    className="flex-1 px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                    className="flex-1 px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
                   />
-                  <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark hover:border-rajvi-gold rounded-sm text-xs text-rajvi-gold font-medium transition-colors shrink-0">
-                    <Upload className="w-3.5 h-3.5" />
+                  <label className="cursor-pointer inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark hover:border-rajvi-gold rounded-sm text-[13px] font-sans text-rajvi-gold font-medium transition-colors shrink-0">
+                    <Upload className="w-4 h-4" />
                     <span>{uploadingImage ? 'Uploading...' : 'Upload'}</span>
                     <input
                       type="file"
@@ -308,7 +308,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                   </label>
                 </div>
                 {editingCategory.image_url && (
-                  <div className="mt-2 relative w-24 h-16 rounded-sm overflow-hidden border border-rajvi-borderDark">
+                  <div className="mt-2.5 relative w-24 h-16 rounded-sm overflow-hidden border border-rajvi-borderDark">
                     <Image
                       src={editingCategory.image_url}
                       alt="Category preview"
@@ -321,7 +321,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
 
               <div className="grid grid-cols-2 gap-4 pt-2">
                 <div>
-                  <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+                  <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                     Display Order
                   </label>
                   <input
@@ -333,7 +333,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                         display_order: parseInt(e.target.value) || 1,
                       })
                     }
-                    className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                    className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold transition-colors"
                   />
                 </div>
 
@@ -347,7 +347,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                       }
                       className="rounded border-rajvi-borderDark text-rajvi-gold focus:ring-rajvi-gold h-4 w-4"
                     />
-                    <span className="text-xs font-medium text-rajvi-offWhite">
+                    <span className="text-[13px] font-sans font-medium text-rajvi-offWhite">
                       Active
                     </span>
                   </label>
@@ -358,7 +358,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-rajvi-borderDark text-xs uppercase tracking-wider text-rajvi-offWhite/70 hover:bg-rajvi-charcoal font-semibold rounded-sm"
+                  className="px-4 py-2.5 border border-rajvi-borderDark text-[13px] font-sans uppercase tracking-wider text-rajvi-offWhite/70 hover:bg-rajvi-charcoal font-semibold rounded-sm transition-colors"
                 >
                   Cancel
                 </button>
@@ -366,7 +366,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-6 py-2 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-semibold text-xs uppercase tracking-wider rounded-sm transition-colors shadow-goldGlow disabled:opacity-50"
+                  className="px-6 py-2.5 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-semibold text-[13px] font-sans uppercase tracking-wider rounded-sm transition-colors shadow-sm disabled:opacity-50"
                 >
                   {isSubmitting ? 'Saving...' : 'Save Category'}
                 </button>

@@ -102,19 +102,19 @@ export default function DiamondsListClient({ initialDiamonds }: DiamondsListClie
       {/* Search and Action Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
         <div className="relative max-w-sm w-full">
-          <Search className="w-4 h-4 text-rajvi-muted absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-rajvi-offWhite/45 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search cuts by name or geometry..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-[#1C1A17] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/45 focus:outline-none focus:border-rajvi-gold transition-colors"
           />
         </div>
 
         <Link
           href="/admin/diamonds/new"
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black text-xs uppercase tracking-wider font-semibold rounded-sm transition-colors"
+          className="inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black text-[13px] font-sans uppercase tracking-wider font-semibold rounded-sm transition-colors shadow-sm"
         >
           <Plus className="w-4 h-4" />
           <span>Add New Diamond Cut</span>
@@ -124,20 +124,20 @@ export default function DiamondsListClient({ initialDiamonds }: DiamondsListClie
       {/* Diamond Cut Records Table */}
       <div className="bg-[#181714] border border-rajvi-borderDark/80 rounded-sm overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-[#1F1E1A] text-rajvi-offWhite/60 uppercase tracking-wider text-[10px] font-semibold">
+          <table className="w-full text-left text-[13px] font-sans">
+            <thead className="bg-[#1F1E1A] text-rajvi-offWhite/70 uppercase tracking-wider text-[11px] font-semibold">
               <tr>
-                <th className="py-3 px-6">Cut / Image</th>
-                <th className="py-3 px-6">Shape</th>
-                <th className="py-3 px-6">Category</th>
-                <th className="py-3 px-6">Color & Clarity</th>
-                <th className="py-3 px-6">Sizes</th>
-                <th className="py-3 px-6 text-center">Featured</th>
-                <th className="py-3 px-6 text-center">Status</th>
-                <th className="py-3 px-6 text-right">Actions</th>
+                <th className="py-3.5 px-6">Cut / Image</th>
+                <th className="py-3.5 px-6">Shape</th>
+                <th className="py-3.5 px-6">Category</th>
+                <th className="py-3.5 px-6">Color & Clarity</th>
+                <th className="py-3.5 px-6">Sizes</th>
+                <th className="py-3.5 px-6 text-center">Featured</th>
+                <th className="py-3.5 px-6 text-center">Status</th>
+                <th className="py-3.5 px-6 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-rajvi-borderDark/40 text-rajvi-offWhite/80">
+            <tbody className="divide-y divide-rajvi-borderDark/40 text-rajvi-offWhite/85">
               {filtered.map((diamond) => {
                 const primaryImage =
                   diamond.images.find((i) => i.is_primary) || diamond.images[0];
@@ -146,8 +146,8 @@ export default function DiamondsListClient({ initialDiamonds }: DiamondsListClie
                 return (
                   <tr key={diamond.id} className="hover:bg-rajvi-charcoal/30 transition-colors">
                     {/* Diamond Name & Thumb */}
-                    <td className="py-3.5 px-6">
-                      <div className="flex items-center gap-3">
+                    <td className="py-4 px-6">
+                      <div className="flex items-center gap-3.5">
                         <div className="relative w-12 h-12 rounded-sm overflow-hidden bg-rajvi-charcoal shrink-0 border border-rajvi-borderDark">
                           {primaryImage ? (
                             <Image
@@ -157,16 +157,16 @@ export default function DiamondsListClient({ initialDiamonds }: DiamondsListClie
                               className="object-cover"
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-[10px] text-rajvi-muted">
+                            <div className="w-full h-full flex items-center justify-center text-[11px] text-rajvi-offWhite/40">
                               No Img
                             </div>
                           )}
                         </div>
                         <div>
-                          <div className="font-serif text-sm font-normal text-rajvi-offWhite">
+                          <div className="font-serif text-[15px] font-normal text-rajvi-offWhite">
                             {diamond.name}
                           </div>
-                          <span className="text-[11px] text-rajvi-muted block">
+                          <span className="text-[12px] font-sans text-rajvi-offWhite/50 block mt-0.5">
                             /{diamond.slug}
                           </span>
                         </div>
@@ -174,62 +174,62 @@ export default function DiamondsListClient({ initialDiamonds }: DiamondsListClie
                     </td>
 
                     {/* Shape */}
-                    <td className="py-3.5 px-6 font-medium">{diamond.shape}</td>
+                    <td className="py-4 px-6 font-medium text-rajvi-offWhite/90">{diamond.shape}</td>
 
                     {/* Category */}
-                    <td className="py-3.5 px-6 text-rajvi-goldLight text-[11px]">
+                    <td className="py-4 px-6 text-rajvi-goldLight text-[12px]">
                       {diamond.category?.name || 'Unassigned'}
                     </td>
 
                     {/* Color & Clarity */}
-                    <td className="py-3.5 px-6">
-                      <div className="flex flex-col gap-0.5 text-[11px]">
+                    <td className="py-4 px-6">
+                      <div className="flex flex-col gap-1 text-[12px]">
                         {diamond.color ? (
                           <span className="text-rajvi-gold">
                             Color: <strong className="text-rajvi-offWhite font-semibold">{diamond.color}</strong>
                           </span>
                         ) : (
-                          <span className="text-rajvi-muted text-[10px]">No Color</span>
+                          <span className="text-rajvi-offWhite/45 text-[11px]">No Color</span>
                         )}
                         {diamond.clarity ? (
                           <span className="text-rajvi-goldLight">
                             Clarity: <strong className="text-rajvi-offWhite font-semibold">{diamond.clarity}</strong>
                           </span>
                         ) : (
-                          <span className="text-rajvi-muted text-[10px]">No Clarity</span>
+                          <span className="text-rajvi-offWhite/45 text-[11px]">No Clarity</span>
                         )}
                       </div>
                     </td>
 
                     {/* Sizes Count */}
-                    <td className="py-3.5 px-6">
-                      <span className="text-[11px]">
+                    <td className="py-4 px-6">
+                      <span className="text-[12px] text-rajvi-offWhite/75">
                         {activeSizesCount} active ({diamond.sizes.length} total)
                       </span>
                     </td>
 
                     {/* Featured Toggle */}
-                    <td className="py-3.5 px-6 text-center">
+                    <td className="py-4 px-6 text-center">
                       <button
                         onClick={() => toggleStatus(diamond, 'is_featured')}
                         disabled={loadingId === diamond.id}
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-sm text-[10px] uppercase font-semibold transition-colors ${
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[11px] font-sans uppercase font-semibold transition-colors ${
                           diamond.is_featured
                             ? 'bg-amber-950/40 text-amber-300 border border-amber-800/40'
-                            : 'bg-rajvi-charcoal text-rajvi-muted border border-rajvi-borderDark'
+                            : 'bg-[#1F1E1A] text-rajvi-offWhite/60 border border-rajvi-borderDark'
                         }`}
                       >
-                        <Sparkles className="w-3 h-3 text-rajvi-gold" />
+                        <Sparkles className="w-3.5 h-3.5 text-rajvi-gold" />
                         <span>{diamond.is_featured ? 'Yes' : 'No'}</span>
                       </button>
                     </td>
 
                     {/* Active Status Toggle */}
-                    <td className="py-3.5 px-6 text-center">
+                    <td className="py-4 px-6 text-center">
                       <button
                         onClick={() => toggleStatus(diamond, 'is_active')}
                         disabled={loadingId === diamond.id}
-                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-sm text-[10px] uppercase font-semibold transition-colors ${
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-sm text-[11px] font-sans uppercase font-semibold transition-colors ${
                           diamond.is_active
                             ? 'bg-emerald-950/40 text-emerald-400 border border-emerald-800/40'
                             : 'bg-red-950/40 text-red-400 border border-red-800/40'
@@ -237,12 +237,12 @@ export default function DiamondsListClient({ initialDiamonds }: DiamondsListClie
                       >
                         {diamond.is_active ? (
                           <>
-                            <CheckCircle className="w-3 h-3" />
+                            <CheckCircle className="w-3.5 h-3.5" />
                             <span>Active</span>
                           </>
                         ) : (
                           <>
-                            <XCircle className="w-3 h-3" />
+                            <XCircle className="w-3.5 h-3.5" />
                             <span>Disabled</span>
                           </>
                         )}
@@ -250,13 +250,13 @@ export default function DiamondsListClient({ initialDiamonds }: DiamondsListClie
                     </td>
 
                     {/* Actions */}
-                    <td className="py-3.5 px-6 text-right">
-                      <div className="flex items-center justify-end gap-3">
+                    <td className="py-4 px-6 text-right">
+                      <div className="flex items-center justify-end gap-3.5">
                         <a
                           href={`/collections/${diamond.slug}`}
                           target="_blank"
                           title="Preview Live Page"
-                          className="text-rajvi-muted hover:text-rajvi-gold transition-colors"
+                          className="text-rajvi-offWhite/60 hover:text-rajvi-gold transition-colors p-1"
                         >
                           <ExternalLink className="w-4 h-4" />
                         </a>
@@ -264,7 +264,7 @@ export default function DiamondsListClient({ initialDiamonds }: DiamondsListClie
                         <Link
                           href={`/admin/diamonds/${diamond.id}`}
                           title="Edit Diamond"
-                          className="text-rajvi-offWhite/80 hover:text-rajvi-gold transition-colors"
+                          className="text-rajvi-offWhite/80 hover:text-rajvi-gold transition-colors p-1"
                         >
                           <Edit className="w-4 h-4" />
                         </Link>
@@ -272,7 +272,7 @@ export default function DiamondsListClient({ initialDiamonds }: DiamondsListClie
                         <button
                           onClick={() => setDeleteTarget(diamond)}
                           title="Delete Diamond"
-                          className="text-red-400/80 hover:text-red-400 transition-colors"
+                          className="text-red-400/80 hover:text-red-400 transition-colors p-1"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -289,10 +289,10 @@ export default function DiamondsListClient({ initialDiamonds }: DiamondsListClie
                       <div className="w-12 h-12 rounded-full bg-rajvi-charcoal flex items-center justify-center mb-3 text-rajvi-gold border border-rajvi-borderDark">
                         <Gem className="w-6 h-6" />
                       </div>
-                      <h4 className="font-serif text-base text-rajvi-offWhite font-normal">
+                      <h4 className="font-serif text-lg text-rajvi-offWhite font-normal">
                         No diamond cuts found
                       </h4>
-                      <p className="text-xs text-rajvi-muted mt-1 leading-relaxed">
+                      <p className="text-[13px] font-sans text-rajvi-offWhite/65 mt-1.5 leading-relaxed">
                         {search
                           ? `No diamond cuts match "${search}". Try clearing your search.`
                           : 'No diamond cuts are recorded in your inventory yet.'}
@@ -301,7 +301,7 @@ export default function DiamondsListClient({ initialDiamonds }: DiamondsListClie
                         <button
                           type="button"
                           onClick={() => setSearch('')}
-                          className="mt-3 text-xs text-rajvi-gold hover:text-rajvi-goldLight underline font-medium"
+                          className="mt-3.5 text-[13px] font-sans text-rajvi-gold hover:text-rajvi-goldLight underline font-medium"
                         >
                           Clear Search Filter
                         </button>

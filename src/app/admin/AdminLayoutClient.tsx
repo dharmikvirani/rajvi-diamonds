@@ -61,7 +61,7 @@ export default function AdminLayoutClient({
             title={pageTitle}
             adminEmail={adminEmail}
           />
-          <main className="flex-1 p-6 sm:p-8 max-w-7xl w-full mx-auto overflow-y-auto">
+          <main className="flex-1 p-6 sm:p-8 lg:p-10 max-w-[1600px] w-full mx-auto overflow-y-auto">
             {children}
           </main>
         </div>

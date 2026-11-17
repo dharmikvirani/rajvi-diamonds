@@ -477,19 +477,19 @@ export default function DiamondEditorForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 pb-16">
-      <div className="flex items-center justify-between pb-4 border-b border-rajvi-borderDark/60">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-rajvi-borderDark/60">
         <div className="flex items-center gap-3">
           <Link
             href="/admin/diamonds"
-            className="p-2 rounded-sm bg-rajvi-charcoal hover:bg-rajvi-borderDark text-rajvi-offWhite transition-colors"
+            className="p-2.5 rounded-sm bg-rajvi-charcoal hover:bg-rajvi-borderDark text-rajvi-offWhite transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div>
-            <h2 className="font-serif text-xl sm:text-2xl text-rajvi-offWhite font-normal">
+            <h2 className="font-serif text-2xl sm:text-3xl text-rajvi-offWhite font-normal tracking-tight sm:tracking-normal">
               {isEditing ? `Edit Diamond Cut: ${formData.name}` : 'Create New Diamond Cut'}
             </h2>
-            <p className="text-xs text-rajvi-muted">
+            <p className="text-[13px] font-sans text-rajvi-offWhite/65 mt-1">
               Configure cut identity, specifications, multi-image gallery, and calibrated sizes.
             </p>
           </div>
@@ -498,7 +498,7 @@ export default function DiamondEditorForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex items-center gap-2 px-6 py-2.5 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-semibold text-xs uppercase tracking-wider rounded-sm transition-colors shadow-goldGlow disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-sans font-semibold text-[13px] uppercase tracking-wider rounded-sm transition-colors shadow-sm disabled:opacity-50"
         >
           {isSubmitting ? (
             <>
@@ -515,7 +515,7 @@ export default function DiamondEditorForm({
       </div>
 
       {errorMessage && (
-        <div className="p-4 bg-red-950/40 border border-red-800 text-red-300 rounded-sm text-xs">
+        <div className="p-4 bg-red-950/40 border border-red-800 text-red-300 rounded-sm text-[13px] font-sans">
           {errorMessage}
         </div>
       )}
@@ -525,14 +525,14 @@ export default function DiamondEditorForm({
         {/* Left 2 Cols: Main Data */}
         <div className="lg:col-span-2 space-y-8">
           {/* Section: Basic Identity */}
-          <div className="bg-[#181714] border border-rajvi-borderDark/80 p-6 rounded-sm space-y-4">
-            <h3 className="font-serif text-base text-rajvi-offWhite font-normal border-b border-rajvi-borderDark/60 pb-2">
+          <div className="bg-[#181714] border border-rajvi-borderDark/80 p-6 sm:p-7 rounded-sm space-y-5">
+            <h3 className="font-serif text-lg sm:text-xl text-rajvi-offWhite font-normal border-b border-rajvi-borderDark/60 pb-3">
               Cut Identification
             </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   Diamond Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -541,12 +541,12 @@ export default function DiamondEditorForm({
                   value={formData.name}
                   onChange={(e) => handleNameChange(e.target.value)}
                   required
-                  className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                  className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   URL Slug <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -555,20 +555,20 @@ export default function DiamondEditorForm({
                   value={formData.slug}
                   onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
                   required
-                  className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold font-mono"
+                  className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-mono text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   Category
                 </label>
                 <select
                   value={formData.category_id || ''}
                   onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                  className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold transition-colors"
                 >
                   <option value="">No Category</option>
                   {categories.map((c) => (
@@ -580,7 +580,7 @@ export default function DiamondEditorForm({
               </div>
 
               <div>
-                <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   Shape / Facet Profile <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -589,13 +589,13 @@ export default function DiamondEditorForm({
                   value={formData.shape}
                   onChange={(e) => setFormData({ ...formData, shape: e.target.value })}
                   required
-                  className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                  className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
                 />
               </div>
 
               {/* Availability Status */}
               <div>
-                <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   Availability Status
                 </label>
                 <select
@@ -603,7 +603,7 @@ export default function DiamondEditorForm({
                   onChange={(e) =>
                     setAvailabilityStatus(e.target.value as any)
                   }
-                  className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold font-medium"
+                  className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold font-medium transition-colors"
                 >
                   <option value="Available">Available (In Stock Parcel)</option>
                   <option value="Made to Order">Made to Order (Bespoke Cut)</option>
@@ -613,7 +613,7 @@ export default function DiamondEditorForm({
 
               {/* Video URL */}
               <div>
-                <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   Diamond 360° Spin Video URL (Optional)
                 </label>
                 <input
@@ -621,53 +621,53 @@ export default function DiamondEditorForm({
                   placeholder="e.g. Cloudinary video or YouTube/Vimeo link"
                   value={videoUrl}
                   onChange={(e) => setVideoUrl(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                  className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
                 />
               </div>
             </div>
 
             {/* Multiple Available Colors & Presets */}
-            <div className="pt-3 border-t border-rajvi-borderDark/40 space-y-2">
+            <div className="pt-4 border-t border-rajvi-borderDark/40 space-y-2.5">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium">
                   Supported Color Grades ({selectedColors.length} Selected)
                 </label>
-                <div className="flex items-center gap-1.5 text-[10px]">
-                  <span className="text-rajvi-muted">Presets:</span>
+                <div className="flex items-center gap-2 text-[11px] font-sans">
+                  <span className="text-rajvi-offWhite/50">Presets:</span>
                   <button
                     type="button"
                     onClick={() => setSelectedColors(['D', 'E', 'F'])}
-                    className="px-1.5 py-0.5 bg-[#1F1E1A] hover:bg-rajvi-gold hover:text-black text-rajvi-gold border border-rajvi-borderDark rounded-sm transition-colors"
+                    className="px-2 py-0.5 bg-[#1F1E1A] hover:bg-rajvi-gold hover:text-black text-rajvi-gold border border-rajvi-borderDark rounded-sm transition-colors font-medium"
                   >
                     D – F
                   </button>
                   <button
                     type="button"
                     onClick={() => setSelectedColors(['D', 'E', 'F', 'G', 'H'])}
-                    className="px-1.5 py-0.5 bg-[#1F1E1A] hover:bg-rajvi-gold hover:text-black text-rajvi-gold border border-rajvi-borderDark rounded-sm transition-colors"
+                    className="px-2 py-0.5 bg-[#1F1E1A] hover:bg-rajvi-gold hover:text-black text-rajvi-gold border border-rajvi-borderDark rounded-sm transition-colors font-medium"
                   >
                     D – H
                   </button>
                   <button
                     type="button"
                     onClick={() => setSelectedColors([])}
-                    className="px-1.5 py-0.5 bg-[#1F1E1A] hover:bg-red-500 hover:text-white text-rajvi-muted border border-rajvi-borderDark rounded-sm transition-colors"
+                    className="px-2 py-0.5 bg-[#1F1E1A] hover:bg-red-500 hover:text-white text-rajvi-offWhite/60 border border-rajvi-borderDark rounded-sm transition-colors font-medium"
                   >
                     Clear
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowAddColorModal(true)}
-                    className="text-rajvi-gold hover:text-rajvi-goldLight ml-1 inline-flex items-center gap-0.5"
+                    className="text-rajvi-gold hover:text-rajvi-goldLight ml-1.5 inline-flex items-center gap-1 font-medium"
                   >
-                    <Plus className="w-3 h-3" />
+                    <Plus className="w-3.5 h-3.5" />
                     <span>Add New</span>
                   </button>
                 </div>
               </div>
 
               {/* Color Chips */}
-              <div className="flex flex-wrap gap-1.5 p-2 bg-[#141311] border border-rajvi-borderDark/60 rounded-sm">
+              <div className="flex flex-wrap gap-2 p-2.5 bg-[#141311] border border-rajvi-borderDark/60 rounded-sm">
                 {colorsList.map((c) => {
                   const isChecked = selectedColors.includes(c.name);
                   return (
@@ -675,9 +675,9 @@ export default function DiamondEditorForm({
                       key={c.id || c.name}
                       type="button"
                       onClick={() => handleToggleColor(c.name)}
-                      className={`px-2.5 py-1 text-xs rounded-sm transition-all border font-medium ${
+                      className={`px-3 py-1.5 text-xs font-sans rounded-sm transition-all border font-medium ${
                         isChecked
-                          ? 'bg-rajvi-gold text-black border-rajvi-gold font-semibold shadow-sm scale-105'
+                          ? 'bg-rajvi-gold text-black border-rajvi-gold font-semibold shadow-sm'
                           : 'bg-[#1F1E1A] text-rajvi-offWhite/80 border-rajvi-borderDark hover:border-rajvi-gold/50'
                       }`}
                     >
@@ -689,47 +689,47 @@ export default function DiamondEditorForm({
             </div>
 
             {/* Multiple Available Clarities & Presets */}
-            <div className="pt-3 border-t border-rajvi-borderDark/40 space-y-2">
+            <div className="pt-4 border-t border-rajvi-borderDark/40 space-y-2.5">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium">
                   Supported Clarity / Purity Grades ({selectedClarities.length} Selected)
                 </label>
-                <div className="flex items-center gap-1.5 text-[10px]">
-                  <span className="text-rajvi-muted">Presets:</span>
+                <div className="flex items-center gap-2 text-[11px] font-sans">
+                  <span className="text-rajvi-offWhite/50">Presets:</span>
                   <button
                     type="button"
                     onClick={() => setSelectedClarities(['FL', 'IF', 'VVS1', 'VVS2'])}
-                    className="px-1.5 py-0.5 bg-[#1F1E1A] hover:bg-rajvi-gold hover:text-black text-rajvi-gold border border-rajvi-borderDark rounded-sm transition-colors"
+                    className="px-2 py-0.5 bg-[#1F1E1A] hover:bg-rajvi-gold hover:text-black text-rajvi-gold border border-rajvi-borderDark rounded-sm transition-colors font-medium"
                   >
                     FL – VVS2
                   </button>
                   <button
                     type="button"
                     onClick={() => setSelectedClarities(['VVS1', 'VVS2', 'VS1', 'VS2'])}
-                    className="px-1.5 py-0.5 bg-[#1F1E1A] hover:bg-rajvi-gold hover:text-black text-rajvi-gold border border-rajvi-borderDark rounded-sm transition-colors"
+                    className="px-2 py-0.5 bg-[#1F1E1A] hover:bg-rajvi-gold hover:text-black text-rajvi-gold border border-rajvi-borderDark rounded-sm transition-colors font-medium"
                   >
                     VVS – VS
                   </button>
                   <button
                     type="button"
                     onClick={() => setSelectedClarities([])}
-                    className="px-1.5 py-0.5 bg-[#1F1E1A] hover:bg-red-500 hover:text-white text-rajvi-muted border border-rajvi-borderDark rounded-sm transition-colors"
+                    className="px-2 py-0.5 bg-[#1F1E1A] hover:bg-red-500 hover:text-white text-rajvi-offWhite/60 border border-rajvi-borderDark rounded-sm transition-colors font-medium"
                   >
                     Clear
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowAddClarityModal(true)}
-                    className="text-rajvi-gold hover:text-rajvi-goldLight ml-1 inline-flex items-center gap-0.5"
+                    className="text-rajvi-gold hover:text-rajvi-goldLight ml-1.5 inline-flex items-center gap-1 font-medium"
                   >
-                    <Plus className="w-3 h-3" />
+                    <Plus className="w-3.5 h-3.5" />
                     <span>Add New</span>
                   </button>
                 </div>
               </div>
 
               {/* Clarity Chips */}
-              <div className="flex flex-wrap gap-1.5 p-2 bg-[#141311] border border-rajvi-borderDark/60 rounded-sm">
+              <div className="flex flex-wrap gap-2 p-2.5 bg-[#141311] border border-rajvi-borderDark/60 rounded-sm">
                 {claritiesList.map((c) => {
                   const isChecked = selectedClarities.includes(c.name);
                   return (
@@ -737,9 +737,9 @@ export default function DiamondEditorForm({
                       key={c.id || c.name}
                       type="button"
                       onClick={() => handleToggleClarity(c.name)}
-                      className={`px-2.5 py-1 text-xs rounded-sm transition-all border font-medium ${
+                      className={`px-3 py-1.5 text-xs font-sans rounded-sm transition-all border font-medium ${
                         isChecked
-                          ? 'bg-rajvi-gold text-black border-rajvi-gold font-semibold shadow-sm scale-105'
+                          ? 'bg-rajvi-gold text-black border-rajvi-gold font-semibold shadow-sm'
                           : 'bg-[#1F1E1A] text-rajvi-offWhite/80 border-rajvi-borderDark hover:border-rajvi-gold/50'
                       }`}
                       title={c.label}
@@ -752,7 +752,7 @@ export default function DiamondEditorForm({
             </div>
 
             <div>
-              <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+              <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                 Short Description (Cards & Previews)
               </label>
               <textarea
@@ -760,12 +760,12 @@ export default function DiamondEditorForm({
                 placeholder="A concise summary highlighting the cut's distinctive geometry and optical dispersion..."
                 value={formData.short_description}
                 onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
-                className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors leading-relaxed"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+              <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                 Detailed Cut Narrative & Craftsmanship Story
               </label>
               <textarea
@@ -773,14 +773,14 @@ export default function DiamondEditorForm({
                 placeholder="Full editorial description explaining facet orientation, light return, and setting suitability..."
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors leading-relaxed"
               />
             </div>
           </div>
 
           {/* Section: Image Gallery Management */}
-          <div className="bg-[#181714] border border-rajvi-borderDark/80 p-6 rounded-sm space-y-4">
-            <h3 className="font-serif text-base text-rajvi-offWhite font-normal border-b border-rajvi-borderDark/60 pb-2">
+          <div className="bg-[#181714] border border-rajvi-borderDark/80 p-6 sm:p-7 rounded-sm space-y-5">
+            <h3 className="font-serif text-lg sm:text-xl text-rajvi-offWhite font-normal border-b border-rajvi-borderDark/60 pb-3">
               Diamond Photography & Gallery
             </h3>
 
@@ -812,9 +812,9 @@ export default function DiamondEditorForm({
                             title="Move Earlier in Gallery"
                             className="p-1 text-white hover:text-rajvi-gold disabled:opacity-30 disabled:hover:text-white transition-colors"
                           >
-                            <ChevronLeft className="w-3 h-3" />
+                            <ChevronLeft className="w-3.5 h-3.5" />
                           </button>
-                          <span className="text-[9px] font-mono font-semibold px-1 text-rajvi-goldLight">
+                          <span className="text-[10px] font-mono font-semibold px-1 text-rajvi-goldLight">
                             #{idx + 1}
                           </span>
                           <button
@@ -824,7 +824,7 @@ export default function DiamondEditorForm({
                             title="Move Later in Gallery"
                             className="p-1 text-white hover:text-rajvi-gold disabled:opacity-30 disabled:hover:text-white transition-colors"
                           >
-                            <ChevronRight className="w-3 h-3" />
+                            <ChevronRight className="w-3.5 h-3.5" />
                           </button>
                         </div>
 
@@ -833,7 +833,7 @@ export default function DiamondEditorForm({
                           className="cursor-pointer p-1 bg-black/70 hover:bg-rajvi-gold hover:text-rajvi-black text-white/90 rounded-sm border border-white/10 transition-colors"
                           title="Replace Photo"
                         >
-                          <RefreshCw className="w-3 h-3" />
+                          <RefreshCw className="w-3.5 h-3.5" />
                           <input
                             type="file"
                             accept="image/*"
@@ -844,15 +844,15 @@ export default function DiamondEditorForm({
                       </div>
                     </div>
 
-                    <div className="pt-2 flex items-center justify-between text-[10px]">
+                    <div className="pt-2 flex items-center justify-between text-[11px] font-sans">
                       <button
                         type="button"
                         onClick={() => handleSetPrimary(idx)}
                         className={`flex items-center gap-1 font-semibold ${
-                          img.is_primary ? 'text-rajvi-gold' : 'text-rajvi-muted hover:text-white'
+                          img.is_primary ? 'text-rajvi-gold' : 'text-rajvi-offWhite/60 hover:text-white'
                         }`}
                       >
-                        <Star className={`w-3 h-3 ${img.is_primary ? 'fill-current' : ''}`} />
+                        <Star className={`w-3.5 h-3.5 ${img.is_primary ? 'fill-current' : ''}`} />
                         <span>{img.is_primary ? 'Primary' : 'Set Primary'}</span>
                       </button>
 
@@ -871,7 +871,7 @@ export default function DiamondEditorForm({
                       <select
                         value={img.view_tag || (idx === 0 ? 'front' : idx === 1 ? 'side' : idx === 2 ? 'close_up' : 'general')}
                         onChange={(e) => handleSetImageViewTag(idx, e.target.value)}
-                        className="w-full text-[10px] py-1 px-1.5 bg-[#151411] border border-rajvi-borderDark rounded-sm text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                        className="w-full text-[11px] font-sans py-1 px-1.5 bg-[#151411] border border-rajvi-borderDark rounded-sm text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
                       >
                         <option value="front">Front Face</option>
                         <option value="side">Side Profile</option>
@@ -887,9 +887,9 @@ export default function DiamondEditorForm({
             )}
 
             {/* Add Image Inputs */}
-            <div className="pt-4 border-t border-rajvi-borderDark/40 grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+            <div className="pt-4 border-t border-rajvi-borderDark/40 grid grid-cols-1 sm:grid-cols-12 gap-3.5 items-end">
               <div className="sm:col-span-6">
-                <label className="block text-[10px] uppercase tracking-wider text-rajvi-muted mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   Image URL
                 </label>
                 <input
@@ -897,12 +897,12 @@ export default function DiamondEditorForm({
                   placeholder="https://... or Cloudinary link"
                   value={newImageUrl}
                   onChange={(e) => setNewImageUrl(e.target.value)}
-                  className="w-full px-3 py-1.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                  className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
                 />
               </div>
 
               <div className="sm:col-span-4">
-                <label className="block text-[10px] uppercase tracking-wider text-rajvi-muted mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   Alt Text
                 </label>
                 <input
@@ -910,7 +910,7 @@ export default function DiamondEditorForm({
                   placeholder="Image description"
                   value={newImageAlt}
                   onChange={(e) => setNewImageAlt(e.target.value)}
-                  className="w-full px-3 py-1.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                  className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
                 />
               </div>
 
@@ -918,7 +918,7 @@ export default function DiamondEditorForm({
                 <button
                   type="button"
                   onClick={handleAddImageUrl}
-                  className="w-full py-2 bg-rajvi-charcoal hover:bg-rajvi-borderDark text-rajvi-gold text-xs uppercase tracking-wider font-semibold rounded-sm transition-colors"
+                  className="w-full py-2.5 bg-[#1F1E1A] hover:bg-rajvi-gold hover:text-black border border-rajvi-borderDark hover:border-rajvi-gold text-rajvi-gold text-[13px] font-sans uppercase tracking-wider font-semibold rounded-sm transition-colors"
                 >
                   Add URL
                 </button>
@@ -926,8 +926,8 @@ export default function DiamondEditorForm({
             </div>
 
             {/* Direct Multi-File Upload to Cloudinary / Server */}
-            <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-3">
-              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-[#1F1E1A] border border-rajvi-borderDark hover:border-rajvi-gold rounded-sm text-xs text-rajvi-offWhite font-semibold transition-colors shadow-sm">
+            <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-3.5">
+              <label className="cursor-pointer inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark hover:border-rajvi-gold rounded-sm text-[13px] font-sans text-rajvi-offWhite font-semibold transition-colors shadow-sm">
                 <Upload className="w-4 h-4 text-rajvi-gold" />
                 <span>
                   {uploadingImage
@@ -943,68 +943,68 @@ export default function DiamondEditorForm({
                   className="hidden"
                 />
               </label>
-              <span className="text-[11px] text-rajvi-muted">
+              <span className="text-[12px] font-sans text-rajvi-offWhite/60">
                 Accepts JPG, PNG, WebP • Multi-select enabled • Automatic view perspective tagging
               </span>
             </div>
           </div>
 
           {/* Section: Lapidary Specifications */}
-          <div className="bg-[#181714] border border-rajvi-borderDark/80 p-6 rounded-sm space-y-4">
-            <h3 className="font-serif text-base text-rajvi-offWhite font-normal border-b border-rajvi-borderDark/60 pb-2">
+          <div className="bg-[#181714] border border-rajvi-borderDark/80 p-6 sm:p-7 rounded-sm space-y-5">
+            <h3 className="font-serif text-lg sm:text-xl text-rajvi-offWhite font-normal border-b border-rajvi-borderDark/60 pb-3">
               Lapidary Specifications (JSONB)
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-rajvi-muted mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   Cut Grade
                 </label>
                 <input
                   type="text"
                   value={specs.cut_grade}
                   onChange={(e) => setSpecs({ ...specs, cut_grade: e.target.value })}
-                  className="w-full px-3 py-1.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none"
+                  className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-rajvi-muted mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   Symmetry
                 </label>
                 <input
                   type="text"
                   value={specs.symmetry}
                   onChange={(e) => setSpecs({ ...specs, symmetry: e.target.value })}
-                  className="w-full px-3 py-1.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none"
+                  className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-rajvi-muted mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   Polish
                 </label>
                 <input
                   type="text"
                   value={specs.polish}
                   onChange={(e) => setSpecs({ ...specs, polish: e.target.value })}
-                  className="w-full px-3 py-1.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none"
+                  className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold transition-colors"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-rajvi-muted mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   Fluorescence
                 </label>
                 <input
                   type="text"
                   value={specs.fluorescence}
                   onChange={(e) => setSpecs({ ...specs, fluorescence: e.target.value })}
-                  className="w-full px-3 py-1.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none"
+                  className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-rajvi-muted mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   Table / Crown Style
                 </label>
                 <input
@@ -1012,11 +1012,11 @@ export default function DiamondEditorForm({
                   placeholder="e.g. Dome Rose Cut"
                   value={specs.table_percentage}
                   onChange={(e) => setSpecs({ ...specs, table_percentage: e.target.value })}
-                  className="w-full px-3 py-1.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none"
+                  className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-rajvi-muted mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   Depth Percentage
                 </label>
                 <input
@@ -1024,14 +1024,14 @@ export default function DiamondEditorForm({
                   placeholder="e.g. 35% - 42%"
                   value={specs.depth_percentage}
                   onChange={(e) => setSpecs({ ...specs, depth_percentage: e.target.value })}
-                  className="w-full px-3 py-1.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none"
+                  className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-rajvi-muted mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   Facet Count
                 </label>
                 <input
@@ -1039,11 +1039,11 @@ export default function DiamondEditorForm({
                   placeholder="e.g. 24"
                   value={specs.facet_count}
                   onChange={(e) => setSpecs({ ...specs, facet_count: e.target.value })}
-                  className="w-full px-3 py-1.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none"
+                  className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-rajvi-muted mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   Culet
                 </label>
                 <input
@@ -1051,11 +1051,11 @@ export default function DiamondEditorForm({
                   placeholder="e.g. Flat Base"
                   value={specs.culet}
                   onChange={(e) => setSpecs({ ...specs, culet: e.target.value })}
-                  className="w-full px-3 py-1.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none"
+                  className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-rajvi-muted mb-1">
+                <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                   Girdle
                 </label>
                 <input
@@ -1063,7 +1063,7 @@ export default function DiamondEditorForm({
                   placeholder="e.g. Faceted, Medium"
                   value={specs.girdle}
                   onChange={(e) => setSpecs({ ...specs, girdle: e.target.value })}
-                  className="w-full px-3 py-1.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none"
+                  className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
                 />
               </div>
             </div>
@@ -1073,8 +1073,8 @@ export default function DiamondEditorForm({
         {/* Right 1 Col: Sizes, Status, SEO */}
         <div className="space-y-8">
           {/* Section: Status & Display */}
-          <div className="bg-[#181714] border border-rajvi-borderDark/80 p-6 rounded-sm space-y-4">
-            <h3 className="font-serif text-base text-rajvi-offWhite font-normal border-b border-rajvi-borderDark/60 pb-2">
+          <div className="bg-[#181714] border border-rajvi-borderDark/80 p-6 sm:p-7 rounded-sm space-y-5">
+            <h3 className="font-serif text-lg sm:text-xl text-rajvi-offWhite font-normal border-b border-rajvi-borderDark/60 pb-3">
               Visibility & Publishing
             </h3>
 
@@ -1086,7 +1086,7 @@ export default function DiamondEditorForm({
                   onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
                   className="rounded border-rajvi-borderDark text-rajvi-gold focus:ring-rajvi-gold h-4 w-4"
                 />
-                <span className="text-xs font-medium text-rajvi-offWhite">
+                <span className="text-[13px] font-sans font-medium text-rajvi-offWhite">
                   Active in Catalogue
                 </span>
               </label>
@@ -1098,29 +1098,29 @@ export default function DiamondEditorForm({
                   onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })}
                   className="rounded border-rajvi-borderDark text-rajvi-gold focus:ring-rajvi-gold h-4 w-4"
                 />
-                <span className="text-xs font-medium text-rajvi-goldLight flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-rajvi-gold" />
+                <span className="text-[13px] font-sans font-medium text-rajvi-goldLight flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-rajvi-gold" />
                   <span>Featured Cut (Homepage)</span>
                 </span>
               </label>
             </div>
 
             <div className="pt-2">
-              <label className="block text-[10px] uppercase tracking-wider text-rajvi-muted mb-1">
+              <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                 Display Order Sort
               </label>
               <input
                 type="number"
                 value={formData.display_order}
                 onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
-                className="w-full px-3 py-1.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite"
+                className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold transition-colors"
               />
             </div>
           </div>
 
           {/* Section: Calibrated Sizes */}
-          <div className="bg-[#181714] border border-rajvi-borderDark/80 p-6 rounded-sm space-y-4">
-            <h3 className="font-serif text-base text-rajvi-offWhite font-normal border-b border-rajvi-borderDark/60 pb-2">
+          <div className="bg-[#181714] border border-rajvi-borderDark/80 p-6 sm:p-7 rounded-sm space-y-5">
+            <h3 className="font-serif text-lg sm:text-xl text-rajvi-offWhite font-normal border-b border-rajvi-borderDark/60 pb-3">
               Calibrated Millimeter Sizes
             </h3>
 
@@ -1130,7 +1130,7 @@ export default function DiamondEditorForm({
                 {sizes.map((s) => (
                   <div
                     key={s.id}
-                    className="flex items-center justify-between p-2 rounded-sm bg-[#1F1E1A] border border-rajvi-borderDark/60 text-xs"
+                    className="flex items-center justify-between p-2.5 rounded-sm bg-[#1F1E1A] border border-rajvi-borderDark/60 text-[13px] font-sans"
                   >
                     <span className="font-semibold text-rajvi-goldLight">
                       {formatSizeMm(s.size_mm)}
@@ -1140,7 +1140,7 @@ export default function DiamondEditorForm({
                       <button
                         type="button"
                         onClick={() => handleToggleSizeAvailable(s.id)}
-                        className={`text-[10px] uppercase px-2 py-0.5 rounded-sm font-semibold ${
+                        className={`text-[11px] font-sans uppercase px-2.5 py-0.5 rounded-sm font-semibold transition-colors ${
                           s.is_available
                             ? 'bg-emerald-950/40 text-emerald-400 border border-emerald-800/40'
                             : 'bg-red-950/40 text-red-400 border border-red-800/40'
@@ -1152,7 +1152,7 @@ export default function DiamondEditorForm({
                       <button
                         type="button"
                         onClick={() => handleDeleteSize(s.id)}
-                        className="text-red-400 hover:text-red-300 p-0.5"
+                        className="text-red-400 hover:text-red-300 p-1"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -1161,7 +1161,7 @@ export default function DiamondEditorForm({
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-rajvi-muted">
+              <p className="text-[13px] font-sans text-rajvi-offWhite/60">
                 No sizes configured yet. Add calibrated millimeter sizes below.
               </p>
             )}
@@ -1174,12 +1174,12 @@ export default function DiamondEditorForm({
                 placeholder="e.g. 4.5"
                 value={newSizeMm}
                 onChange={(e) => setNewSizeMm(e.target.value)}
-                className="w-full px-3 py-1.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
               />
               <button
                 type="button"
                 onClick={handleAddSize}
-                className="px-3 py-1.5 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-semibold text-xs rounded-sm shrink-0 uppercase tracking-wider"
+                className="px-4 py-2.5 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-semibold text-[13px] font-sans rounded-sm shrink-0 uppercase tracking-wider transition-colors shadow-sm"
               >
                 Add mm
               </button>
@@ -1187,13 +1187,13 @@ export default function DiamondEditorForm({
           </div>
 
           {/* Section: SEO Metadata */}
-          <div className="bg-[#181714] border border-rajvi-borderDark/80 p-6 rounded-sm space-y-4">
-            <h3 className="font-serif text-base text-rajvi-offWhite font-normal border-b border-rajvi-borderDark/60 pb-2">
+          <div className="bg-[#181714] border border-rajvi-borderDark/80 p-6 sm:p-7 rounded-sm space-y-5">
+            <h3 className="font-serif text-lg sm:text-xl text-rajvi-offWhite font-normal border-b border-rajvi-borderDark/60 pb-3">
               Search Engine Optimization (SEO)
             </h3>
 
             <div>
-              <label className="block text-[10px] uppercase tracking-wider text-rajvi-muted mb-1">
+              <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                 Meta Title
               </label>
               <input
@@ -1201,12 +1201,12 @@ export default function DiamondEditorForm({
                 placeholder="e.g. Rose Octagone Fancy Cut | Rajvi Diamonds"
                 value={formData.seo_title}
                 onChange={(e) => setFormData({ ...formData, seo_title: e.target.value })}
-                className="w-full px-3 py-1.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none"
+                className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-[10px] uppercase tracking-wider text-rajvi-muted mb-1">
+              <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                 Meta Description
               </label>
               <textarea
@@ -1214,7 +1214,7 @@ export default function DiamondEditorForm({
                 placeholder="Concise Google search description..."
                 value={formData.seo_description}
                 onChange={(e) => setFormData({ ...formData, seo_description: e.target.value })}
-                className="w-full px-3 py-1.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none"
+                className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors leading-relaxed"
               />
             </div>
           </div>
@@ -1223,23 +1223,23 @@ export default function DiamondEditorForm({
 
       {/* Add Custom Color Modal */}
       {showAddColorModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[#181714] border border-rajvi-gold/40 rounded-sm p-6 max-w-sm w-full space-y-4 shadow-luxuryDark">
-            <div className="flex items-center justify-between border-b border-rajvi-borderDark pb-3">
-              <h4 className="font-serif text-lg text-rajvi-offWhite font-normal">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-[#181714] border border-rajvi-borderDark rounded-sm p-6 sm:p-7 max-w-md w-full space-y-4 shadow-luxuryDark">
+            <div className="flex items-center justify-between border-b border-rajvi-borderDark/60 pb-3">
+              <h4 className="font-serif text-lg sm:text-xl text-rajvi-offWhite font-normal">
                 Add Diamond Color Grade
               </h4>
               <button
                 type="button"
                 onClick={() => setShowAddColorModal(false)}
-                className="text-rajvi-muted hover:text-white"
+                className="text-rajvi-offWhite/60 hover:text-white transition-colors p-1"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div>
-              <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+              <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                 Color Name / Grade
               </label>
               <input
@@ -1247,29 +1247,29 @@ export default function DiamondEditorForm({
                 placeholder="e.g. Fancy Vivid Pink, D, O-P"
                 value={newColorName}
                 onChange={(e) => setNewColorName(e.target.value)}
-                className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+              <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                 Category
               </label>
               <select
                 value={newColorCategory}
                 onChange={(e) => setNewColorCategory(e.target.value as 'standard' | 'fancy')}
-                className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold transition-colors"
               >
                 <option value="standard">Standard Alphabetical (D – Z)</option>
                 <option value="fancy">Fancy Color (Yellow, Pink, etc.)</option>
               </select>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-rajvi-borderDark">
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-rajvi-borderDark/60">
               <button
                 type="button"
                 onClick={() => setShowAddColorModal(false)}
-                className="px-4 py-2 text-xs text-rajvi-muted hover:text-white"
+                className="px-4 py-2 text-[13px] font-sans text-rajvi-offWhite/60 hover:text-white transition-colors"
               >
                 Cancel
               </button>
@@ -1277,7 +1277,7 @@ export default function DiamondEditorForm({
                 type="button"
                 disabled={savingColor || !newColorName.trim()}
                 onClick={handleSaveNewColor}
-                className="px-4 py-2 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-semibold text-xs uppercase tracking-wider rounded-sm disabled:opacity-50"
+                className="px-5 py-2.5 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-semibold text-[13px] font-sans uppercase tracking-wider rounded-sm transition-colors shadow-sm disabled:opacity-50"
               >
                 {savingColor ? 'Saving...' : 'Add & Select'}
               </button>
@@ -1288,23 +1288,23 @@ export default function DiamondEditorForm({
 
       {/* Add Custom Clarity Modal */}
       {showAddClarityModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[#181714] border border-rajvi-gold/40 rounded-sm p-6 max-w-sm w-full space-y-4 shadow-luxuryDark">
-            <div className="flex items-center justify-between border-b border-rajvi-borderDark pb-3">
-              <h4 className="font-serif text-lg text-rajvi-offWhite font-normal">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-[#181714] border border-rajvi-borderDark rounded-sm p-6 sm:p-7 max-w-md w-full space-y-4 shadow-luxuryDark">
+            <div className="flex items-center justify-between border-b border-rajvi-borderDark/60 pb-3">
+              <h4 className="font-serif text-lg sm:text-xl text-rajvi-offWhite font-normal">
                 Add Purity / Clarity Grade
               </h4>
               <button
                 type="button"
                 onClick={() => setShowAddClarityModal(false)}
-                className="text-rajvi-muted hover:text-white"
+                className="text-rajvi-offWhite/60 hover:text-white transition-colors p-1"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div>
-              <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+              <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                 Clarity Code
               </label>
               <input
@@ -1312,12 +1312,12 @@ export default function DiamondEditorForm({
                 placeholder="e.g. VVS1, VS2, SI1"
                 value={newClarityName}
                 onChange={(e) => setNewClarityName(e.target.value)}
-                className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1">
+              <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
                 Full Label Description
               </label>
               <input
@@ -1325,15 +1325,15 @@ export default function DiamondEditorForm({
                 placeholder="e.g. Very Very Slightly Included 1"
                 value={newClarityLabel}
                 onChange={(e) => setNewClarityLabel(e.target.value)}
-                className="w-full px-3 py-2 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite focus:outline-none focus:border-rajvi-gold"
+                className="w-full px-3.5 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
               />
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-rajvi-borderDark">
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-rajvi-borderDark/60">
               <button
                 type="button"
                 onClick={() => setShowAddClarityModal(false)}
-                className="px-4 py-2 text-xs text-rajvi-muted hover:text-white"
+                className="px-4 py-2 text-[13px] font-sans text-rajvi-offWhite/60 hover:text-white transition-colors"
               >
                 Cancel
               </button>
@@ -1341,7 +1341,7 @@ export default function DiamondEditorForm({
                 type="button"
                 disabled={savingClarity || !newClarityName.trim()}
                 onClick={handleSaveNewClarity}
-                className="px-4 py-2 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-semibold text-xs uppercase tracking-wider rounded-sm disabled:opacity-50"
+                className="px-5 py-2.5 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-semibold text-[13px] font-sans uppercase tracking-wider rounded-sm transition-colors shadow-sm disabled:opacity-50"
               >
                 {savingClarity ? 'Saving...' : 'Add & Select'}
               </button>

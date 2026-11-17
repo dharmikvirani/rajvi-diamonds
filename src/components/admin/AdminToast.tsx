@@ -62,7 +62,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             >
               <div className="flex items-start gap-2.5">
                 <Icon className={`w-4 h-4 shrink-0 mt-0.5 ${iconColor}`} />
-                <p className="text-xs font-medium leading-relaxed">{toast.message}</p>
+                <p className="text-[13px] font-sans font-medium leading-relaxed">{toast.message}</p>
               </div>
               <button
                 onClick={() => removeToast(toast.id)}

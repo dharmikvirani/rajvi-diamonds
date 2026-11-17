@@ -58,17 +58,17 @@ export default function AdminLoginPage() {
               className="object-contain h-full w-auto mx-auto"
             />
           </div>
-          <span className="text-[10px] uppercase tracking-[0.25em] text-rajvi-gold font-semibold block">
+          <span className="text-[11px] font-sans uppercase tracking-[0.25em] text-rajvi-gold font-medium block">
             Authorized Personnel Only
           </span>
-          <h2 className="font-serif text-xl sm:text-2xl text-rajvi-offWhite font-normal mt-1">
+          <h2 className="font-serif text-2xl text-rajvi-offWhite font-normal mt-1.5">
             Management Portal
           </h2>
         </div>
 
         {/* Error Alert */}
         {error && (
-          <div className="mb-6 p-4 rounded-sm bg-red-950/40 border border-red-800/50 flex items-start gap-3 text-red-300 text-xs">
+          <div className="mb-6 p-4 rounded-sm bg-red-950/40 border border-red-800/50 flex items-start gap-3 text-red-300 text-[13px] font-sans">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
             <span>{error}</span>
           </div>
@@ -76,11 +76,11 @@ export default function AdminLoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1.5">
+            <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
               Admin Identifier / Email
             </label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-rajvi-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Mail className="w-4 h-4 text-rajvi-offWhite/45 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="admin@rajvidiamonds.com"
@@ -88,24 +88,24 @@ export default function AdminLoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="username"
-                className="w-full pl-10 pr-4 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite placeholder:text-rajvi-muted focus:outline-none focus:border-rajvi-gold transition-colors"
+                className="w-full pl-10 pr-4 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-[11px] uppercase tracking-wider text-rajvi-offWhite/80 font-semibold mb-1.5">
+            <label className="block text-[12px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 font-medium mb-1.5">
               Secret Passkey
             </label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-rajvi-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Lock className="w-4 h-4 text-rajvi-offWhite/45 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="password"
                 placeholder="••••••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full pl-10 pr-4 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-xs text-rajvi-offWhite placeholder:text-rajvi-muted focus:outline-none focus:border-rajvi-gold transition-colors"
+                className="w-full pl-10 pr-4 py-2.5 bg-[#1F1E1A] border border-rajvi-borderDark rounded-sm text-[13px] font-sans text-rajvi-offWhite placeholder:text-rajvi-offWhite/40 focus:outline-none focus:border-rajvi-gold transition-colors"
               />
             </div>
           </div>
@@ -113,7 +113,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 inline-flex items-center justify-center gap-2 py-3 px-6 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black text-xs uppercase tracking-widest font-semibold rounded-sm transition-all shadow-goldGlow disabled:opacity-50"
+            className="w-full mt-2 inline-flex items-center justify-center gap-2 py-3 px-6 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black text-[13px] font-sans uppercase tracking-widest font-semibold rounded-sm transition-all shadow-sm disabled:opacity-50"
           >
             {loading ? (
               <>

@@ -35,11 +35,11 @@ export default function ConfirmationModal({
       />
 
       {/* Modal Dialog */}
-      <div className="relative bg-[#1A1815] border border-rajvi-borderDark text-rajvi-offWhite max-w-md w-full p-6 rounded-sm shadow-luxuryDark z-10 animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative bg-[#1A1815] border border-rajvi-borderDark text-rajvi-offWhite max-w-md w-full p-6 sm:p-7 rounded-sm shadow-luxuryDark z-10 animate-in fade-in zoom-in-95 duration-200">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
             <div
-              className={`w-10 h-10 rounded-sm flex items-center justify-center ${
+              className={`w-10 h-10 rounded-sm flex items-center justify-center shrink-0 ${
                 isDestructive
                   ? 'bg-red-950/40 text-red-400 border border-red-800/40'
                   : 'bg-rajvi-charcoal text-rajvi-gold border border-rajvi-gold/30'
@@ -47,20 +47,20 @@ export default function ConfirmationModal({
             >
               <AlertTriangle className="w-5 h-5" />
             </div>
-            <h3 className="font-serif text-lg font-normal text-rajvi-offWhite">
+            <h3 className="font-serif text-lg sm:text-xl font-normal text-rajvi-offWhite">
               {title}
             </h3>
           </div>
 
           <button
             onClick={onCancel}
-            className="text-rajvi-offWhite/60 hover:text-white transition-colors"
+            className="text-rajvi-offWhite/60 hover:text-white transition-colors p-1"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <p className="text-xs sm:text-sm text-rajvi-offWhite/70 leading-relaxed mb-6">
+        <p className="text-[13px] font-sans text-rajvi-offWhite/75 leading-relaxed mb-6">
           {message}
         </p>
 
@@ -68,7 +68,7 @@ export default function ConfirmationModal({
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 rounded-sm border border-rajvi-borderDark text-xs uppercase tracking-wider text-rajvi-offWhite/80 hover:bg-rajvi-charcoal transition-colors font-semibold"
+            className="px-4 py-2.5 rounded-sm border border-rajvi-borderDark text-[13px] font-sans uppercase tracking-wider text-rajvi-offWhite/80 hover:bg-rajvi-charcoal transition-colors font-medium"
           >
             {cancelLabel}
           </button>
@@ -76,7 +76,7 @@ export default function ConfirmationModal({
           <button
             type="button"
             onClick={onConfirm}
-            className={`px-5 py-2 rounded-sm text-xs uppercase tracking-wider font-semibold transition-colors ${
+            className={`px-5 py-2.5 rounded-sm text-[13px] font-sans uppercase tracking-wider font-semibold transition-colors shadow-sm ${
               isDestructive
                 ? 'bg-red-600 hover:bg-red-700 text-white'
                 : 'bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black'
