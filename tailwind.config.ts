@@ -11,17 +11,21 @@ const config: Config = {
       colors: {
         rajvi: {
           black: "#171614",
+          deepBlack: "#0D0C0A",
+          graphite: "#141311",
           charcoal: "#24221E",
-          cardDark: "#1E1C18",
-          borderDark: "#2F2B24",
+          cardDark: "#1A1916",
+          borderDark: "#2A2722",
           gold: "#C6A46A",
           goldLight: "#E5D2AD",
           goldMuted: "#9C7F4E",
           offWhite: "#F8F7F4",
+          ivory: "#F5F5F0",
           lightGrey: "#EAE8E3",
           borderLight: "#DDD9D0",
           textDark: "#24221E",
           textMuted: "#77736C",
+          mutedGrey: "#8E8A82",
         },
       },
       fontFamily: {

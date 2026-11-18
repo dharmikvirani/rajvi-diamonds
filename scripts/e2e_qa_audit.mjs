@@ -698,7 +698,10 @@ async function runQA() {
         testedImages++;
         let fullUrl = imgUrl.startsWith('http') ? imgUrl : `${PROD_BASE}${imgUrl}`;
         try {
-          const imgCheck = await fetch(fullUrl, { method: 'HEAD' });
+          let imgCheck = await fetch(fullUrl, { method: 'HEAD' });
+          if ((imgCheck.status === 400 || imgCheck.status === 405) && fullUrl.includes('/_next/image')) {
+            imgCheck = await fetch(fullUrl, { method: 'GET', headers: { Range: 'bytes=0-10' } });
+          }
           if (imgCheck.status >= 400) {
             brokenImages++;
             console.error(`Broken image on ${route}: ${fullUrl} (${imgCheck.status})`);

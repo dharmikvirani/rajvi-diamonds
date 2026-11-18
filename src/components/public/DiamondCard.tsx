@@ -170,7 +170,7 @@ export default function DiamondCard({ diamond, theme = 'light' }: DiamondCardPro
           <h3
             className={`font-serif text-xl sm:text-2xl font-normal mb-2 transition-colors ${
               isDark
-                ? 'text-rajvi-offWhite group-hover:text-rajvi-goldLight'
+                ? 'text-white group-hover:text-rajvi-goldLight'
                 : 'text-rajvi-textDark group-hover:text-rajvi-gold'
             }`}
           >
@@ -180,61 +180,85 @@ export default function DiamondCard({ diamond, theme = 'light' }: DiamondCardPro
           {/* Short Description */}
           <p
             className={`text-xs line-clamp-2 leading-relaxed mb-4 ${
-              isDark ? 'text-rajvi-offWhite/70' : 'text-rajvi-textMuted'
+              isDark ? 'text-white/70' : 'text-rajvi-textMuted'
             }`}
           >
             {diamond.short_description}
           </p>
 
-          {/* Specifications Pills Row */}
-          <div className="flex flex-wrap items-center gap-1.5 mb-4">
-            {colors.length > 0 && (
-              <span className="text-[10px] px-2 py-0.5 rounded-sm bg-rajvi-offWhite border border-rajvi-borderLight text-rajvi-textDark font-medium">
-                Color: {colors.join(', ')}
-              </span>
-            )}
-            {clarities.length > 0 && (
-              <span className="text-[10px] px-2 py-0.5 rounded-sm bg-rajvi-offWhite border border-rajvi-borderLight text-rajvi-textDark font-medium">
-                Clarity: {clarities.join(', ')}
-              </span>
-            )}
-          </div>
+          {/* Specifications Pills Row - Only when actual data exists */}
+          {(colors.length > 0 || clarities.length > 0) && (
+            <div className="flex flex-wrap items-center gap-1.5 mb-4">
+              {colors.length > 0 && (
+                <span
+                  className={`text-[10px] px-2 py-0.5 rounded-sm font-medium ${
+                    isDark
+                      ? 'bg-[#1C1B17] border border-[#2A2722] text-rajvi-goldLight'
+                      : 'bg-rajvi-offWhite border border-rajvi-borderLight text-rajvi-textDark'
+                  }`}
+                >
+                  Color: {colors.join(', ')}
+                </span>
+              )}
+              {clarities.length > 0 && (
+                <span
+                  className={`text-[10px] px-2 py-0.5 rounded-sm font-medium ${
+                    isDark
+                      ? 'bg-[#1C1B17] border border-[#2A2722] text-rajvi-goldLight'
+                      : 'bg-rajvi-offWhite border border-rajvi-borderLight text-rajvi-textDark'
+                  }`}
+                >
+                  Clarity: {clarities.join(', ')}
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Bottom Specs & Action */}
+        {/* Bottom Specs & Action Buttons */}
         <div
-          className={`pt-4 border-t flex items-center justify-between mt-auto ${
-            isDark ? 'border-rajvi-borderDark/60' : 'border-rajvi-lightGrey'
+          className={`pt-4 border-t flex flex-col gap-3 mt-auto ${
+            isDark ? 'border-[#2A2722]' : 'border-rajvi-lightGrey'
           }`}
         >
-          <div>
+          <div className="flex items-center justify-between">
             <span
-              className={`block text-[10px] uppercase tracking-wider ${
-                isDark ? 'text-rajvi-muted' : 'text-rajvi-textMuted/80'
+              className={`text-[10px] uppercase tracking-wider ${
+                isDark ? 'text-white/50' : 'text-rajvi-textMuted/80'
               }`}
             >
               Sizes Available
             </span>
             <span
               className={`text-xs font-semibold ${
-                isDark ? 'text-rajvi-offWhite' : 'text-rajvi-textDark'
+                isDark ? 'text-white/90' : 'text-rajvi-textDark'
               }`}
             >
               {sizeRangeText}
             </span>
           </div>
 
-          <a
-            href={`/collections/${diamond.slug}`}
-            className={`inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold transition-colors ${
-              isDark
-                ? 'text-rajvi-gold hover:text-rajvi-goldLight'
-                : 'text-rajvi-textDark hover:text-rajvi-gold'
-            }`}
-          >
-            <span>View Cut</span>
-            <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </a>
+          {/* Dual CTAs: View Details & Enquire Now */}
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <a
+              href={`/collections/${diamond.slug}`}
+              className={`inline-flex items-center justify-center gap-1 text-[11px] uppercase tracking-wider font-semibold py-2 px-3 rounded-sm transition-colors text-center ${
+                isDark
+                  ? 'border border-[#2A2722] text-white/80 hover:text-white hover:border-rajvi-gold/50 bg-[#161513]'
+                  : 'border border-rajvi-borderLight text-rajvi-textDark hover:text-rajvi-gold hover:border-rajvi-gold bg-rajvi-offWhite'
+              }`}
+            >
+              <span>View Details</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </a>
+
+            <a
+              href={`/contact?diamond=${diamond.slug}&cut=${encodeURIComponent(diamond.name)}`}
+              className="inline-flex items-center justify-center text-[11px] uppercase tracking-wider font-semibold py-2 px-3 rounded-sm bg-rajvi-gold hover:bg-rajvi-goldLight text-[#0D0C0A] transition-colors text-center shadow-sm"
+            >
+              <span>Enquire Now</span>
+            </a>
+          </div>
         </div>
       </div>
     </div>
