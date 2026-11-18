@@ -14,6 +14,12 @@ import {
   LogOut,
   ExternalLink,
   X,
+  LayoutTemplate,
+  Navigation,
+  PanelBottom,
+  Images,
+  FileText,
+  Search,
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -28,13 +34,22 @@ export default function AdminSidebar({
   const pathname = usePathname();
   const router = useRouter();
 
-  const navItems = [
+  const coreNavItems = [
     { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
     { label: 'Diamonds', href: '/admin/diamonds', icon: Gem },
     { label: 'Categories', href: '/admin/categories', icon: Layers },
     { label: 'Sizes & Dimensions', href: '/admin/sizes', icon: Ruler },
     { label: 'Inquiries', href: '/admin/inquiries', icon: Inbox },
-    { label: 'Site Settings', href: '/admin/settings', icon: Settings },
+  ];
+
+  const cmsNavItems = [
+    { label: 'Homepage Sections', href: '/admin/website/homepage', icon: LayoutTemplate },
+    { label: 'Header & Navigation', href: '/admin/website/navigation', icon: Navigation },
+    { label: 'Footer Editor', href: '/admin/website/footer', icon: PanelBottom },
+    { label: 'Media Gallery', href: '/admin/website/gallery', icon: Images },
+    { label: 'Page Content', href: '/admin/website/pages', icon: FileText },
+    { label: 'General Settings', href: '/admin/settings', icon: Settings },
+    { label: 'SEO Settings', href: '/admin/website/seo', icon: Search },
   ];
 
   const handleLogout = async () => {
@@ -84,29 +99,62 @@ export default function AdminSidebar({
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 px-3.5 py-4 space-y-1 overflow-y-auto">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive =
-            item.href === '/admin'
-              ? pathname === '/admin'
-              : pathname?.startsWith(item.href);
+      <nav className="flex-1 px-3.5 py-4 space-y-6 overflow-y-auto">
+        {/* Core Management */}
+        <div className="space-y-1">
+          {coreNavItems.map((item) => {
+            const Icon = item.icon;
+            const isActive =
+              item.href === '/admin'
+                ? pathname === '/admin'
+                : pathname?.startsWith(item.href);
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onCloseMobile}
-              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-sm text-[13px] font-sans font-medium transition-all ${isActive
-                ? 'bg-rajvi-gold text-rajvi-black font-semibold shadow-sm'
-                : 'text-rajvi-offWhite/80 hover:bg-[#1E1C18] hover:text-rajvi-goldLight'
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onCloseMobile}
+                className={`flex items-center gap-3 px-3.5 py-2 rounded-sm text-[13px] font-sans font-medium transition-all ${
+                  isActive
+                    ? 'bg-rajvi-gold text-rajvi-black font-semibold shadow-sm'
+                    : 'text-rajvi-offWhite/80 hover:bg-[#1E1C18] hover:text-rajvi-goldLight'
                 }`}
-            >
-              <Icon className="w-[18px] h-[18px] shrink-0" />
-              <span>{item.label}</span>
-            </Link>
-          );
-        })}
+              >
+                <Icon className="w-[17px] h-[17px] shrink-0" />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Website Management */}
+        <div className="space-y-1">
+          <div className="px-3 pb-1.5 pt-2">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-rajvi-gold/80 font-semibold">
+              Website Management
+            </span>
+          </div>
+          {cmsNavItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname?.startsWith(item.href);
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onCloseMobile}
+                className={`flex items-center gap-3 px-3.5 py-2 rounded-sm text-[13px] font-sans font-medium transition-all ${
+                  isActive
+                    ? 'bg-rajvi-gold text-rajvi-black font-semibold shadow-sm'
+                    : 'text-rajvi-offWhite/80 hover:bg-[#1E1C18] hover:text-rajvi-goldLight'
+                }`}
+              >
+                <Icon className="w-[17px] h-[17px] shrink-0" />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </div>
       </nav>
 
       {/* Bottom Actions */}

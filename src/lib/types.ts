@@ -150,7 +150,11 @@ export interface SiteSettings {
   contact_email: string;
   phone_number: string;
   instagram_url: string;
+  facebook_url?: string;
+  linkedin_url?: string;
   business_address: string;
+  google_maps_url?: string;
+  business_hours?: string;
   footer_text: string;
   hero_heading: string;
   hero_subtitle: string;
@@ -160,6 +164,168 @@ export interface SiteSettings {
   about_expertise: string;
   about_quality: string;
   about_vision: string;
+}
+
+// ==============================================================================
+// COMPLETE CMS TYPES
+// ==============================================================================
+
+export interface CmsButton {
+  label: string;
+  href: string;
+  variant?: 'primary' | 'outline' | 'whatsapp';
+  is_external?: boolean;
+  is_active?: boolean;
+}
+
+export interface CmsBenefitCardItem {
+  id: string;
+  number: string;
+  title: string;
+  description: string;
+  icon?: string;
+  display_order: number;
+  is_active: boolean;
+}
+
+export interface CmsCraftsmanshipStageItem {
+  id: string;
+  step: string;
+  title: string;
+  tagline: string;
+  description: string;
+  badge: string;
+  image_url: string;
+  image_alt?: string;
+  display_order: number;
+  is_active: boolean;
+}
+
+export interface CmsHallmarkPillItem {
+  id: string;
+  title: string;
+  highlight: string;
+  icon?: string;
+}
+
+export interface CmsBrandPillarItem {
+  id: string;
+  title: string;
+  description: string;
+  icon?: string;
+}
+
+export interface CmsSection {
+  id: string;
+  section_key: string; // 'hero' | 'featured_cuts' | 'why_choose_us' | 'craftsmanship' | 'brand_story' | 'inquiry_cta'
+  page_slug: string; // 'home' | 'about' | 'contact' | 'privacy'
+  title: string;
+  subtitle: string;
+  badge: string;
+  description: string;
+  image_url: string;
+  image_mobile_url?: string;
+  image_alt?: string;
+  buttons: CmsButton[];
+  items: any[];
+  is_active: boolean;
+  display_order: number;
+  draft_data?: Partial<CmsSection> | null;
+  has_draft: boolean;
+  published_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface WebsiteNavigationItem {
+  id: string;
+  menu_location: 'header' | 'footer_collections' | 'footer_navigation';
+  label: string;
+  href: string;
+  display_order: number;
+  is_active: boolean;
+  is_external?: boolean;
+}
+
+export interface HeaderSettings {
+  logo_url: string;
+  logo_width: number;
+  logo_height: number;
+  show_cta: boolean;
+  cta_label: string;
+  cta_href: string;
+  show_whatsapp: boolean;
+}
+
+export interface FooterSettings {
+  logo_url: string;
+  brand_description: string;
+  disclaimer: string;
+  copyright_text: string;
+  show_socials: boolean;
+  footer_badge: string;
+}
+
+export interface CmsGalleryItem {
+  id: string;
+  image_url: string;
+  cloudinary_public_id?: string | null;
+  caption: string;
+  alt_text: string;
+  category: string;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PageCmsContent {
+  about: {
+    hero_title: string;
+    hero_subtitle: string;
+    hero_badge: string;
+    story_heading: string;
+    story_p1: string;
+    story_p2: string;
+    story_image: string;
+    expertise_heading: string;
+    expertise_subtitle: string;
+    expertise_items: { title: string; description: string; icon?: string }[];
+    craftsmanship_heading: string;
+    craftsmanship_desc: string;
+    craftsmanship_image: string;
+  };
+  contact: {
+    hero_title: string;
+    hero_subtitle: string;
+    hero_badge: string;
+    whatsapp_box_title: string;
+    whatsapp_box_subtitle: string;
+    whatsapp_box_desc: string;
+    direct_channels_title: string;
+  };
+  privacy: {
+    title: string;
+    badge: string;
+    last_updated: string;
+    sections: { id: string; heading: string; content: string }[];
+  };
+}
+
+export interface SeoSettings {
+  default_title: string;
+  default_description: string;
+  default_keywords: string[];
+  default_og_image: string;
+  page_seo: Record<
+    string,
+    {
+      title?: string;
+      description?: string;
+      keywords?: string[];
+      og_image?: string;
+    }
+  >;
 }
 
 export interface FilterParams {

@@ -6,9 +6,22 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 interface FeaturedCutsProps {
   diamonds: Diamond[];
   theme?: 'dark' | 'light';
+  title?: string;
+  subtitle?: string;
+  badge?: string;
+  buttonLabel?: string;
+  buttonHref?: string;
 }
 
-export default function FeaturedCuts({ diamonds, theme = 'dark' }: FeaturedCutsProps) {
+export default function FeaturedCuts({
+  diamonds,
+  theme = 'dark',
+  title = 'Featured Diamond Collections',
+  subtitle = 'Discover distinctive diamond cuts crafted with precision.',
+  badge = 'Curated Masterpieces',
+  buttonLabel = 'View Complete Catalogue',
+  buttonHref = '/collections',
+}: FeaturedCutsProps) {
   if (!diamonds || diamonds.length === 0) {
     return null;
   }
@@ -29,25 +42,25 @@ export default function FeaturedCuts({ diamonds, theme = 'dark' }: FeaturedCutsP
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-rajvi-gold font-semibold mb-3">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Curated Masterpieces</span>
+              <span>{badge}</span>
             </div>
             <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight leading-tight">
-              Featured Diamond Collections
+              {title}
             </h2>
             <p
               className={`mt-3 text-sm sm:text-base leading-relaxed font-light ${
                 isDark ? 'text-white/70' : 'text-rajvi-textMuted'
               }`}
             >
-              Discover distinctive diamond cuts crafted with precision.
+              {subtitle}
             </p>
           </div>
 
           <a
-            href="/collections"
+            href={buttonHref}
             className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-rajvi-gold hover:text-rajvi-goldLight font-semibold transition-colors group self-start md:self-auto"
           >
-            <span>View Complete Catalogue</span>
+            <span>{buttonLabel}</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </a>
         </div>

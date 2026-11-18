@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Playfair_Display, Inter } from 'next/font/google';
 import './globals.css';
-import { getSiteSettings } from '@/lib/db';
+import { getSiteSettings, getSeoSettings } from '@/lib/db';
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -23,49 +23,54 @@ export const viewport: Viewport = {
 };
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings();
+  const [settings, seo] = await Promise.all([getSiteSettings(), getSeoSettings()]);
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rajvidiamonds.com';
+
+  const defaultTitle = seo.default_title || `${settings.brand_name} | Premium Fancy Cut Diamonds`;
+  const defaultDesc = seo.default_description || settings.hero_subtitle || 'Premier fancy diamond manufacturer and supplier showcasing exceptional cuts, rare silhouettes, and artisanal lapidary excellence.';
+  const keywords = seo.default_keywords && seo.default_keywords.length > 0 ? seo.default_keywords : [
+    'Rajvi Diamonds',
+    'fancy cut diamonds',
+    'rose octagone diamond',
+    'tulip cut diamond',
+    'geometric diamond cuts',
+    'luxury diamond manufacturer',
+    'bespoke jewellery diamonds',
+    'wholesale fancy diamonds',
+  ];
+  const ogImage = seo.default_og_image || '/rajvi-diamonds-logo.png';
 
   return {
     metadataBase: new URL(siteUrl),
     title: {
-      default: `${settings.brand_name} | Premium Fancy Cut Diamonds`,
+      default: defaultTitle,
       template: `%s | ${settings.brand_name}`,
     },
-    description: settings.hero_subtitle || 'Premier fancy diamond manufacturer and supplier showcasing exceptional cuts, rare silhouettes, and artisanal lapidary excellence.',
-    keywords: [
-      'Rajvi Diamonds',
-      'fancy cut diamonds',
-      'rose octagone diamond',
-      'tulip cut diamond',
-      'geometric diamond cuts',
-      'luxury diamond manufacturer',
-      'bespoke jewellery diamonds',
-      'wholesale fancy diamonds',
-    ],
-    authors: [{ name: 'Rajvi Diamonds' }],
-    creator: 'Rajvi Diamonds',
+    description: defaultDesc,
+    keywords,
+    authors: [{ name: settings.brand_name || 'Rajvi Diamonds' }],
+    creator: settings.brand_name || 'Rajvi Diamonds',
     openGraph: {
       type: 'website',
       locale: 'en_US',
       url: siteUrl,
-      title: `${settings.brand_name} | Premium Fancy Cut Diamonds`,
-      description: settings.hero_subtitle,
+      title: defaultTitle,
+      description: defaultDesc,
       siteName: settings.brand_name,
       images: [
         {
-          url: '/rajvi-diamonds-logo.png',
+          url: ogImage,
           width: 1536,
           height: 1024,
-          alt: 'Rajvi Diamonds Brand',
+          alt: `${settings.brand_name} Brand`,
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${settings.brand_name} | Premium Fancy Cut Diamonds`,
-      description: settings.hero_subtitle,
-      images: ['/rajvi-diamonds-logo.png'],
+      title: defaultTitle,
+      description: defaultDesc,
+      images: [ogImage],
     },
     robots: {
       index: true,

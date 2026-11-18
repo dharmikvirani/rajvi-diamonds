@@ -4,9 +4,25 @@ import { Mail, MessageCircle, Sparkles } from 'lucide-react';
 
 interface InquiryCTAProps {
   whatsappNumber?: string;
+  title?: string;
+  subtitle?: string;
+  badge?: string;
+  description?: string;
+  whatsappLabel?: string;
+  contactLabel?: string;
+  contactHref?: string;
 }
 
-export default function InquiryCTA({ whatsappNumber = '' }: InquiryCTAProps) {
+export default function InquiryCTA({
+  whatsappNumber = '',
+  title = 'Looking for Something Exceptional?',
+  subtitle = 'Direct Trade & Bespoke Cutting Inquiries',
+  badge = 'Direct Trade & Bespoke Cutting Inquiries',
+  description = 'Connect with Rajvi Diamonds to explore our collection and discuss your diamond requirements.',
+  whatsappLabel = 'WhatsApp Enquiry',
+  contactLabel = 'Contact Us',
+  contactHref = '/contact',
+}: InquiryCTAProps) {
   return (
     <section className="bg-[#0D0C0A] text-white py-20 sm:py-24 border-t border-[#2A2722] relative overflow-hidden">
       {/* Subtle Gold Ambient Glow */}
@@ -16,20 +32,26 @@ export default function InquiryCTA({ whatsappNumber = '' }: InquiryCTAProps) {
         {/* Subtle Luxury Badge */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-rajvi-gold/30 bg-[#161512] text-rajvi-goldLight text-[11px] uppercase tracking-[0.25em] font-medium mb-6 shadow-sm">
           <Sparkles className="w-3.5 h-3.5 text-rajvi-gold" />
-          <span>Direct Trade & Bespoke Cutting Inquiries</span>
+          <span>{badge}</span>
         </div>
 
         {/* Heading */}
         <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl text-white font-normal tracking-tight mb-6 leading-tight">
-          Looking for Something{' '}
-          <span className="gold-gradient-text italic font-serif">
-            Exceptional?
-          </span>
+          {title.includes('Something') ? (
+            <>
+              {title.split('Something')[0]}Something{' '}
+              <span className="gold-gradient-text italic font-serif">
+                {title.split('Something')[1]?.trim() || 'Exceptional?'}
+              </span>
+            </>
+          ) : (
+            title
+          )}
         </h2>
 
         {/* Description */}
         <p className="text-white/75 text-base sm:text-lg max-w-xl mx-auto mb-10 leading-relaxed font-light">
-          Connect with Rajvi Diamonds to explore our collection and discuss your diamond requirements.
+          {description}
         </p>
 
         {/* Two Action Buttons: WhatsApp Enquiry & Contact Us */}
@@ -37,16 +59,16 @@ export default function InquiryCTA({ whatsappNumber = '' }: InquiryCTAProps) {
           <WhatsAppButton
             phoneNumber={whatsappNumber}
             variant="primary"
-            label="WhatsApp Enquiry"
+            label={whatsappLabel}
             className="w-full sm:w-auto px-8 py-4 text-xs uppercase tracking-widest font-semibold shadow-goldGlow hover:scale-105"
           />
 
           <a
-            href="/contact"
+            href={contactHref}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 border border-[#2A2722] text-white/90 hover:text-white hover:border-rajvi-gold/60 bg-[#141311] font-semibold text-xs uppercase tracking-widest rounded-sm transition-all duration-300 hover:scale-105"
           >
             <Mail className="w-4 h-4 text-rajvi-gold" />
-            <span>Contact Us</span>
+            <span>{contactLabel}</span>
           </a>
         </div>
       </div>

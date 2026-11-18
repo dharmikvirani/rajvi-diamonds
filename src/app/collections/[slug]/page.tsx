@@ -5,7 +5,14 @@ import Header from '@/components/public/Header';
 import Footer from '@/components/public/Footer';
 import DiamondDetailClient from '@/components/public/DiamondDetailClient';
 import WhatsAppButton from '@/components/public/WhatsAppButton';
-import { getDiamondBySlug, getDiamonds, getSiteSettings } from '@/lib/db';
+import {
+  getDiamondBySlug,
+  getDiamonds,
+  getSiteSettings,
+  getHeaderSettings,
+  getFooterSettings,
+  getWebsiteNavigation,
+} from '@/lib/db';
 
 interface DiamondDetailPageProps {
   params: {
@@ -63,10 +70,24 @@ export async function generateMetadata({ params }: DiamondDetailPageProps): Prom
 }
 
 export default async function DiamondDetailPage({ params }: DiamondDetailPageProps) {
-  const [settings, diamond, allDiamonds] = await Promise.all([
+  const [
+    settings,
+    diamond,
+    allDiamonds,
+    headerSettings,
+    navLinks,
+    footerSettings,
+    footerColNav,
+    footerNav,
+  ] = await Promise.all([
     getSiteSettings(),
     getDiamondBySlug(params.slug),
     getDiamonds(),
+    getHeaderSettings(),
+    getWebsiteNavigation('header'),
+    getFooterSettings(),
+    getWebsiteNavigation('footer_collections'),
+    getWebsiteNavigation('footer_navigation'),
   ]);
 
   if (!diamond) {
@@ -112,6 +133,12 @@ export default async function DiamondDetailPage({ params }: DiamondDetailPagePro
       <Header
         whatsappNumber={settings.whatsapp_number}
         brandName={settings.brand_name}
+        logoUrl={headerSettings.logo_url}
+        navLinks={navLinks}
+        showCta={headerSettings.show_cta}
+        ctaLabel={headerSettings.cta_label}
+        ctaHref={headerSettings.cta_href}
+        showWhatsApp={headerSettings.show_whatsapp}
       />
 
       {/* Main Detail Client */}
@@ -125,7 +152,12 @@ export default async function DiamondDetailPage({ params }: DiamondDetailPagePro
       </main>
 
       {/* Footer */}
-      <Footer settings={settings} />
+      <Footer
+        settings={settings}
+        footerSettings={footerSettings}
+        collectionLinks={footerColNav}
+        navigationLinks={footerNav}
+      />
 
       {/* Floating WhatsApp Action */}
       <WhatsAppButton

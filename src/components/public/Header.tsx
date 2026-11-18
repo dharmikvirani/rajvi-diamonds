@@ -10,12 +10,24 @@ interface HeaderProps {
   whatsappNumber?: string;
   brandName?: string;
   theme?: 'light' | 'dark';
+  logoUrl?: string;
+  navLinks?: { label: string; href: string }[];
+  showCta?: boolean;
+  ctaLabel?: string;
+  ctaHref?: string;
+  showWhatsApp?: boolean;
 }
 
 export default function Header({
   whatsappNumber = '',
   brandName = 'Rajvi Diamonds',
   theme = 'light',
+  logoUrl,
+  navLinks: customNavLinks,
+  showCta = true,
+  ctaLabel = 'Enquire Now',
+  ctaHref = '/contact',
+  showWhatsApp = true,
 }: HeaderProps) {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -34,14 +46,18 @@ export default function Header({
     setMobileMenuOpen(false);
   }, [pathname]);
 
-  const navLinks = [
+  const defaultNavLinks = [
     { label: 'Home', href: '/' },
     { label: 'Collections', href: '/collections' },
     { label: 'About Us', href: '/about' },
     { label: 'Contact Us', href: '/contact' },
   ];
 
+  const navLinks = customNavLinks && customNavLinks.length > 0 ? customNavLinks : defaultNavLinks;
   const isDark = theme === 'dark';
+
+  const defaultLogo = isDark ? '/rajvi-diamonds-logo-light.png' : '/rajvi-diamonds-logo-display.png';
+  const displayLogo = logoUrl && logoUrl.trim() !== '' ? logoUrl : defaultLogo;
 
   return (
     <header
@@ -60,7 +76,7 @@ export default function Header({
         <a href="/" className="flex items-center gap-3 group shrink-0" aria-label={brandName}>
           <div className="relative h-[56px] sm:h-[64px] md:h-[70px] w-[150px] sm:w-[175px] md:w-[200px] flex items-center justify-start overflow-hidden transition-transform duration-300 group-hover:scale-[1.02]">
             <Image
-              src={isDark ? '/rajvi-diamonds-logo-light.png' : '/rajvi-diamonds-logo-display.png'}
+              src={displayLogo}
               alt={brandName}
               width={1089}
               height={840}
@@ -100,14 +116,16 @@ export default function Header({
 
         {/* Desktop Right CTAs */}
         <div className="hidden md:flex items-center gap-4">
-          <a
-            href="/contact"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-rajvi-gold hover:bg-rajvi-goldLight text-[#0D0C0A] font-semibold text-[11px] uppercase tracking-widest rounded-sm transition-all duration-300 shadow-sm hover:scale-105"
-          >
-            <span>Enquire Now</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </a>
-          <WhatsAppButton phoneNumber={whatsappNumber} variant="header" />
+          {showCta && (
+            <a
+              href={ctaHref}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-rajvi-gold hover:bg-rajvi-goldLight text-[#0D0C0A] font-semibold text-[11px] uppercase tracking-widest rounded-sm transition-all duration-300 shadow-sm hover:scale-105"
+            >
+              <span>{ctaLabel}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </a>
+          )}
+          {showWhatsApp && <WhatsAppButton phoneNumber={whatsappNumber} variant="header" />}
         </div>
 
         {/* Mobile Hamburger Button */}
@@ -163,21 +181,25 @@ export default function Header({
           </nav>
 
           <div className="pt-2 flex flex-col gap-3">
-            <a
-              href="/contact"
-              className="w-full text-center py-3 bg-rajvi-gold text-[#0D0C0A] font-semibold text-xs uppercase tracking-widest rounded-sm hover:bg-rajvi-goldLight transition-colors"
-            >
-              Enquire Now
-            </a>
-            <WhatsAppButton
-              phoneNumber={whatsappNumber}
-              variant="outline"
-              className={`w-full text-center ${
-                isDark
-                  ? 'border-rajvi-gold/60 text-rajvi-gold hover:bg-rajvi-gold/10'
-                  : ''
-              }`}
-            />
+            {showCta && (
+              <a
+                href={ctaHref}
+                className="w-full text-center py-3 bg-rajvi-gold text-[#0D0C0A] font-semibold text-xs uppercase tracking-widest rounded-sm hover:bg-rajvi-goldLight transition-colors"
+              >
+                {ctaLabel}
+              </a>
+            )}
+            {showWhatsApp && (
+              <WhatsAppButton
+                phoneNumber={whatsappNumber}
+                variant="outline"
+                className={`w-full text-center ${
+                  isDark
+                    ? 'border-rajvi-gold/60 text-rajvi-gold hover:bg-rajvi-gold/10'
+                    : ''
+                }`}
+              />
+            )}
           </div>
         </div>
       )}

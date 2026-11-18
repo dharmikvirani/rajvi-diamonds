@@ -6,13 +6,54 @@ import { SiteSettings } from '@/lib/types';
 interface FooterProps {
   settings: SiteSettings;
   theme?: 'light' | 'dark';
+  footerSettings?: {
+    logo_url?: string;
+    brand_description?: string;
+    disclaimer?: string;
+    copyright_text?: string;
+    show_socials?: boolean;
+    footer_badge?: string;
+  };
+  collectionLinks?: { label: string; href: string }[];
+  navigationLinks?: { label: string; href: string }[];
 }
 
-export default function Footer({ settings, theme = 'light' }: FooterProps) {
+export default function Footer({
+  settings,
+  theme = 'light',
+  footerSettings,
+  collectionLinks: customCollectionLinks,
+  navigationLinks: customNavLinks,
+}: FooterProps) {
   const currentYear = new Date().getFullYear();
 
   const cleanWhatsAppNumber = (settings.whatsapp_number || '').replace(/[^0-9]/g, '');
   const isDark = theme === 'dark';
+
+  const defaultCollectionLinks = [
+    { label: 'Rose Octagone Cut', href: '/collections/rose-octagone' },
+    { label: 'Tulip Cut', href: '/collections/tulip' },
+    { label: 'Geometric Fancy Cuts', href: '/collections' },
+    { label: 'Botanical & Floral Cuts', href: '/collections' },
+  ];
+
+  const defaultNavLinks = [
+    { label: 'Home', href: '/' },
+    { label: 'Diamond Catalogue', href: '/collections' },
+    { label: 'About Rajvi Diamonds', href: '/about' },
+    { label: 'Trade Inquiries', href: '/contact' },
+    { label: 'Privacy Policy', href: '/privacy' },
+    { label: 'Admin Portal', href: '/admin' },
+  ];
+
+  const colLinks = customCollectionLinks && customCollectionLinks.length > 0 ? customCollectionLinks : defaultCollectionLinks;
+  const navLinks = customNavLinks && customNavLinks.length > 0 ? customNavLinks : defaultNavLinks;
+
+  const logoSrc = footerSettings?.logo_url || (isDark ? '/rajvi-diamonds-logo-light.png' : '/rajvi-diamonds-logo-display.png');
+  const brandDesc = footerSettings?.brand_description || settings.footer_text || 'Manufacturer and supplier of exceptional fancy diamond cuts. Dedicated to precision craftsmanship, rarity, and enduring trade excellence.';
+  const badgeText = footerSettings?.footer_badge || 'Fancy Diamond Specialist • Surat';
+  const disclaimerText = footerSettings?.disclaimer || 'Premium Fancy Cut Showcase (B2B & Private Inquiry)';
+  const copyrightNotice = footerSettings?.copyright_text || `${settings.brand_name}. All rights reserved.`;
 
   return (
     <footer
@@ -29,7 +70,7 @@ export default function Footer({ settings, theme = 'light' }: FooterProps) {
             <a href="/" className="inline-block group" aria-label={settings.brand_name}>
               <div className="relative h-14 sm:h-16 w-44 sm:w-52 flex items-center justify-start overflow-hidden transition-transform duration-300 group-hover:scale-105">
                 <Image
-                  src={isDark ? '/rajvi-diamonds-logo-light.png' : '/rajvi-diamonds-logo-display.png'}
+                  src={logoSrc}
                   alt={settings.brand_name}
                   width={1089}
                   height={840}
@@ -42,12 +83,11 @@ export default function Footer({ settings, theme = 'light' }: FooterProps) {
                 isDark ? 'text-white/60' : 'text-rajvi-textMuted'
               }`}
             >
-              {settings.footer_text ||
-                'Manufacturer and supplier of exceptional fancy diamond cuts. Dedicated to precision craftsmanship, rarity, and enduring trade excellence.'}
+              {brandDesc}
             </p>
             <div className="flex items-center gap-2.5 text-rajvi-gold text-xs tracking-wider uppercase font-semibold">
               <ShieldCheck className="w-4 h-4 text-rajvi-gold" />
-              <span>Fancy Diamond Specialist • Surat</span>
+              <span>{badgeText}</span>
             </div>
           </div>
 
@@ -65,38 +105,16 @@ export default function Footer({ settings, theme = 'light' }: FooterProps) {
                 isDark ? 'text-white/60' : 'text-rajvi-textMuted'
               }`}
             >
-              <li>
-                <a
-                  href="/collections/rose-octagone"
-                  className="hover:text-rajvi-gold transition-colors block py-0.5"
-                >
-                  Rose Octagone Cut
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/collections/tulip"
-                  className="hover:text-rajvi-gold transition-colors block py-0.5"
-                >
-                  Tulip Cut
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/collections"
-                  className="hover:text-rajvi-gold transition-colors block py-0.5"
-                >
-                  Geometric Fancy Cuts
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/collections"
-                  className="hover:text-rajvi-gold transition-colors block py-0.5"
-                >
-                  Botanical & Floral Cuts
-                </a>
-              </li>
+              {colLinks.map((link, idx) => (
+                <li key={idx}>
+                  <a
+                    href={link.href}
+                    className="hover:text-rajvi-gold transition-colors block py-0.5"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
               <li>
                 <a
                   href="/collections"
@@ -122,39 +140,13 @@ export default function Footer({ settings, theme = 'light' }: FooterProps) {
                 isDark ? 'text-white/60' : 'text-rajvi-textMuted'
               }`}
             >
-              <li>
-                <a href="/" className="hover:text-rajvi-gold transition-colors block py-0.5">
-                  Home
-                </a>
-              </li>
-              <li>
-                <a href="/collections" className="hover:text-rajvi-gold transition-colors block py-0.5">
-                  Diamond Catalogue
-                </a>
-              </li>
-              <li>
-                <a href="/about" className="hover:text-rajvi-gold transition-colors block py-0.5">
-                  About Rajvi Diamonds
-                </a>
-              </li>
-              <li>
-                <a href="/contact" className="hover:text-rajvi-gold transition-colors block py-0.5">
-                  Trade Inquiries
-                </a>
-              </li>
-              <li>
-                <a href="/privacy" className="hover:text-rajvi-gold transition-colors block py-0.5">
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/admin"
-                  className="hover:text-rajvi-gold transition-colors block py-0.5 text-white/40"
-                >
-                  Admin Portal
-                </a>
-              </li>
+              {navLinks.map((link, idx) => (
+                <li key={idx}>
+                  <a href={link.href} className="hover:text-rajvi-gold transition-colors block py-0.5">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -238,15 +230,13 @@ export default function Footer({ settings, theme = 'light' }: FooterProps) {
             isDark ? 'border-[#2A2722] text-white/50' : 'border-rajvi-borderLight text-rajvi-textMuted'
           }`}
         >
-          <p>© {currentYear} {settings.brand_name}. All rights reserved.</p>
+          <p>© {currentYear} {copyrightNotice}</p>
           <div className="flex items-center space-x-6">
             <a href="/privacy" className="hover:text-rajvi-gold transition-colors">
               Privacy Policy
             </a>
             <span className={isDark ? 'text-white/20' : 'text-rajvi-borderLight'}>|</span>
-            <span>
-              Premium Fancy Cut Showcase (B2B & Private Inquiry)
-            </span>
+            <span>{disclaimerText}</span>
           </div>
         </div>
       </div>

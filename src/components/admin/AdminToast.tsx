@@ -90,3 +90,46 @@ export function useToast() {
   }
   return context;
 }
+
+export default function AdminToast({
+  message,
+  type = 'success',
+  onClose,
+}: {
+  message: string;
+  type?: ToastType;
+  onClose?: () => void;
+}) {
+  let borderClass = 'border-emerald-700/60 bg-[#161f18] text-emerald-200';
+  let Icon = CheckCircle2;
+  let iconColor = 'text-emerald-400';
+
+  if (type === 'error') {
+    borderClass = 'border-red-800/60 bg-[#241313] text-red-200';
+    Icon = AlertCircle;
+    iconColor = 'text-red-400';
+  } else if (type === 'info') {
+    borderClass = 'border-rajvi-gold/60 bg-[#1f1d16] text-rajvi-goldLight';
+    Icon = Info;
+    iconColor = 'text-rajvi-gold';
+  }
+
+  return (
+    <div className="fixed bottom-5 right-5 z-50 max-w-sm w-full animate-in fade-in slide-in-from-bottom-3 duration-200">
+      <div className={`p-4 rounded-sm border shadow-luxuryDark flex items-start justify-between gap-3 ${borderClass}`}>
+        <div className="flex items-start gap-2.5">
+          <Icon className={`w-4 h-4 shrink-0 mt-0.5 ${iconColor}`} />
+          <p className="text-[13px] font-sans font-medium leading-relaxed">{message}</p>
+        </div>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="text-white/40 hover:text-white transition-colors shrink-0"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}

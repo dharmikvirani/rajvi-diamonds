@@ -7,14 +7,22 @@ import { ArrowRight, Sparkles, MessageCircle, Gem } from 'lucide-react';
 interface HeroSectionProps {
   heading?: string;
   subtitle?: string;
+  badge?: string;
   imageUrl?: string;
+  imageAlt?: string;
+  buttons?: { label: string; href: string; variant?: string }[];
+  items?: { id?: string; title: string; highlight: string; icon?: string }[];
   whatsappNumber?: string;
 }
 
 export default function HeroSection({
   heading = 'The Art of Extraordinary Diamonds',
   subtitle = 'Specializing in rare fancy-cut geometries, artisanal rose faceting, and calibrated millimeter parcels crafted with generational lapidary mastery in Surat.',
+  badge = 'Fancy Cut Diamond Manufacturer • Surat',
   imageUrl,
+  imageAlt = 'Rajvi Diamonds Rose Octagone Fancy Cut Macro Facets',
+  buttons,
+  items,
   whatsappNumber = '',
 }: HeroSectionProps) {
   // Use authentic Rose Octagone Cloudinary macro photography as the primary spotlight diamond
@@ -22,6 +30,21 @@ export default function HeroSection({
     imageUrl && imageUrl.trim() !== '' && !imageUrl.includes('unsplash.com') && !imageUrl.includes('tef2et2mdtlcxvp3yvlb')
       ? imageUrl.trim()
       : 'https://res.cloudinary.com/b2fsbbzr/image/upload/v1794978442/rose-octagone-cut.png';
+
+  const defaultButtons = [
+    { label: 'Explore Collections', href: '/collections', variant: 'primary' },
+    { label: 'Enquire Now', href: '/contact', variant: 'outline' },
+  ];
+
+  const actionButtons = buttons && buttons.length > 0 ? buttons : defaultButtons;
+
+  const defaultItems = [
+    { title: 'Rose Octagone', highlight: '8-Fold Dome' },
+    { title: 'Tulip Cut', highlight: 'Floral Petal Silhouette' },
+    { title: 'Calibrated Parcels', highlight: 'Precision Sizing' },
+  ];
+
+  const hallmarkPills = items && items.length > 0 ? items : defaultItems;
 
   return (
     <section className="relative min-h-[85vh] lg:min-h-[88vh] flex items-center justify-center overflow-hidden bg-[#0D0C0A] text-white py-16 sm:py-20 lg:py-24">
@@ -36,15 +59,21 @@ export default function HeroSection({
             {/* Subtle Luxury Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-rajvi-gold/30 bg-[#161512]/90 backdrop-blur-md text-rajvi-goldLight text-[11px] uppercase tracking-[0.25em] font-medium mb-6 shadow-sm">
               <Gem className="w-3.5 h-3.5 text-rajvi-gold" />
-              <span>Fancy Cut Diamond Manufacturer • Surat</span>
+              <span>{badge}</span>
             </div>
 
             {/* Headline: The Art of Extraordinary Diamonds */}
             <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-[64px] font-normal tracking-tight text-white leading-[1.12] mb-6">
-              The Art of{' '}
-              <span className="gold-gradient-text italic font-serif">
-                Extraordinary Diamonds
-              </span>
+              {heading.includes('The Art of') ? (
+                <>
+                  The Art of{' '}
+                  <span className="gold-gradient-text italic font-serif">
+                    {heading.replace('The Art of', '').trim() || 'Extraordinary Diamonds'}
+                  </span>
+                </>
+              ) : (
+                heading
+              )}
             </h1>
 
             {/* Concise Supporting Description */}
@@ -52,38 +81,36 @@ export default function HeroSection({
               {subtitle}
             </p>
 
-            {/* Two Action CTAs */}
+            {/* Dynamic Action CTAs */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto mb-10">
-              <a
-                href="/collections"
-                className="inline-flex items-center justify-center gap-3 px-8 py-3.5 bg-rajvi-gold hover:bg-rajvi-goldLight text-[#0D0C0A] font-semibold text-xs uppercase tracking-[0.2em] transition-all duration-300 shadow-goldGlow hover:scale-105 rounded-sm text-center"
-              >
-                <span>Explore Collections</span>
-                <ArrowRight className="w-4 h-4" />
-              </a>
-
-              <a
-                href="/contact"
-                className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 border border-rajvi-gold/60 text-rajvi-goldLight hover:bg-rajvi-gold hover:text-[#0D0C0A] font-semibold text-xs uppercase tracking-[0.2em] transition-all duration-300 rounded-sm hover:scale-105 text-center"
-              >
-                <MessageCircle className="w-4 h-4 text-rajvi-gold" />
-                <span>Enquire Now</span>
-              </a>
+              {actionButtons.map((btn, bIdx) => (
+                <a
+                  key={bIdx}
+                  href={btn.href || (btn.variant === 'primary' ? '/collections' : '/contact')}
+                  className={`inline-flex items-center justify-center gap-3 px-8 py-3.5 font-semibold text-xs uppercase tracking-[0.2em] transition-all duration-300 rounded-sm text-center hover:scale-105 ${
+                    btn.variant === 'primary'
+                      ? 'bg-rajvi-gold hover:bg-rajvi-goldLight text-[#0D0C0A] shadow-goldGlow'
+                      : 'border border-rajvi-gold/60 text-rajvi-goldLight hover:bg-rajvi-gold hover:text-[#0D0C0A]'
+                  }`}
+                >
+                  {btn.variant === 'outline' && <MessageCircle className="w-4 h-4 text-rajvi-gold" />}
+                  <span>{btn.label}</span>
+                  {btn.variant === 'primary' && <ArrowRight className="w-4 h-4" />}
+                </a>
+              ))}
             </div>
 
-            {/* Hallmark Cuts Quick Pills */}
+            {/* Dynamic Hallmark Cuts Quick Pills */}
             <div className="pt-6 border-t border-[#2A2722]/80 w-full flex flex-wrap items-center gap-3 sm:gap-6 text-xs text-white/60">
-              <span className="flex items-center gap-1.5 text-white/80">
-                <Sparkles className="w-3.5 h-3.5 text-rajvi-gold" />
-                <strong className="text-rajvi-goldLight font-medium">Rose Octagone:</strong> 8-Fold Dome
-              </span>
-              <span className="text-[#2A2722] hidden sm:inline">•</span>
-              <span className="flex items-center gap-1.5 text-white/80">
-                <Sparkles className="w-3.5 h-3.5 text-rajvi-gold" />
-                <strong className="text-rajvi-goldLight font-medium">Tulip Cut:</strong> Floral Petal Silhouette
-              </span>
-              <span className="text-[#2A2722] hidden sm:inline">•</span>
-              <span className="text-white/60">Calibrated Parcels</span>
+              {hallmarkPills.map((pill, pIdx) => (
+                <React.Fragment key={pIdx}>
+                  {pIdx > 0 && <span className="text-[#2A2722] hidden sm:inline">•</span>}
+                  <span className="flex items-center gap-1.5 text-white/80">
+                    <Sparkles className="w-3.5 h-3.5 text-rajvi-gold" />
+                    <strong className="text-rajvi-goldLight font-medium">{pill.title}:</strong> {pill.highlight}
+                  </span>
+                </React.Fragment>
+              ))}
             </div>
           </div>
 
@@ -92,7 +119,7 @@ export default function HeroSection({
             <div className="relative aspect-square sm:aspect-[4/3] lg:aspect-square w-full rounded-sm overflow-hidden bg-[#141311] border border-[#2A2722] shadow-luxuryDark group">
               <Image
                 src={heroDiamondImage}
-                alt="Rajvi Diamonds Rose Octagone Fancy Cut Macro Facets"
+                alt={imageAlt}
                 fill
                 priority
                 sizes="(max-width: 1024px) 100vw, 45vw"

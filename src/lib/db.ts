@@ -13,6 +13,13 @@ import {
   Inquiry,
   InquiryStatus,
   SiteSettings,
+  CmsSection,
+  WebsiteNavigationItem,
+  CmsGalleryItem,
+  HeaderSettings,
+  FooterSettings,
+  PageCmsContent,
+  SeoSettings,
 } from './types';
 import {
   initialCategories,
@@ -21,6 +28,13 @@ import {
   initialDiamondClarities,
   initialInquiries,
   initialSiteSettings,
+  initialCmsSections,
+  initialWebsiteNavigation,
+  initialCmsGallery,
+  initialHeaderSettings,
+  initialFooterSettings,
+  initialPageCms,
+  initialSeoSettings,
 } from './seedData';
 
 // Persistent local store file for development / standalone mode
@@ -33,6 +47,13 @@ export interface LocalStoreData {
   diamondClarities: DiamondClarityOption[];
   inquiries: Inquiry[];
   settings: SiteSettings;
+  cmsSections: CmsSection[];
+  navigation: WebsiteNavigationItem[];
+  gallery: CmsGalleryItem[];
+  headerSettings: HeaderSettings;
+  footerSettings: FooterSettings;
+  pageCms: PageCmsContent;
+  seoSettings: SeoSettings;
 }
 
 function getDefaultStoreData(): LocalStoreData {
@@ -43,6 +64,13 @@ function getDefaultStoreData(): LocalStoreData {
     diamondClarities: JSON.parse(JSON.stringify(initialDiamondClarities)),
     inquiries: JSON.parse(JSON.stringify(initialInquiries)),
     settings: JSON.parse(JSON.stringify(initialSiteSettings)),
+    cmsSections: JSON.parse(JSON.stringify(initialCmsSections)),
+    navigation: JSON.parse(JSON.stringify(initialWebsiteNavigation)),
+    gallery: JSON.parse(JSON.stringify(initialCmsGallery)),
+    headerSettings: JSON.parse(JSON.stringify(initialHeaderSettings)),
+    footerSettings: JSON.parse(JSON.stringify(initialFooterSettings)),
+    pageCms: JSON.parse(JSON.stringify(initialPageCms)),
+    seoSettings: JSON.parse(JSON.stringify(initialSeoSettings)),
   };
 }
 
@@ -61,6 +89,13 @@ function readLocalStore(): LocalStoreData {
           diamondClarities: Array.isArray(parsed.diamondClarities) ? parsed.diamondClarities : initialDiamondClarities,
           inquiries: Array.isArray(parsed.inquiries) ? parsed.inquiries : initialInquiries,
           settings: { ...initialSiteSettings, ...(parsed.settings || {}) },
+          cmsSections: Array.isArray(parsed.cmsSections) ? parsed.cmsSections : initialCmsSections,
+          navigation: Array.isArray(parsed.navigation) ? parsed.navigation : initialWebsiteNavigation,
+          gallery: Array.isArray(parsed.gallery) ? parsed.gallery : initialCmsGallery,
+          headerSettings: { ...initialHeaderSettings, ...(parsed.headerSettings || {}) },
+          footerSettings: { ...initialFooterSettings, ...(parsed.footerSettings || {}) },
+          pageCms: { ...initialPageCms, ...(parsed.pageCms || {}) },
+          seoSettings: { ...initialSeoSettings, ...(parsed.seoSettings || {}) },
         };
         inMemoryCache = store;
         return store;
@@ -1359,4 +1394,522 @@ export async function deleteDiamondClarity(id: string): Promise<boolean> {
   store.diamondClarities = store.diamondClarities.filter((c) => c.id !== id);
   writeLocalStore(store);
   return true;
+}
+
+// ==============================================================================
+// COMPLETE DYNAMIC WEBSITE CMS DATA LAYER
+// ==============================================================================
+
+// Helper to persist CMS setting in Supabase
+async function persistCmsSetting(key: string, value: any): Promise<void> {
+  const supabase = createAdminClient();
+  if (supabase) {
+    await supabase
+      .from('site_settings')
+      .upsert(
+        {
+          setting_key: key,
+          setting_value: value,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'setting_key' }
+      );
+  }
+}
+
+// ----------------- 1. Homepage & Page CMS Sections -----------------
+
+export async function getCmsSections(
+  pageSlug: string = 'home',
+  includeDrafts: boolean = false
+): Promise<CmsSection[]> {
+  let sections: CmsSection[] = [];
+  const supabase = createClient();
+
+  if (supabase) {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('setting_value')
+      .eq('setting_key', 'cms_sections')
+      .single();
+
+    if (data && Array.isArray(data.setting_value)) {
+      sections = data.setting_value;
+    }
+  }
+
+  if (!sections || sections.length === 0) {
+    const store = readLocalStore();
+    sections = store.cmsSections || initialCmsSections;
+  }
+
+  // Filter by page_slug
+  let filtered = sections.filter((s) => (s.page_slug || 'home') === pageSlug);
+
+  // If public view, only return active sections and published content
+  if (!includeDrafts) {
+    filtered = filtered.filter((s) => s.is_active);
+    // Return clean published fields without draft overrides
+    return filtered
+      .map((s) => {
+        const { draft_data, ...published } = s;
+        return published as CmsSection;
+      })
+      .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0));
+  }
+
+  // If draft/admin view, apply draft_data overrides where present
+  return filtered
+    .map((s) => {
+      if (s.has_draft && s.draft_data) {
+        return {
+          ...s,
+          ...s.draft_data,
+          has_draft: true,
+          draft_data: s.draft_data,
+        };
+      }
+      return s;
+    })
+    .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0));
+}
+
+export async function getCmsSectionByKey(
+  sectionKey: string,
+  includeDrafts: boolean = false
+): Promise<CmsSection | null> {
+  const sections = await getCmsSections('home', includeDrafts);
+  return sections.find((s) => s.section_key === sectionKey) || null;
+}
+
+export async function saveCmsSectionDraft(
+  sectionKey: string,
+  draftData: Partial<CmsSection>
+): Promise<CmsSection> {
+  const store = readLocalStore();
+  const now = new Date().toISOString();
+
+  // Find or create section
+  let idx = store.cmsSections.findIndex((s) => s.section_key === sectionKey);
+  if (idx === -1) {
+    const initialSec = initialCmsSections.find((s) => s.section_key === sectionKey);
+    if (initialSec) {
+      store.cmsSections.push(JSON.parse(JSON.stringify(initialSec)));
+      idx = store.cmsSections.length - 1;
+    } else {
+      throw new Error(`Section with key "${sectionKey}" not found.`);
+    }
+  }
+
+  const existing = store.cmsSections[idx];
+  const mergedDraft = {
+    ...(existing.draft_data || {}),
+    ...draftData,
+  };
+
+  store.cmsSections[idx] = {
+    ...existing,
+    draft_data: mergedDraft,
+    has_draft: true,
+    updated_at: now,
+  };
+
+  writeLocalStore(store);
+  await persistCmsSetting('cms_sections', store.cmsSections);
+
+  return store.cmsSections[idx];
+}
+
+export async function publishCmsSection(sectionKey: string): Promise<CmsSection> {
+  const store = readLocalStore();
+  const now = new Date().toISOString();
+
+  const idx = store.cmsSections.findIndex((s) => s.section_key === sectionKey);
+  if (idx === -1) {
+    throw new Error(`Section with key "${sectionKey}" not found.`);
+  }
+
+  const sec = store.cmsSections[idx];
+  const draft = sec.draft_data || {};
+
+  // Promote draft to published
+  store.cmsSections[idx] = {
+    ...sec,
+    ...draft,
+    draft_data: null,
+    has_draft: false,
+    published_at: now,
+    updated_at: now,
+  };
+
+  writeLocalStore(store);
+  await persistCmsSetting('cms_sections', store.cmsSections);
+
+  return store.cmsSections[idx];
+}
+
+export async function reorderCmsSections(orderedKeys: string[]): Promise<boolean> {
+  const store = readLocalStore();
+  const now = new Date().toISOString();
+
+  store.cmsSections = store.cmsSections.map((sec) => {
+    const newIdx = orderedKeys.indexOf(sec.section_key);
+    if (newIdx !== -1) {
+      return {
+        ...sec,
+        display_order: newIdx + 1,
+        updated_at: now,
+      };
+    }
+    return sec;
+  });
+
+  writeLocalStore(store);
+  await persistCmsSetting('cms_sections', store.cmsSections);
+  return true;
+}
+
+export async function toggleCmsSectionVisibility(
+  sectionKey: string,
+  isActive: boolean
+): Promise<boolean> {
+  const store = readLocalStore();
+  const now = new Date().toISOString();
+
+  const idx = store.cmsSections.findIndex((s) => s.section_key === sectionKey);
+  if (idx !== -1) {
+    store.cmsSections[idx] = {
+      ...store.cmsSections[idx],
+      is_active: isActive,
+      updated_at: now,
+    };
+    writeLocalStore(store);
+    await persistCmsSetting('cms_sections', store.cmsSections);
+    return true;
+  }
+  return false;
+}
+
+// ----------------- 2. Website Navigation (Header & Footers) -----------------
+
+export async function getWebsiteNavigation(
+  menuLocation?: 'header' | 'footer_collections' | 'footer_navigation'
+): Promise<WebsiteNavigationItem[]> {
+  let nav: WebsiteNavigationItem[] = [];
+  const supabase = createClient();
+
+  if (supabase) {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('setting_value')
+      .eq('setting_key', 'website_navigation')
+      .single();
+
+    if (data && Array.isArray(data.setting_value)) {
+      nav = data.setting_value;
+    }
+  }
+
+  if (!nav || nav.length === 0) {
+    const store = readLocalStore();
+    nav = store.navigation || initialWebsiteNavigation;
+  }
+
+  if (menuLocation) {
+    nav = nav.filter((n) => n.menu_location === menuLocation);
+  }
+
+  return nav
+    .filter((n) => n.is_active)
+    .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0));
+}
+
+export async function getAllWebsiteNavigationAdmin(): Promise<WebsiteNavigationItem[]> {
+  let nav: WebsiteNavigationItem[] = [];
+  const supabase = createClient();
+
+  if (supabase) {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('setting_value')
+      .eq('setting_key', 'website_navigation')
+      .single();
+
+    if (data && Array.isArray(data.setting_value)) {
+      nav = data.setting_value;
+    }
+  }
+
+  if (!nav || nav.length === 0) {
+    const store = readLocalStore();
+    nav = store.navigation || initialWebsiteNavigation;
+  }
+
+  return nav.sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0));
+}
+
+export async function saveWebsiteNavigationItem(
+  item: Partial<WebsiteNavigationItem>
+): Promise<WebsiteNavigationItem> {
+  const store = readLocalStore();
+  const id = item.id || `nav-${Date.now()}`;
+
+  const idx = store.navigation.findIndex((n) => n.id === id);
+  const newItem: WebsiteNavigationItem = {
+    id,
+    menu_location: item.menu_location || 'header',
+    label: item.label || 'New Link',
+    href: item.href || '/',
+    display_order: item.display_order ?? store.navigation.length + 1,
+    is_active: item.is_active ?? true,
+    is_external: item.is_external ?? false,
+  };
+
+  if (idx !== -1) {
+    store.navigation[idx] = { ...store.navigation[idx], ...newItem };
+  } else {
+    store.navigation.push(newItem);
+  }
+
+  writeLocalStore(store);
+  await persistCmsSetting('website_navigation', store.navigation);
+  return newItem;
+}
+
+export async function deleteWebsiteNavigationItem(id: string): Promise<boolean> {
+  const store = readLocalStore();
+  store.navigation = store.navigation.filter((n) => n.id !== id);
+  writeLocalStore(store);
+  await persistCmsSetting('website_navigation', store.navigation);
+  return true;
+}
+
+export async function reorderWebsiteNavigation(orderedIds: string[]): Promise<boolean> {
+  const store = readLocalStore();
+  store.navigation = store.navigation.map((item) => {
+    const newIdx = orderedIds.indexOf(item.id);
+    if (newIdx !== -1) {
+      return { ...item, display_order: newIdx + 1 };
+    }
+    return item;
+  });
+  writeLocalStore(store);
+  await persistCmsSetting('website_navigation', store.navigation);
+  return true;
+}
+
+// ----------------- 3. Brand Media Gallery -----------------
+
+export async function getCmsGallery(includeInactive: boolean = false): Promise<CmsGalleryItem[]> {
+  let gallery: CmsGalleryItem[] = [];
+  const supabase = createClient();
+
+  if (supabase) {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('setting_value')
+      .eq('setting_key', 'cms_gallery')
+      .single();
+
+    if (data && Array.isArray(data.setting_value)) {
+      gallery = data.setting_value;
+    }
+  }
+
+  if (!gallery || gallery.length === 0) {
+    const store = readLocalStore();
+    gallery = store.gallery || initialCmsGallery;
+  }
+
+  if (!includeInactive) {
+    gallery = gallery.filter((g) => g.is_active);
+  }
+
+  return gallery.sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0));
+}
+
+export async function saveCmsGalleryItem(
+  item: Partial<CmsGalleryItem>
+): Promise<CmsGalleryItem> {
+  const store = readLocalStore();
+  const id = item.id || `gal-${Date.now()}`;
+  const now = new Date().toISOString();
+
+  const idx = store.gallery.findIndex((g) => g.id === id);
+  const newItem: CmsGalleryItem = {
+    id,
+    image_url: item.image_url || '',
+    cloudinary_public_id: item.cloudinary_public_id || null,
+    caption: item.caption || '',
+    alt_text: item.alt_text || '',
+    category: item.category || 'general',
+    display_order: item.display_order ?? store.gallery.length + 1,
+    is_active: item.is_active ?? true,
+    created_at: item.created_at || now,
+    updated_at: now,
+  };
+
+  if (idx !== -1) {
+    store.gallery[idx] = { ...store.gallery[idx], ...newItem };
+  } else {
+    store.gallery.push(newItem);
+  }
+
+  writeLocalStore(store);
+  await persistCmsSetting('cms_gallery', store.gallery);
+  return newItem;
+}
+
+export async function deleteCmsGalleryItem(id: string): Promise<boolean> {
+  const store = readLocalStore();
+  const target = store.gallery.find((g) => g.id === id);
+
+  if (target?.cloudinary_public_id) {
+    await deleteCloudinaryImage(target.cloudinary_public_id);
+  }
+
+  store.gallery = store.gallery.filter((g) => g.id !== id);
+  writeLocalStore(store);
+  await persistCmsSetting('cms_gallery', store.gallery);
+  return true;
+}
+
+export async function reorderCmsGallery(orderedIds: string[]): Promise<boolean> {
+  const store = readLocalStore();
+  store.gallery = store.gallery.map((item) => {
+    const newIdx = orderedIds.indexOf(item.id);
+    if (newIdx !== -1) {
+      return { ...item, display_order: newIdx + 1 };
+    }
+    return item;
+  });
+  writeLocalStore(store);
+  await persistCmsSetting('cms_gallery', store.gallery);
+  return true;
+}
+
+// ----------------- 4. Header & Footer Settings -----------------
+
+export async function getHeaderSettings(): Promise<HeaderSettings> {
+  const supabase = createClient();
+  if (supabase) {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('setting_value')
+      .eq('setting_key', 'header_settings')
+      .single();
+
+    if (data && data.setting_value) {
+      return { ...initialHeaderSettings, ...data.setting_value };
+    }
+  }
+
+  const store = readLocalStore();
+  return store.headerSettings || initialHeaderSettings;
+}
+
+export async function updateHeaderSettings(
+  settings: Partial<HeaderSettings>
+): Promise<HeaderSettings> {
+  const store = readLocalStore();
+  store.headerSettings = { ...store.headerSettings, ...settings };
+  writeLocalStore(store);
+  await persistCmsSetting('header_settings', store.headerSettings);
+  return store.headerSettings;
+}
+
+export async function getFooterSettings(): Promise<FooterSettings> {
+  const supabase = createClient();
+  if (supabase) {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('setting_value')
+      .eq('setting_key', 'footer_settings')
+      .single();
+
+    if (data && data.setting_value) {
+      return { ...initialFooterSettings, ...data.setting_value };
+    }
+  }
+
+  const store = readLocalStore();
+  return store.footerSettings || initialFooterSettings;
+}
+
+export async function updateFooterSettings(
+  settings: Partial<FooterSettings>
+): Promise<FooterSettings> {
+  const store = readLocalStore();
+  store.footerSettings = { ...store.footerSettings, ...settings };
+  writeLocalStore(store);
+  await persistCmsSetting('footer_settings', store.footerSettings);
+  return store.footerSettings;
+}
+
+// ----------------- 5. Inner Pages Content (About, Contact, Privacy) -----------------
+
+export async function getPageCms<K extends keyof PageCmsContent>(page: K): Promise<PageCmsContent[K]> {
+  const supabase = createClient();
+  if (supabase) {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('setting_value')
+      .eq('setting_key', `page_cms_${page}`)
+      .single();
+
+    if (data && data.setting_value) {
+      return { ...initialPageCms[page], ...data.setting_value };
+    }
+  }
+
+  const store = readLocalStore();
+  return store.pageCms[page] || initialPageCms[page];
+}
+
+export async function updatePageCms<K extends keyof PageCmsContent>(
+  page: K,
+  content: Partial<PageCmsContent[K]>
+): Promise<PageCmsContent[K]> {
+  const store = readLocalStore();
+  store.pageCms[page] = { ...store.pageCms[page], ...content };
+  writeLocalStore(store);
+  await persistCmsSetting(`page_cms_${page}`, store.pageCms[page]);
+  return store.pageCms[page];
+}
+
+// ----------------- 6. Global SEO Metadata -----------------
+
+export async function getSeoSettings(): Promise<SeoSettings> {
+  const supabase = createClient();
+  if (supabase) {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('setting_value')
+      .eq('setting_key', 'seo_settings')
+      .single();
+
+    if (data && data.setting_value) {
+      return { ...initialSeoSettings, ...data.setting_value };
+    }
+  }
+
+  const store = readLocalStore();
+  return store.seoSettings || initialSeoSettings;
+}
+
+export async function updateSeoSettings(
+  settings: Partial<SeoSettings>
+): Promise<SeoSettings> {
+  const store = readLocalStore();
+  store.seoSettings = {
+    ...store.seoSettings,
+    ...settings,
+    page_seo: {
+      ...(store.seoSettings.page_seo || {}),
+      ...(settings.page_seo || {}),
+    },
+  };
+  writeLocalStore(store);
+  await persistCmsSetting('seo_settings', store.seoSettings);
+  return store.seoSettings;
 }

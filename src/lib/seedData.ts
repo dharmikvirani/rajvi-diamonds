@@ -1,4 +1,18 @@
-import { Category, Diamond, DiamondColorOption, DiamondClarityOption, Inquiry, SiteSettings } from './types';
+import {
+  Category,
+  Diamond,
+  DiamondColorOption,
+  DiamondClarityOption,
+  Inquiry,
+  SiteSettings,
+  CmsSection,
+  WebsiteNavigationItem,
+  CmsGalleryItem,
+  HeaderSettings,
+  FooterSettings,
+  PageCmsContent,
+  SeoSettings,
+} from './types';
 
 export const initialDiamondColors: DiamondColorOption[] = [
   ...['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'].map((letter, idx) => ({
@@ -374,6 +388,492 @@ export const initialSiteSettings: SiteSettings = {
   about_expertise: 'Our workshop specializes exclusively in non-traditional fancy shapes, including faceted rose domes, geometric step cuts, and botanical silhouettes. Every cut undergoes rigorous facet angle calibration to harmonize light return and aesthetic individuality.',
   about_quality: 'From careful rough stone selection to final microscopic inspection, we uphold exacting standards of symmetry, polish, and facet alignment. We deliver calibrated parcels and individual centre stones with complete transparency.',
   about_vision: 'To be the trusted global destination for visionary jewellery creators seeking diamond cuts that tell a distinctive story of artistry, proportion, and unmatched luxury.',
+};
+
+export const initialHeaderSettings: HeaderSettings = {
+  logo_url: '/rajvi-diamonds-logo-light.png',
+  logo_width: 1089,
+  logo_height: 840,
+  show_cta: true,
+  cta_label: 'Enquire Now',
+  cta_href: '/contact',
+  show_whatsapp: true,
+};
+
+export const initialFooterSettings: FooterSettings = {
+  logo_url: '/rajvi-diamonds-logo-light.png',
+  brand_description:
+    'Manufacturer and supplier of exceptional fancy diamond cuts. Dedicated to precision craftsmanship, rarity, and enduring trade excellence.',
+  disclaimer: 'Premium Fancy Cut Showcase (B2B & Private Inquiry)',
+  copyright_text: 'Rajvi Diamonds. All rights reserved.',
+  show_socials: true,
+  footer_badge: 'Fancy Diamond Specialist • Surat',
+};
+
+export const initialWebsiteNavigation: WebsiteNavigationItem[] = [
+  { id: 'nav-1', menu_location: 'header', label: 'Home', href: '/', display_order: 1, is_active: true },
+  { id: 'nav-2', menu_location: 'header', label: 'Collections', href: '/collections', display_order: 2, is_active: true },
+  { id: 'nav-3', menu_location: 'header', label: 'About Us', href: '/about', display_order: 3, is_active: true },
+  { id: 'nav-4', menu_location: 'header', label: 'Contact Us', href: '/contact', display_order: 4, is_active: true },
+
+  { id: 'fcol-1', menu_location: 'footer_collections', label: 'Rose Octagone Cut', href: '/collections/rose-octagone', display_order: 1, is_active: true },
+  { id: 'fcol-2', menu_location: 'footer_collections', label: 'Tulip Cut', href: '/collections/tulip', display_order: 2, is_active: true },
+  { id: 'fcol-3', menu_location: 'footer_collections', label: 'Geometric Fancy Cuts', href: '/collections', display_order: 3, is_active: true },
+  { id: 'fcol-4', menu_location: 'footer_collections', label: 'Botanical & Floral Cuts', href: '/collections', display_order: 4, is_active: true },
+
+  { id: 'fnav-1', menu_location: 'footer_navigation', label: 'Home', href: '/', display_order: 1, is_active: true },
+  { id: 'fnav-2', menu_location: 'footer_navigation', label: 'Diamond Catalogue', href: '/collections', display_order: 2, is_active: true },
+  { id: 'fnav-3', menu_location: 'footer_navigation', label: 'About Rajvi Diamonds', href: '/about', display_order: 3, is_active: true },
+  { id: 'fnav-4', menu_location: 'footer_navigation', label: 'Trade Inquiries', href: '/contact', display_order: 4, is_active: true },
+  { id: 'fnav-5', menu_location: 'footer_navigation', label: 'Privacy Policy', href: '/privacy', display_order: 5, is_active: true },
+];
+
+export const initialCmsSections: CmsSection[] = [
+  {
+    id: 'sec-hero',
+    section_key: 'hero',
+    page_slug: 'home',
+    title: 'The Art of Extraordinary Diamonds',
+    subtitle:
+      'Specializing in rare fancy-cut geometries, artisanal rose faceting, and calibrated millimeter parcels crafted with generational lapidary mastery in Surat.',
+    badge: 'Fancy Cut Diamond Manufacturer • Surat',
+    description: '',
+    image_url: 'https://res.cloudinary.com/b2fsbbzr/image/upload/v1794978442/rose-octagone-cut.png',
+    image_alt: 'Rajvi Diamonds Rose Octagone Fancy Cut Macro Facets',
+    buttons: [
+      { label: 'Explore Collections', href: '/collections', variant: 'primary', is_active: true },
+      { label: 'Enquire Now', href: '/contact', variant: 'outline', is_active: true },
+    ],
+    items: [
+      { id: 'hp-1', title: 'Rose Octagone', highlight: '8-Fold Dome', icon: 'Sparkles' },
+      { id: 'hp-2', title: 'Tulip Cut', highlight: 'Floral Petal Silhouette', icon: 'Sparkles' },
+      { id: 'hp-3', title: 'Calibrated Parcels', highlight: 'Precision Sizing', icon: 'Gem' },
+    ],
+    is_active: true,
+    display_order: 1,
+    has_draft: false,
+    published_at: new Date('2024-01-01').toISOString(),
+    created_at: new Date('2024-01-01').toISOString(),
+    updated_at: new Date('2024-01-01').toISOString(),
+  },
+  {
+    id: 'sec-featured',
+    section_key: 'featured_cuts',
+    page_slug: 'home',
+    title: 'Featured Diamond Collections',
+    subtitle:
+      'Explore our signature diamond cuts, crafted with mathematical facet orientation and calibrated for luxury jewellery creations.',
+    badge: 'Signature Portfolio',
+    description: '',
+    image_url: '',
+    buttons: [
+      { label: 'View Details', href: '/collections', variant: 'primary', is_active: true },
+      { label: 'Enquire Now', href: '/contact', variant: 'outline', is_active: true },
+    ],
+    items: [],
+    is_active: true,
+    display_order: 2,
+    has_draft: false,
+    published_at: new Date('2024-01-01').toISOString(),
+    created_at: new Date('2024-01-01').toISOString(),
+    updated_at: new Date('2024-01-01').toISOString(),
+  },
+  {
+    id: 'sec-why-choose-us',
+    section_key: 'why_choose_us',
+    page_slug: 'home',
+    title: 'Excellence in Every Detail',
+    subtitle:
+      'The core pillars guiding every facet of our diamond cutting mastery and wholesale trade relationships.',
+    badge: 'Why Partner with Rajvi',
+    description: '',
+    image_url: '',
+    buttons: [],
+    items: [
+      {
+        id: 'prop-1',
+        number: '01',
+        title: 'Precision Craftsmanship',
+        description:
+          'Every diamond reflects attention to detail and precision, with facet angles mathematically calibrated to produce extraordinary light performance.',
+        icon: 'Compass',
+        display_order: 1,
+        is_active: true,
+      },
+      {
+        id: 'prop-2',
+        number: '02',
+        title: 'Exceptional Quality',
+        description:
+          'Focus on quality and carefully selected diamond specifications, ensuring superior optical clarity, polish luster, and symmetry in every parcel.',
+        icon: 'Sparkles',
+        display_order: 2,
+        is_active: true,
+      },
+      {
+        id: 'prop-3',
+        number: '03',
+        title: 'Distinctive Cuts',
+        description:
+          'Discover unique fancy-cut diamond designs—from our signature architectural Rose Octagone to organic floral silhouettes and custom geometries.',
+        icon: 'Gem',
+        display_order: 3,
+        is_active: true,
+      },
+      {
+        id: 'prop-4',
+        number: '04',
+        title: 'Customer Commitment',
+        description:
+          'Dedicated support and personalized business inquiries, providing responsive consultation and tailored millimeter parcels for trade partners globally.',
+        icon: 'Users',
+        display_order: 4,
+        is_active: true,
+      },
+    ],
+    is_active: true,
+    display_order: 3,
+    has_draft: false,
+    published_at: new Date('2024-01-01').toISOString(),
+    created_at: new Date('2024-01-01').toISOString(),
+    updated_at: new Date('2024-01-01').toISOString(),
+  },
+  {
+    id: 'sec-craftsmanship',
+    section_key: 'craftsmanship',
+    page_slug: 'home',
+    title: 'Our Craftsmanship',
+    subtitle:
+      'From raw stone evaluation to scaife polishing in Surat, explore the disciplined journey behind our fancy cut diamonds.',
+    badge: 'Artisanal Process',
+    description: '',
+    image_url: '',
+    buttons: [],
+    items: [
+      {
+        id: 'stg-1',
+        step: '01',
+        title: 'Diamond Selection',
+        tagline: 'Rough Evaluation & Shape Planning',
+        description:
+          'Each rough crystal is carefully evaluated for optical transparency and natural grain structure before determining the ideal fancy-cut silhouette.',
+        image_url: '/images/cuts2.jpeg',
+        image_alt: 'Rough diamond evaluation and shape planning',
+        badge: 'Crystal Planning',
+        display_order: 1,
+        is_active: true,
+      },
+      {
+        id: 'stg-2',
+        step: '02',
+        title: 'Facet Planning',
+        tagline: 'Geometric Contours & Proportions',
+        description:
+          'Facet proportions are mathematically calculated to shape the distinctive geometry—whether the eight-fold dome of Rose Octagone or the curves of the Tulip cut.',
+        image_url: '/images/cuts.jpeg',
+        image_alt: 'Diamond facet planning and geometric proportions',
+        badge: 'Facet Geometry',
+        display_order: 2,
+        is_active: true,
+      },
+      {
+        id: 'stg-3',
+        step: '03',
+        title: 'Expert Polishing',
+        tagline: 'Hand-Polishing on the Scaife Wheel',
+        description:
+          'Skilled lapidaries in our Surat workshop hand-polish facet planes against the scaife wheel, achieving clean facet junction lines and optical luster.',
+        image_url: '/images/polish.jpeg',
+        image_alt: 'Diamond hand-polishing on scaife wheel in Surat workshop',
+        badge: 'Surat Lapidary',
+        display_order: 3,
+        is_active: true,
+      },
+      {
+        id: 'stg-4',
+        step: '04',
+        title: 'Final Diamond',
+        tagline: 'Quality Inspection & Calibrated Sizing',
+        description:
+          'Each finished diamond is carefully inspected for symmetry, polish luster, and exact millimeter dimensions before parcel dispatch.',
+        image_url: '/images/cuts3.jpeg',
+        image_alt: 'Final finished fancy cut diamond inspection',
+        badge: 'Precision Sizing',
+        display_order: 4,
+        is_active: true,
+      },
+    ],
+    is_active: true,
+    display_order: 4,
+    has_draft: false,
+    published_at: new Date('2024-01-01').toISOString(),
+    created_at: new Date('2024-01-01').toISOString(),
+    updated_at: new Date('2024-01-01').toISOString(),
+  },
+  {
+    id: 'sec-brand-story',
+    section_key: 'brand_story',
+    page_slug: 'home',
+    title: 'About Rajvi Diamonds',
+    subtitle: 'Surat Atelier Heritage',
+    badge: 'Surat Atelier Heritage',
+    description: '',
+    image_url: '/images/cuts2.jpeg',
+    image_alt: 'Rajvi Diamonds Artisanal Fancy Cut Diamonds',
+    buttons: [
+      { label: 'Explore Our Heritage', href: '/about', variant: 'primary', is_active: true },
+    ],
+    items: [
+      {
+        id: 'bp-1',
+        title: 'Distinctive Cuts',
+        description: 'Specialized focus on non-traditional fancy and antique silhouettes.',
+        icon: 'Compass',
+      },
+      {
+        id: 'bp-2',
+        title: 'Lapidary Quality',
+        description: 'Micro-calibrated facet symmetry and crisp corner integrity.',
+        icon: 'Sparkles',
+      },
+      {
+        id: 'bp-3',
+        title: 'Master Craftsmanship',
+        description: 'Surat atelier polishing combining generational craft and precision.',
+        icon: 'Gem',
+      },
+      {
+        id: 'bp-4',
+        title: 'Bespoke Collaboration',
+        description: 'Direct trade partnerships for custom designer parcels.',
+        icon: 'HeartHandshake',
+      },
+    ],
+    is_active: true,
+    display_order: 5,
+    has_draft: false,
+    published_at: new Date('2024-01-01').toISOString(),
+    created_at: new Date('2024-01-01').toISOString(),
+    updated_at: new Date('2024-01-01').toISOString(),
+  },
+  {
+    id: 'sec-inquiry-cta',
+    section_key: 'inquiry_cta',
+    page_slug: 'home',
+    title: 'Looking for Something Exceptional?',
+    subtitle: 'Direct Trade & Bespoke Cutting Inquiries',
+    badge: 'Direct Trade & Bespoke Cutting Inquiries',
+    description:
+      'Connect with Rajvi Diamonds to explore our collection and discuss your diamond requirements.',
+    image_url: '',
+    buttons: [
+      { label: 'WhatsApp Enquiry', href: '', variant: 'whatsapp', is_active: true },
+      { label: 'Contact Us', href: '/contact', variant: 'outline', is_active: true },
+    ],
+    items: [],
+    is_active: true,
+    display_order: 6,
+    has_draft: false,
+    published_at: new Date('2024-01-01').toISOString(),
+    created_at: new Date('2024-01-01').toISOString(),
+    updated_at: new Date('2024-01-01').toISOString(),
+  },
+];
+
+export const initialCmsGallery: CmsGalleryItem[] = [
+  {
+    id: 'gal-1',
+    image_url: 'https://res.cloudinary.com/b2fsbbzr/image/upload/v1794978442/rose-octagone-cut.png',
+    caption: 'Rose Octagone signature geometric cut with 8-fold triangular crown',
+    alt_text: 'Rose Octagone diamond cut macro photography',
+    category: 'signature',
+    display_order: 1,
+    is_active: true,
+    created_at: new Date('2024-01-01').toISOString(),
+    updated_at: new Date('2024-01-01').toISOString(),
+  },
+  {
+    id: 'gal-2',
+    image_url: '/images/cuts.jpeg',
+    caption: 'Facet geometry and planar reflections of fancy diamond parcels',
+    alt_text: 'Fancy cut diamond facet symmetry',
+    category: 'craftsmanship',
+    display_order: 2,
+    is_active: true,
+    created_at: new Date('2024-01-01').toISOString(),
+    updated_at: new Date('2024-01-01').toISOString(),
+  },
+  {
+    id: 'gal-3',
+    image_url: '/images/cuts2.jpeg',
+    caption: 'Calibrated millimeter diamond assortments in our Surat atelier',
+    alt_text: 'Calibrated diamond parcels in workshop',
+    category: 'atelier',
+    display_order: 3,
+    is_active: true,
+    created_at: new Date('2024-01-01').toISOString(),
+    updated_at: new Date('2024-01-01').toISOString(),
+  },
+  {
+    id: 'gal-4',
+    image_url: '/images/polish.jpeg',
+    caption: 'Hand-polishing diamond facet planes against the scaife wheel',
+    alt_text: 'Diamond scaife polishing wheel in Surat',
+    category: 'craftsmanship',
+    display_order: 4,
+    is_active: true,
+    created_at: new Date('2024-01-01').toISOString(),
+    updated_at: new Date('2024-01-01').toISOString(),
+  },
+  {
+    id: 'gal-5',
+    image_url: '/images/cuts3.jpeg',
+    caption: 'Optical clarity inspection of finished fancy cuts under magnification',
+    alt_text: 'Diamond optical inspection',
+    category: 'quality',
+    display_order: 5,
+    is_active: true,
+    created_at: new Date('2024-01-01').toISOString(),
+    updated_at: new Date('2024-01-01').toISOString(),
+  },
+];
+
+export const initialPageCms: PageCmsContent = {
+  about: {
+    hero_title: 'Dedicated Exclusively to the World of Fancy Cut Diamonds',
+    hero_subtitle:
+      'Rajvi Diamonds is a dedicated manufacturer and supplier of premier fancy diamond cuts, serving esteemed jewellery houses, private designers, and international diamond connoisseurs.',
+    hero_badge: 'The Heritage of Artistry',
+    story_heading: 'Beyond Standard Brilliant Cuts: Coaxing Rare Character from Rough Diamonds',
+    story_p1:
+      'Founded with a profound reverence for rare geometric and artisanal silhouettes, Rajvi Diamonds bridges heritage lapidary techniques with modern dimensional precision. Our master diamond polishers coax unprecedented fire and character from rough stones, producing singular fancy cuts that cannot be replicated by automated mass production.',
+    story_p2:
+      'While conventional commercial cutting prioritizes automated yield and uniform round brilliants, Rajvi Diamonds embraces the distinct discipline of fancy shapes. We see beauty in geometry, architectural symmetry, and historical rose faceting that diffuse light with subtle, hypnotic warmth.',
+    story_image: 'https://images.unsplash.com/photo-1750767323874-5946ad2c7e91?auto=format&fit=crop&w=1200&q=85',
+    expertise_heading: 'Our Core Expertise',
+    expertise_subtitle:
+      'Our workshop specializes exclusively in non-traditional fancy shapes, including faceted rose domes, geometric step cuts, and botanical silhouettes. Every cut undergoes rigorous facet angle calibration to harmonize light return and aesthetic individuality.',
+    expertise_items: [
+      {
+        title: 'Rare Geometric Profiles',
+        description: 'Octagonal, hexagonal, and custom angular contours designed for avant-garde jewellery settings.',
+        icon: 'Compass',
+      },
+      {
+        title: 'Calibrated Millimeter Sizing',
+        description: 'Exact-tolerance parcels suited for multi-stone layouts, eternity bands, and matched suites.',
+        icon: 'Sparkles',
+      },
+      {
+        title: 'Artisanal Rose Faceting',
+        description: 'Flat-base, multi-faceted dome crowns offering vintage romantic fire and lower profile bezel mounting.',
+        icon: 'Eye',
+      },
+      {
+        title: 'Direct Surat Sourcing',
+        description: 'Manufacturer-direct trade access eliminating intermediary markups and ensuring complete parcel provenance.',
+        icon: 'ShieldCheck',
+      },
+    ],
+    craftsmanship_heading: 'Surat Lapidary Craftsmanship',
+    craftsmanship_desc:
+      'Situated in Surat, the diamond cutting capital of the world, our artisans bring generations of lapidary mastery to each fancy cut. We combine time-honored cast-iron scaife polishing with microscopic quality checks to craft diamonds that stand apart.',
+    craftsmanship_image: '/images/polish.jpeg',
+  },
+  contact: {
+    hero_title: 'Connect with Rajvi Diamonds',
+    hero_subtitle:
+      'Reach out directly to our diamond team to discuss fancy cut orders, parcel calibrations, bespoke sizes, or trade collaborations.',
+    hero_badge: 'Trade & Client Communications',
+    whatsapp_box_title: 'Instant WhatsApp Support',
+    whatsapp_box_subtitle: 'Fast response for availability & parcels',
+    whatsapp_box_desc:
+      'Connect directly with our master sales desk on WhatsApp for real-time video diamond previews, stone measurements, and stock confirmation.',
+    direct_channels_title: 'Direct Contact Channels',
+  },
+  privacy: {
+    title: 'Privacy Policy & Client Data Confidentiality',
+    badge: 'Legal & Trust',
+    last_updated: 'January 2024',
+    sections: [
+      {
+        id: 'sec-1',
+        heading: '1. Brand Commitment & Non-Commercial Discovery',
+        content:
+          'Rajvi Diamonds operates this showcase website exclusively to display fancy cut diamond geometries, manufacturing specifications, and artisanal capabilities. This platform is strictly a discovery catalogue and inquiry system, not an e-commerce purchasing portal.',
+      },
+      {
+        id: 'sec-2',
+        heading: '2. Information We Collect',
+        content:
+          'We collect personal information solely when you voluntarily transmit a trade inquiry or contact us via WhatsApp, email, or our inquiry forms. This information may include your full name, company name, contact details (email, phone, WhatsApp), and diamond project requirements.',
+      },
+      {
+        id: 'sec-3',
+        heading: '3. Purpose of Data Processing',
+        content:
+          'All data collected is utilized solely to respond directly to your diamond inquiry or parcel quotation request, provide accurate cut specifications, and maintain confidential business communications. We never sell or monetize client data.',
+      },
+      {
+        id: 'sec-4',
+        heading: '4. Data Security & Storage',
+        content:
+          'Inquiries are securely stored within our encrypted PostgreSQL database infrastructure (powered by Supabase) equipped with strict Row Level Security (RLS). Only authenticated administrators have authorization to review inquiry records.',
+      },
+      {
+        id: 'sec-5',
+        heading: '5. Contact Regarding Your Data',
+        content:
+          'If you wish to review, update, or request the deletion of your inquiry data from our records, please contact our privacy compliance desk directly at our registered contact email.',
+      },
+    ],
+  },
+};
+
+export const initialSeoSettings: SeoSettings = {
+  default_title: 'Rajvi Diamonds | The Art of Extraordinary Diamonds',
+  default_description:
+    'Discover distinctive fancy-cut diamonds from Rajvi Diamonds. Featuring Rose Octagone, Tulip, and calibrated millimeter fancy cuts crafted in Surat, India.',
+  default_keywords: [
+    'Rajvi Diamonds',
+    'fancy cut diamonds',
+    'rose octagone diamond',
+    'tulip cut diamond',
+    'geometric diamond cuts',
+    'luxury diamond manufacturer',
+    'bespoke jewellery diamonds',
+    'wholesale fancy diamonds',
+    'Surat diamond manufacturer',
+  ],
+  default_og_image: 'https://res.cloudinary.com/b2fsbbzr/image/upload/v1794978442/rose-octagone-cut.png',
+  page_seo: {
+    '/': {
+      title: 'Rajvi Diamonds | The Art of Extraordinary Diamonds',
+      description:
+        'Discover distinctive fancy-cut diamonds from Rajvi Diamonds. Featuring Rose Octagone, Tulip, and calibrated millimeter fancy cuts crafted in Surat, India.',
+      og_image: 'https://res.cloudinary.com/b2fsbbzr/image/upload/v1794978442/rose-octagone-cut.png',
+    },
+    '/about': {
+      title: 'About Rajvi Diamonds | Artisanal Fancy Diamond Cutters',
+      description:
+        'Learn about Rajvi Diamonds, our devotion to fancy cut lapidary craftsmanship, geometric precision, and trusted wholesale diamond relationships.',
+    },
+    '/collections': {
+      title: 'Fancy Diamond Collections & Cut Catalogue | Rajvi Diamonds',
+      description:
+        'Browse the complete Rajvi Diamonds catalogue of fancy diamond cuts including Rose Octagone, Tulip, and geometric step cuts. Calibrated sizes for jewellery designers and trade buyers.',
+    },
+    '/contact': {
+      title: 'Contact Rajvi Diamonds | Trade & Direct Inquiries',
+      description:
+        'Contact Rajvi Diamonds for fancy cut diamond wholesale orders, bespoke jewellery manufacturing parcels, and calibrated diamond availability.',
+    },
+    '/privacy': {
+      title: 'Privacy Policy | Rajvi Diamonds',
+      description:
+        'Rajvi Diamonds privacy policy, inquiry data handling, and confidentiality commitments for trade clients.',
+    },
+  },
 };
 
 export const initialInquiries: Inquiry[] = [

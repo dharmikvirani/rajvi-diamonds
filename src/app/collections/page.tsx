@@ -5,16 +5,35 @@ import Footer from '@/components/public/Footer';
 import CollectionsView from '@/components/public/CollectionsView';
 import InquiryCTA from '@/components/public/InquiryCTA';
 import WhatsAppButton from '@/components/public/WhatsAppButton';
-import { getCategories, getDiamonds, getSiteSettings } from '@/lib/db';
-
-export const metadata: Metadata = {
-  title: 'Fancy Diamond Collections & Cut Catalogue',
-  description:
-    'Browse the complete Rajvi Diamonds catalogue of fancy diamond cuts including Rose Octagone, Tulip, and geometric step cuts. Calibrated sizes for jewellery designers and trade buyers.',
-};
+import {
+  getCategories,
+  getDiamonds,
+  getSiteSettings,
+  getHeaderSettings,
+  getFooterSettings,
+  getWebsiteNavigation,
+  getSeoSettings,
+} from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSeoSettings();
+  const pageSeo = seo.page_seo?.['/collections'] || {};
+
+  return {
+    title: pageSeo.title || 'Fancy Diamond Collections & Cut Catalogue | Rajvi Diamonds',
+    description:
+      pageSeo.description ||
+      'Browse the complete Rajvi Diamonds catalogue of fancy diamond cuts including Rose Octagone, Tulip, and geometric step cuts. Calibrated sizes for jewellery designers and trade buyers.',
+    openGraph: {
+      title: pageSeo.title || 'Fancy Diamond Collections & Cut Catalogue | Rajvi Diamonds',
+      description: pageSeo.description,
+      images: pageSeo.og_image ? [pageSeo.og_image] : [],
+    },
+  };
+}
 
 interface CollectionsPageProps {
   searchParams?: {
@@ -23,10 +42,24 @@ interface CollectionsPageProps {
 }
 
 export default async function CollectionsPage({ searchParams }: CollectionsPageProps) {
-  const [settings, categories, diamonds] = await Promise.all([
+  const [
+    settings,
+    categories,
+    diamonds,
+    headerSettings,
+    navLinks,
+    footerSettings,
+    footerColNav,
+    footerNav,
+  ] = await Promise.all([
     getSiteSettings(),
     getCategories(),
     getDiamonds(),
+    getHeaderSettings(),
+    getWebsiteNavigation('header'),
+    getFooterSettings(),
+    getWebsiteNavigation('footer_collections'),
+    getWebsiteNavigation('footer_navigation'),
   ]);
 
   // Only display categories supported by actual product data or confirmed business offerings
@@ -42,6 +75,12 @@ export default async function CollectionsPage({ searchParams }: CollectionsPageP
       <Header
         whatsappNumber={settings.whatsapp_number}
         brandName={settings.brand_name}
+        logoUrl={headerSettings.logo_url}
+        navLinks={navLinks}
+        showCta={headerSettings.show_cta}
+        ctaLabel={headerSettings.cta_label}
+        ctaHref={headerSettings.cta_href}
+        showWhatsApp={headerSettings.show_whatsapp}
       />
 
       {/* Catalogue Hero Banner (Clean Light Editorial Theme) */}
@@ -72,7 +111,12 @@ export default async function CollectionsPage({ searchParams }: CollectionsPageP
       <InquiryCTA whatsappNumber={settings.whatsapp_number} />
 
       {/* Footer */}
-      <Footer settings={settings} />
+      <Footer
+        settings={settings}
+        footerSettings={footerSettings}
+        collectionLinks={footerColNav}
+        navigationLinks={footerNav}
+      />
 
       {/* Floating WhatsApp Action */}
       <WhatsAppButton

@@ -4,20 +4,55 @@ import Header from '@/components/public/Header';
 import Footer from '@/components/public/Footer';
 import ContactForm from '@/components/public/ContactForm';
 import WhatsAppButton from '@/components/public/WhatsAppButton';
-import { getSiteSettings } from '@/lib/db';
+import {
+  getSiteSettings,
+  getPageCms,
+  getHeaderSettings,
+  getFooterSettings,
+  getWebsiteNavigation,
+  getSeoSettings,
+} from '@/lib/db';
 import { Mail, Phone, MapPin, Instagram, MessageCircle, Clock, ShieldCheck } from 'lucide-react';
-
-export const metadata: Metadata = {
-  title: 'Contact Rajvi Diamonds | Trade & Direct Inquiries',
-  description:
-    'Contact Rajvi Diamonds for fancy cut diamond wholesale orders, bespoke jewellery manufacturing parcels, and calibrated diamond availability.',
-};
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSeoSettings();
+  const pageSeo = seo.page_seo?.['/contact'] || {};
+
+  return {
+    title: pageSeo.title || 'Contact Rajvi Diamonds | Trade & Direct Inquiries',
+    description:
+      pageSeo.description ||
+      'Contact Rajvi Diamonds for fancy cut diamond wholesale orders, bespoke jewellery manufacturing parcels, and calibrated diamond availability.',
+    openGraph: {
+      title: pageSeo.title || 'Contact Rajvi Diamonds | Trade & Direct Inquiries',
+      description: pageSeo.description,
+      images: pageSeo.og_image ? [pageSeo.og_image] : [],
+    },
+  };
+}
+
 export default async function ContactPage() {
-  const settings = await getSiteSettings();
+  const [
+    settings,
+    contactCms,
+    headerSettings,
+    navLinks,
+    footerSettings,
+    footerColNav,
+    footerNav,
+  ] = await Promise.all([
+    getSiteSettings(),
+    getPageCms('contact'),
+    getHeaderSettings(),
+    getWebsiteNavigation('header'),
+    getFooterSettings(),
+    getWebsiteNavigation('footer_collections'),
+    getWebsiteNavigation('footer_navigation'),
+  ]);
+
   const cleanWhatsAppNumber = (settings.whatsapp_number || '').replace(/[^0-9]/g, '');
 
   return (
@@ -26,19 +61,26 @@ export default async function ContactPage() {
       <Header
         whatsappNumber={settings.whatsapp_number}
         brandName={settings.brand_name}
+        logoUrl={headerSettings.logo_url}
+        navLinks={navLinks}
+        showCta={headerSettings.show_cta}
+        ctaLabel={headerSettings.cta_label}
+        ctaHref={headerSettings.cta_href}
+        showWhatsApp={headerSettings.show_whatsapp}
       />
 
       {/* Hero Header (Clean Light Theme with Gold Accent) */}
       <section className="bg-white border-b border-rajvi-borderLight py-16 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="text-[11px] uppercase tracking-[0.25em] text-rajvi-gold font-semibold block mb-3">
-            Trade & Client Communications
+            {contactCms.hero_badge || 'Trade & Client Communications'}
           </span>
           <h1 className="font-serif text-3xl sm:text-5xl font-normal tracking-tight text-rajvi-textDark mb-4">
-            Connect with Rajvi Diamonds
+            {contactCms.hero_title || 'Connect with Rajvi Diamonds'}
           </h1>
           <p className="text-rajvi-textMuted text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            Reach out directly to our diamond team to discuss fancy cut orders, parcel calibrations, bespoke sizes, or trade collaborations.
+            {contactCms.hero_subtitle ||
+              'Reach out directly to our diamond team to discuss fancy cut orders, parcel calibrations, bespoke sizes, or trade collaborations.'}
           </p>
         </div>
       </section>
@@ -56,16 +98,17 @@ export default async function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-serif text-lg text-white font-normal">
-                    Instant WhatsApp Support
+                    {contactCms.whatsapp_box_title || 'Instant WhatsApp Support'}
                   </h3>
                   <p className="text-xs text-rajvi-offWhite/70">
-                    Fast response for availability & parcels
+                    {contactCms.whatsapp_box_subtitle || 'Fast response for availability & parcels'}
                   </p>
                 </div>
               </div>
 
               <p className="text-xs text-rajvi-offWhite/80 leading-relaxed">
-                Connect directly with our master sales desk on WhatsApp for real-time video diamond previews, stone measurements, and stock confirmation.
+                {contactCms.whatsapp_box_desc ||
+                  'Connect directly with our master sales desk on WhatsApp for real-time video diamond previews, stone measurements, and stock confirmation.'}
               </p>
 
               <div className="pt-2">
@@ -81,7 +124,7 @@ export default async function ContactPage() {
             {/* Business Contact Info Cards */}
             <div className="bg-white border border-rajvi-borderLight rounded-sm p-8 shadow-sm space-y-6">
               <h3 className="font-serif text-xl text-rajvi-textDark font-normal pb-3 border-b border-rajvi-lightGrey">
-                Direct Contact Channels
+                {contactCms.direct_channels_title || 'Direct Contact Channels'}
               </h3>
 
               <div className="space-y-4 text-xs">
@@ -107,7 +150,7 @@ export default async function ContactPage() {
                     <Phone className="w-4 h-4 text-rajvi-gold shrink-0 mt-0.5" />
                     <div>
                       <span className="block text-[10px] uppercase tracking-wider text-rajvi-textMuted font-semibold">
-                        Direct Phone
+                        Direct Phone / Call
                       </span>
                       <a
                         href={`tel:${settings.phone_number.replace(/\s+/g, '')}`}
@@ -119,12 +162,31 @@ export default async function ContactPage() {
                   </div>
                 )}
 
+                {settings.whatsapp_number && (
+                  <div className="flex items-start gap-3">
+                    <MessageCircle className="w-4 h-4 text-[#25D366] shrink-0 mt-0.5" />
+                    <div>
+                      <span className="block text-[10px] uppercase tracking-wider text-rajvi-textMuted font-semibold">
+                        WhatsApp Sales Desk
+                      </span>
+                      <a
+                        href={`https://wa.me/${cleanWhatsAppNumber}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-rajvi-textDark hover:text-rajvi-gold font-medium"
+                      >
+                        {settings.whatsapp_number}
+                      </a>
+                    </div>
+                  </div>
+                )}
+
                 {settings.instagram_url && (
                   <div className="flex items-start gap-3">
                     <Instagram className="w-4 h-4 text-rajvi-gold shrink-0 mt-0.5" />
                     <div>
                       <span className="block text-[10px] uppercase tracking-wider text-rajvi-textMuted font-semibold">
-                        Instagram
+                        Instagram Atelier
                       </span>
                       <a
                         href={settings.instagram_url}
@@ -132,20 +194,20 @@ export default async function ContactPage() {
                         rel="noopener noreferrer"
                         className="text-rajvi-textDark hover:text-rajvi-gold font-medium"
                       >
-                        Follow @rajvidiamonds
+                        @rajvidiamonds
                       </a>
                     </div>
                   </div>
                 )}
 
                 {settings.business_address && (
-                  <div className="flex items-start gap-3 pt-2 border-t border-rajvi-lightGrey">
+                  <div className="flex items-start gap-3">
                     <MapPin className="w-4 h-4 text-rajvi-gold shrink-0 mt-0.5" />
                     <div>
                       <span className="block text-[10px] uppercase tracking-wider text-rajvi-textMuted font-semibold">
-                        Bourse / Office Address
+                        Manufacturing Atelier Location
                       </span>
-                      <p className="text-rajvi-textDark leading-relaxed mt-0.5">
+                      <p className="text-rajvi-textDark leading-relaxed">
                         {settings.business_address}
                       </p>
                     </div>
@@ -153,40 +215,36 @@ export default async function ContactPage() {
                 )}
               </div>
             </div>
-
-            {/* Trade Assurance Note */}
-            <div className="bg-rajvi-offWhite border border-rajvi-borderLight p-6 rounded-sm text-xs space-y-2">
-              <div className="flex items-center gap-2 text-rajvi-gold font-semibold uppercase tracking-wider text-[11px]">
-                <ShieldCheck className="w-4 h-4" />
-                <span>Wholesale & B2B Inquiries Welcome</span>
-              </div>
-              <p className="text-rajvi-textMuted leading-relaxed">
-                We accommodate single-stone bespoke custom cuts as well as volume calibrated parcels for high jewellery manufacturers and traders.
-              </p>
-            </div>
           </div>
 
-          {/* Right Column: Inquiry Form */}
+          {/* Right Column: Diamond Inquiry Submission Form */}
           <div className="lg:col-span-7">
-            <div className="mb-6">
-              <span className="text-xs uppercase tracking-widest text-rajvi-gold font-semibold block mb-1">
-                Written Submission
-              </span>
-              <h2 className="font-serif text-2xl sm:text-3xl text-rajvi-textDark font-normal">
-                Send a Formal Trade Inquiry
-              </h2>
-              <p className="text-xs sm:text-sm text-rajvi-textMuted mt-1">
-                Please provide details regarding your required cut shapes, millimeter dimensions, or parcel volumes.
-              </p>
-            </div>
+            <div className="bg-white border border-rajvi-borderLight rounded-sm p-8 sm:p-10 shadow-luxury">
+              <div className="mb-6 pb-4 border-b border-rajvi-lightGrey">
+                <span className="text-[10px] uppercase tracking-widest text-rajvi-gold font-semibold block mb-1">
+                  B2B & Private Orders
+                </span>
+                <h3 className="font-serif text-2xl text-rajvi-textDark font-normal">
+                  Send a Cut or Parcel Inquiry
+                </h3>
+                <p className="text-xs text-rajvi-textMuted mt-1">
+                  Our diamond cutting desk will respond within 24 hours with stone availability and calibration specifications.
+                </p>
+              </div>
 
-            <ContactForm />
+              <ContactForm />
+            </div>
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <Footer settings={settings} />
+      <Footer
+        settings={settings}
+        footerSettings={footerSettings}
+        collectionLinks={footerColNav}
+        navigationLinks={footerNav}
+      />
 
       {/* Floating WhatsApp Action */}
       <WhatsAppButton

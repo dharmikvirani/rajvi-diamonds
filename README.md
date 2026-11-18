@@ -221,6 +221,13 @@ The administrative dashboard is located at `/admin` (protected by middleware and
   - Spam and test inquiry deletion capability.
 - **Site Settings (`/admin/settings`):**
   - Live configuration of business contact info, physical atelier address in Surat, official WhatsApp number, and hero banner copy.
+- **Website CMS Management (`/admin/website/*`):**
+  - **Homepage Sections (`/admin/website/homepage`):** Complete visual CMS for homepage sections (Hero, Featured Cuts, Why Choose Us, Craftsmanship, Brand Story, Inquiry CTA). Supports reordering via move up/down, active visibility toggling, safe Draft saving without affecting live visitors, live Draft Preview (`?preview=true`), and instant 1-click publishing.
+  - **Navigation Management (`/admin/website/navigation`):** Manage header logo with preview and dimension validation, configure header CTA button visibility/label/destination, WhatsApp header toggle, and full CRUD + reordering for header and footer navigation links.
+  - **Footer Settings (`/admin/website/footer`):** Dynamic control of footer logo, atelier description, trust badge ("Surat Diamond Bourse Member"), legal trade disclaimers, copyright notice, and social media links.
+  - **Brand Media Gallery (`/admin/website/gallery`):** Upload diamond macro photography to Cloudinary directly from the CMS, edit captions and SEO alt tags, reorder visuals, toggle active status, and safely delete with CDN purge.
+  - **Inner Pages CMS (`/admin/website/pages`):** Manage editorial copy, headlines, subtitles, and story paragraphs for `/about`, `/contact`, and `/privacy` without code deployments.
+  - **SEO & Social Metadata (`/admin/website/seo`):** Global meta tags, OpenGraph sharing images, and per-page SEO overrides for `/`, `/about`, `/collections`, `/contact`, and `/privacy`.
 
 ---
 
@@ -262,11 +269,14 @@ The repository includes a comprehensive, automated end-to-end QA audit script co
 ### Running the Test Suite:
 
 ```bash
-# Run against the live production deployment
+# 1. Run the Core Product, Cloudinary & CRM QA Suite
 node scripts/e2e_qa_audit.mjs
 
+# 2. Run the Dynamic CMS & Draft Isolation QA Suite (27/27 Assertions)
+node scripts/e2e_cms_qa.mjs
+
 # Or run against a specific custom target URL
-BASE_URL=https://rajvi-diamonds.vercel.app node scripts/e2e_qa_audit.mjs
+TARGET_URL=https://rajvi-diamonds.vercel.app node scripts/e2e_cms_qa.mjs
 ```
 
 ### Test Coverage (24/24 Assertions):
