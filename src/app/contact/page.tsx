@@ -20,15 +20,20 @@ export const revalidate = 0;
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSeoSettings();
   const pageSeo = seo.page_seo?.['/contact'] || {};
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rajvidiamonds.com';
 
   return {
     title: pageSeo.title || 'Contact Rajvi Diamonds | Trade & Direct Inquiries',
     description:
       pageSeo.description ||
       'Contact Rajvi Diamonds for fancy cut diamond wholesale orders, bespoke jewellery manufacturing parcels, and calibrated diamond availability.',
+    alternates: {
+      canonical: `${siteUrl}/contact`,
+    },
     openGraph: {
       title: pageSeo.title || 'Contact Rajvi Diamonds | Trade & Direct Inquiries',
       description: pageSeo.description,
+      url: `${siteUrl}/contact`,
       images: pageSeo.og_image ? [pageSeo.og_image] : [],
     },
   };

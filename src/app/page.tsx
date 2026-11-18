@@ -18,6 +18,7 @@ import {
   getWebsiteNavigation,
   getSeoSettings,
 } from '@/lib/db';
+import { getAdminSession } from '@/lib/auth';
 import { Eye } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -26,6 +27,7 @@ export const revalidate = 0;
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSeoSettings();
   const pageSeo = seo.page_seo?.['/'] || {};
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rajvidiamonds.com';
 
   const title = pageSeo.title || seo.default_title || 'Rajvi Diamonds | The Art of Extraordinary Diamonds';
   const description =
@@ -37,9 +39,13 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title,
     description,
+    alternates: {
+      canonical: `${siteUrl}`,
+    },
     openGraph: {
       title,
       description,
+      url: `${siteUrl}`,
       images: ogImage ? [ogImage] : [],
     },
   };
@@ -52,7 +58,8 @@ interface HomePageProps {
 }
 
 export default async function HomePage({ searchParams }: HomePageProps) {
-  const isPreview = searchParams?.preview === 'true';
+  const session = await getAdminSession();
+  const isPreview = searchParams?.preview === 'true' && session.isAdmin;
 
   const [
     settings,

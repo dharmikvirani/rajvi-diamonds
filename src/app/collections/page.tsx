@@ -21,15 +21,20 @@ export const revalidate = 0;
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSeoSettings();
   const pageSeo = seo.page_seo?.['/collections'] || {};
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rajvidiamonds.com';
 
   return {
     title: pageSeo.title || 'Fancy Diamond Collections & Cut Catalogue | Rajvi Diamonds',
     description:
       pageSeo.description ||
       'Browse the complete Rajvi Diamonds catalogue of fancy diamond cuts including Rose Octagone, Tulip, and geometric step cuts. Calibrated sizes for jewellery designers and trade buyers.',
+    alternates: {
+      canonical: `${siteUrl}/collections`,
+    },
     openGraph: {
       title: pageSeo.title || 'Fancy Diamond Collections & Cut Catalogue | Rajvi Diamonds',
       description: pageSeo.description,
+      url: `${siteUrl}/collections`,
       images: pageSeo.og_image ? [pageSeo.og_image] : [],
     },
   };

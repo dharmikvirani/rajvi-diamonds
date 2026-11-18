@@ -21,15 +21,20 @@ export const revalidate = 0;
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSeoSettings();
   const pageSeo = seo.page_seo?.['/about'] || {};
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rajvidiamonds.com';
 
   return {
     title: pageSeo.title || 'About Rajvi Diamonds | Artisanal Fancy Diamond Cutters',
     description:
       pageSeo.description ||
       'Learn about Rajvi Diamonds, our devotion to fancy cut lapidary craftsmanship, geometric precision, and trusted wholesale diamond relationships.',
+    alternates: {
+      canonical: `${siteUrl}/about`,
+    },
     openGraph: {
       title: pageSeo.title || 'About Rajvi Diamonds | Artisanal Fancy Diamond Cutters',
       description: pageSeo.description,
+      url: `${siteUrl}/about`,
       images: pageSeo.og_image ? [pageSeo.og_image] : [],
     },
   };

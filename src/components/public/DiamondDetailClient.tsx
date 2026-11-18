@@ -327,6 +327,7 @@ export default function DiamondDetailClient({
             initialClarity={selectedClarity}
             initialDiamondId={diamond.id}
             inquiryTypeDefault="Diamond Availability"
+            whatsappNumber={settings.whatsapp_number}
           />
         </div>
       </div>

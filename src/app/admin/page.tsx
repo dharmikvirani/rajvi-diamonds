@@ -13,6 +13,9 @@ import {
   Plus,
   Clock,
   Eye,
+  TrendingUp,
+  BarChart3,
+  Calendar,
 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 
@@ -77,10 +80,100 @@ export default async function AdminDashboardPage() {
         <StatsCard
           label="Customer Inquiries"
           value={stats.totalInquiries}
-          subValue={`${stats.newInquiries} New • ${stats.contactedInquiries} Contacted • ${stats.convertedInquiries} Converted`}
+          subValue={`${stats.newInquiries} New • ${stats.pendingInquiries || stats.newInquiries} Pending • ${stats.convertedInquiries} Converted`}
           icon={Inbox}
           badge={stats.newInquiries > 0 ? `${stats.newInquiries} New` : undefined}
         />
+      </div>
+
+      {/* Inquiry Demand Analytics & Monthly Volume */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-7">
+        {/* Most Requested Diamond Cuts */}
+        <div className="lg:col-span-6 bg-[#181714] border border-rajvi-borderDark/80 rounded-sm p-6 sm:p-7 shadow-sm">
+          <div className="flex items-center justify-between pb-4 mb-5 border-b border-rajvi-borderDark/60">
+            <div className="flex items-center gap-2.5">
+              <TrendingUp className="w-4 h-4 text-rajvi-gold" />
+              <h3 className="font-serif text-lg text-rajvi-offWhite font-normal">
+                Most Requested Diamond Cuts
+              </h3>
+            </div>
+            <span className="text-[11px] font-sans uppercase tracking-wider text-rajvi-offWhite/50">
+              Demand Distribution
+            </span>
+          </div>
+
+          {stats.mostRequestedCuts && stats.mostRequestedCuts.length > 0 ? (
+            <div className="space-y-4">
+              {stats.mostRequestedCuts.map((cut, idx) => (
+                <div key={cut.name} className="space-y-1.5">
+                  <div className="flex items-center justify-between text-[13px] font-sans">
+                    <span className="font-medium text-rajvi-offWhite flex items-center gap-2">
+                      <span className="text-[11px] font-mono text-rajvi-gold/70">0{idx + 1}.</span>
+                      {cut.name}
+                    </span>
+                    <span className="text-rajvi-offWhite/60 text-[12px]">
+                      {cut.count} {cut.count === 1 ? 'inquiry' : 'inquiries'} ({cut.percentage}%)
+                    </span>
+                  </div>
+                  <div className="w-full h-1.5 bg-[#23211C] rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-rajvi-goldMuted to-rajvi-gold rounded-full transition-all duration-500"
+                      style={{ width: `${Math.max(cut.percentage, 8)}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="py-8 text-center text-[13px] text-rajvi-offWhite/50">
+              No cut requests aggregated yet.
+            </div>
+          )}
+        </div>
+
+        {/* Monthly Inquiries Activity */}
+        <div className="lg:col-span-6 bg-[#181714] border border-rajvi-borderDark/80 rounded-sm p-6 sm:p-7 shadow-sm">
+          <div className="flex items-center justify-between pb-4 mb-5 border-b border-rajvi-borderDark/60">
+            <div className="flex items-center gap-2.5">
+              <Calendar className="w-4 h-4 text-rajvi-gold" />
+              <h3 className="font-serif text-lg text-rajvi-offWhite font-normal">
+                Monthly Inquiry Volume
+              </h3>
+            </div>
+            <span className="text-[11px] font-sans uppercase tracking-wider text-rajvi-offWhite/50">
+              Past 6 Months
+            </span>
+          </div>
+
+          {stats.monthlyInquiryStats && stats.monthlyInquiryStats.length > 0 ? (
+            <div className="grid grid-cols-6 gap-2 sm:gap-3 items-end h-[140px] pt-4">
+              {stats.monthlyInquiryStats.map((item) => {
+                const maxCount = Math.max(...stats.monthlyInquiryStats.map((s) => s.count), 1);
+                const heightPercent = Math.max(Math.round((item.count / maxCount) * 100), 12);
+                return (
+                  <div key={item.month} className="flex flex-col items-center gap-2 h-full justify-end">
+                    <span className="text-[11px] font-mono text-rajvi-gold font-semibold">
+                      {item.count}
+                    </span>
+                    <div className="w-full max-w-[32px] bg-[#23211C] rounded-t-sm flex items-end h-[85px] overflow-hidden">
+                      <div
+                        className="w-full bg-gradient-to-t from-rajvi-gold/40 to-rajvi-gold rounded-t-sm transition-all duration-500"
+                        style={{ height: `${heightPercent}%` }}
+                      />
+                    </div>
+                    <span className="text-[10px] font-sans uppercase tracking-wider text-rajvi-offWhite/60 text-center truncate w-full">
+                      {item.month.split(' ')[0]}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="py-8 text-center text-[13px] text-rajvi-offWhite/50">
+              No monthly activity recorded yet.
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Recent Inquiries Panel */}

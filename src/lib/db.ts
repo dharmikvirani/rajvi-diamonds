@@ -1150,12 +1150,57 @@ export async function getDashboardStats() {
   const featuredDiamonds = diamonds.filter((d) => d.is_featured).length;
 
   const newInquiries = inquiries.filter((i) => i.status === 'New').length;
+  const pendingInquiries = inquiries.filter(
+    (i) => i.status === 'New' || i.status === 'Contacted' || i.status === 'In Progress'
+  ).length;
   const contactedInquiries = inquiries.filter(
     (i) => i.status === 'Contacted' || i.status === 'In Progress'
   ).length;
   const convertedInquiries = inquiries.filter(
     (i) => i.status === 'Converted' || i.status === 'Resolved'
   ).length;
+
+  // Monthly inquiry statistics (last 6 months)
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const monthlyStatsMap = new Map<string, number>();
+
+  const now = new Date();
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+    monthlyStatsMap.set(key, 0);
+  }
+
+  inquiries.forEach((inq) => {
+    if (inq.created_at) {
+      const d = new Date(inq.created_at);
+      const key = `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+      if (monthlyStatsMap.has(key)) {
+        monthlyStatsMap.set(key, (monthlyStatsMap.get(key) || 0) + 1);
+      }
+    }
+  });
+
+  const monthlyInquiryStats = Array.from(monthlyStatsMap.entries()).map(([month, count]) => ({
+    month,
+    count,
+  }));
+
+  // Most requested diamond cuts
+  const cutCountMap = new Map<string, number>();
+  inquiries.forEach((inq) => {
+    const cutName = inq.diamond_name?.trim() || 'General Inquiry';
+    cutCountMap.set(cutName, (cutCountMap.get(cutName) || 0) + 1);
+  });
+
+  const mostRequestedCuts = Array.from(cutCountMap.entries())
+    .map(([name, count]) => ({
+      name,
+      count,
+      percentage: inquiries.length > 0 ? Math.round((count / inquiries.length) * 100) : 0,
+    }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
 
   return {
     totalDiamonds: diamonds.length,
@@ -1165,9 +1210,12 @@ export async function getDashboardStats() {
     totalCategories: categories.length,
     totalInquiries: inquiries.length,
     newInquiries,
+    pendingInquiries,
     contactedInquiries,
     convertedInquiries,
-    recentInquiries: inquiries.slice(0, 5),
+    recentInquiries: inquiries.slice(0, 6),
+    monthlyInquiryStats,
+    mostRequestedCuts,
   };
 }
 

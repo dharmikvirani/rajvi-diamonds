@@ -23,7 +23,7 @@ export default function ContactForm({
   initialClarity = '',
   initialDiamondId = '',
   inquiryTypeDefault = 'General Inquiry',
-  whatsappNumber = '+919924151515',
+  whatsappNumber = '',
   className = '',
 }: ContactFormProps) {
   const buildInitialMessage = (

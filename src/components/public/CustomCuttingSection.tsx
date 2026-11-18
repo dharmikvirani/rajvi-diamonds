@@ -7,7 +7,7 @@ interface CustomCuttingSectionProps {
 }
 
 export default function CustomCuttingSection({
-  whatsappNumber = '+919924151515',
+  whatsappNumber = '',
 }: CustomCuttingSectionProps) {
   const customFeatures = [
     'Proprietary & Exclusive Silhouette Cutting (Under NDA)',

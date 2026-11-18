@@ -18,15 +18,20 @@ export const revalidate = 0;
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSeoSettings();
   const pageSeo = seo.page_seo?.['/privacy'] || {};
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rajvidiamonds.com';
 
   return {
     title: pageSeo.title || 'Privacy Policy | Rajvi Diamonds',
     description:
       pageSeo.description ||
       'Rajvi Diamonds privacy policy, inquiry data handling, and confidentiality commitments for trade clients.',
+    alternates: {
+      canonical: `${siteUrl}/privacy`,
+    },
     openGraph: {
       title: pageSeo.title || 'Privacy Policy | Rajvi Diamonds',
       description: pageSeo.description,
+      url: `${siteUrl}/privacy`,
       images: pageSeo.og_image ? [pageSeo.og_image] : [],
     },
   };
