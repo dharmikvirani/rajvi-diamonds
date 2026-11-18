@@ -17,7 +17,7 @@ export default function FeaturedCuts({ diamonds, theme = 'dark' }: FeaturedCutsP
 
   return (
     <section
-      className={`py-24 sm:py-28 border-t ${
+      className={`py-20 sm:py-24 border-t ${
         isDark
           ? 'bg-[#0D0C0A] text-white border-[#2A2722]'
           : 'bg-white text-rajvi-textDark border-rajvi-borderLight'
@@ -25,17 +25,17 @@ export default function FeaturedCuts({ diamonds, theme = 'dark' }: FeaturedCutsP
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-rajvi-gold font-semibold mb-3">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Curated Masterpieces</span>
             </div>
             <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight leading-tight">
-              Explore Our Collections
+              Featured Diamond Collections
             </h2>
             <p
-              className={`mt-4 text-sm sm:text-base leading-relaxed font-light ${
+              className={`mt-3 text-sm sm:text-base leading-relaxed font-light ${
                 isDark ? 'text-white/70' : 'text-rajvi-textMuted'
               }`}
             >
@@ -47,7 +47,7 @@ export default function FeaturedCuts({ diamonds, theme = 'dark' }: FeaturedCutsP
             href="/collections"
             className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-rajvi-gold hover:text-rajvi-goldLight font-semibold transition-colors group self-start md:self-auto"
           >
-            <span>View All Cuts</span>
+            <span>View Complete Catalogue</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </a>
         </div>

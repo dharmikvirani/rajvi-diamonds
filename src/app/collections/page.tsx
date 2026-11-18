@@ -29,6 +29,11 @@ export default async function CollectionsPage({ searchParams }: CollectionsPageP
     getDiamonds(),
   ]);
 
+  // Only display categories supported by actual product data or confirmed business offerings
+  const supportedCategories = categories.filter((cat) =>
+    diamonds.some((d) => d.category_id === cat.id)
+  );
+
   const initialCat = searchParams?.category || 'all';
 
   return (
@@ -58,7 +63,7 @@ export default async function CollectionsPage({ searchParams }: CollectionsPageP
       <main className="flex-grow">
         <CollectionsView
           initialDiamonds={diamonds}
-          categories={categories}
+          categories={supportedCategories.length > 0 ? supportedCategories : categories}
           initialCategoryFilter={initialCat}
         />
       </main>

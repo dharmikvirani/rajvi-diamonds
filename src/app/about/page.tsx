@@ -132,6 +132,105 @@ export default async function AboutPage() {
         </div>
       </section>
 
+      {/* Section 4: Surat Lapidary Craftsmanship Process */}
+      <section className="bg-white py-24 border-b border-rajvi-borderLight">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            {/* Visual Workshop Photography */}
+            <div className="lg:col-span-5 relative">
+              <div className="relative aspect-[4/3] rounded-sm overflow-hidden border border-rajvi-borderLight shadow-luxury bg-white p-2">
+                <div className="relative w-full h-full rounded-sm overflow-hidden">
+                  <Image
+                    src="/images/polish.jpeg"
+                    alt="Artisan diamond hand-polishing on cast iron scaife wheel in Surat"
+                    fill
+                    className="object-cover object-center"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                  <div className="absolute bottom-4 left-4 right-4 p-3 bg-white/95 backdrop-blur-md rounded-sm border border-rajvi-gold/30">
+                    <span className="text-[10px] uppercase tracking-widest text-rajvi-gold font-semibold block">
+                      Surat Lapidary Workshop
+                    </span>
+                    <p className="text-xs text-rajvi-textDark font-medium">
+                      Traditional scaife faceting of bespoke fancy-cut silhouettes.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Neutral, Accurate Process Descriptions */}
+            <div className="lg:col-span-7 space-y-6">
+              <span className="text-xs uppercase tracking-[0.25em] text-rajvi-gold font-semibold block">
+                The Cutting Journey
+              </span>
+              <h2 className="font-serif text-3xl sm:text-4xl text-rajvi-textDark font-normal tracking-tight leading-tight">
+                Artisanal Lapidary Craftsmanship
+              </h2>
+              <div className="prose max-w-none text-xs sm:text-sm text-rajvi-textMuted leading-relaxed space-y-4">
+                <p>
+                  Every fancy diamond cut in our workshop follows a meticulous step-by-step lapidary path. Starting with rough crystal evaluation, our cutters assess natural grain lines and internal optical transparency to determine whether a stone will achieve its highest expression as a faceted dome, step cut, or organic curve.
+                </p>
+                <p>
+                  In our Surat workshop, senior lapidaries hand-guide stones against cast iron scaife wheels, orienting each facet plane with careful pressure and precision. Completed stones undergo thorough visual inspection and millimeter gauge sizing before being prepared for trade parcels.
+                </p>
+              </div>
+
+              {/* 4 Neutral Steps */}
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-rajvi-borderLight">
+                <div className="p-3 bg-[#FAF9F6] border border-rajvi-borderLight rounded-sm">
+                  <span className="text-[10px] uppercase tracking-wider text-rajvi-gold font-semibold block">
+                    Phase 01
+                  </span>
+                  <h4 className="font-serif text-sm text-rajvi-textDark font-medium mt-0.5">
+                    Crystal Planning
+                  </h4>
+                  <p className="text-[11px] text-rajvi-textMuted mt-1">
+                    Careful evaluation of rough grain and optical transparency.
+                  </p>
+                </div>
+
+                <div className="p-3 bg-[#FAF9F6] border border-rajvi-borderLight rounded-sm">
+                  <span className="text-[10px] uppercase tracking-wider text-rajvi-gold font-semibold block">
+                    Phase 02
+                  </span>
+                  <h4 className="font-serif text-sm text-rajvi-textDark font-medium mt-0.5">
+                    Geometric Shaping
+                  </h4>
+                  <p className="text-[11px] text-rajvi-textMuted mt-1">
+                    Calculating facet angles for eight-fold and floral silhouettes.
+                  </p>
+                </div>
+
+                <div className="p-3 bg-[#FAF9F6] border border-rajvi-borderLight rounded-sm">
+                  <span className="text-[10px] uppercase tracking-wider text-rajvi-gold font-semibold block">
+                    Phase 03
+                  </span>
+                  <h4 className="font-serif text-sm text-rajvi-textDark font-medium mt-0.5">
+                    Scaife Polishing
+                  </h4>
+                  <p className="text-[11px] text-rajvi-textMuted mt-1">
+                    Hand-guided scaife faceting for clean junction lines and fire.
+                  </p>
+                </div>
+
+                <div className="p-3 bg-[#FAF9F6] border border-rajvi-borderLight rounded-sm">
+                  <span className="text-[10px] uppercase tracking-wider text-rajvi-gold font-semibold block">
+                    Phase 04
+                  </span>
+                  <h4 className="font-serif text-sm text-rajvi-textDark font-medium mt-0.5">
+                    Quality & Sizing
+                  </h4>
+                  <p className="text-[11px] text-rajvi-textMuted mt-1">
+                    Visual symmetry inspection and millimeter gauge calibration.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Inquiry CTA */}
       <InquiryCTA whatsappNumber={settings.whatsapp_number} />
 

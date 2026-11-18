@@ -8,7 +8,7 @@ interface InquiryCTAProps {
 
 export default function InquiryCTA({ whatsappNumber = '' }: InquiryCTAProps) {
   return (
-    <section className="bg-[#0D0C0A] text-white py-24 sm:py-32 border-t border-[#2A2722] relative overflow-hidden">
+    <section className="bg-[#0D0C0A] text-white py-20 sm:py-24 border-t border-[#2A2722] relative overflow-hidden">
       {/* Subtle Gold Ambient Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-rajvi-gold/10 rounded-full blur-[140px] pointer-events-none" />
 

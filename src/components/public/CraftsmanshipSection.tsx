@@ -11,62 +11,62 @@ export default function CraftsmanshipSection() {
     {
       step: '01',
       title: 'Diamond Selection',
-      tagline: 'Rough Evaluation & Optical Orientation',
+      tagline: 'Rough Evaluation & Shape Planning',
       description:
-        'Every rough crystal is rigorously evaluated for crystal lattice purity, natural grain, and optical transparency before planning the optimal fancy silhouette.',
+        'Each rough crystal is carefully evaluated for optical transparency and natural grain structure before determining the ideal fancy-cut silhouette.',
       image: '/images/cuts2.jpeg',
-      alt: 'Rough diamond evaluation and crystal orientation planning',
-      badge: 'Rough Planning',
+      alt: 'Rough diamond evaluation and shape planning',
+      badge: 'Crystal Planning',
     },
     {
       step: '02',
-      title: 'Precision Cutting',
-      tagline: 'Laser Kerfing & Facet Geometry',
+      title: 'Facet Planning',
+      tagline: 'Geometric Contours & Proportions',
       description:
-        'Advanced kerfing defines the exact geometric perimeter—establishing the crisp eight-fold octagon dome or the curved petal lines of the Tulip cut.',
+        'Facet proportions are mathematically calculated to shape the distinctive geometry—whether the eight-fold dome of Rose Octagone or the curves of the Tulip cut.',
       image: '/images/cuts.jpeg',
-      alt: 'Precision diamond blocking and laser kerfing',
-      badge: 'Geometric Kerfing',
+      alt: 'Diamond facet planning and geometric proportions',
+      badge: 'Facet Geometry',
     },
     {
       step: '03',
       title: 'Expert Polishing',
-      tagline: 'Artisanal Scaife Faceting in Surat',
+      tagline: 'Hand-Polishing on the Scaife Wheel',
       description:
-        'Master lapidaries in our Surat workshop hand-orient each facet plane against the cast iron scaife wheel, achieving mirror-like optical luster and fire.',
+        'Skilled lapidaries in our Surat workshop hand-polish facet planes against the scaife wheel, achieving clean facet junction lines and optical luster.',
       image: '/images/polish.jpeg',
-      alt: 'Artisan diamond polishing on cast iron scaife wheel in Surat workshop',
-      badge: 'Master Lapidary',
+      alt: 'Diamond hand-polishing on scaife wheel in Surat workshop',
+      badge: 'Surat Lapidary',
     },
     {
       step: '04',
       title: 'Final Diamond',
-      tagline: 'Microscopic Inspection & Calibrated Sizing',
+      tagline: 'Quality Inspection & Calibrated Sizing',
       description:
-        'Each completed diamond undergoes darkfield microscopic examination and precision gauge measurement to ensure exact millimeter consistency.',
+        'Each finished diamond is carefully inspected for symmetry, polish luster, and exact millimeter dimensions before parcel dispatch.',
       image: '/images/cuts3.jpeg',
       alt: 'Final finished fancy cut diamond inspection',
-      badge: 'Final Calibration',
+      badge: 'Precision Sizing',
     },
   ];
 
   return (
-    <section className="py-24 sm:py-32 bg-[#12110F] text-white border-t border-[#2A2722] relative overflow-hidden">
+    <section className="py-20 sm:py-24 bg-[#12110F] text-white border-t border-[#2A2722] relative overflow-hidden">
       {/* Background Subtle Gradient */}
       <div className="absolute top-0 right-1/4 w-[400px] h-[400px] bg-rajvi-gold/5 rounded-full blur-[140px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-rajvi-gold/30 bg-[#1A1916] text-rajvi-goldLight text-[11px] uppercase tracking-[0.25em] font-medium mb-4 shadow-sm">
+        <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-16">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-rajvi-gold/30 bg-[#1A1916] text-rajvi-goldLight text-[11px] uppercase tracking-[0.25em] font-medium mb-3 shadow-sm">
             <Compass className="w-3.5 h-3.5 text-rajvi-gold" />
-            <span>Generational Lapidary Mastery</span>
+            <span>Artisanal Process</span>
           </div>
           <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl font-normal tracking-tight text-white leading-tight">
-            The Art Behind Every Diamond
+            Our Craftsmanship
           </h2>
-          <p className="mt-4 text-white/70 text-sm sm:text-base leading-relaxed font-light max-w-xl mx-auto">
-            From raw crystal selection to hand-guided scaife polishing, discover the disciplined four-stage journey of our fancy cut diamonds.
+          <p className="mt-3 text-white/70 text-sm sm:text-base leading-relaxed font-light max-w-xl mx-auto">
+            From raw stone evaluation to scaife polishing in Surat, explore the disciplined journey behind our fancy cut diamonds.
           </p>
         </div>
 

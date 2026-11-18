@@ -17,7 +17,7 @@ export default function BrandStory({ settings }: BrandStoryProps) {
     'Founded with a profound reverence for rare geometric and artisanal silhouettes, Rajvi Diamonds bridges heritage lapidary techniques with modern dimensional precision. Our master diamond polishers coax unprecedented fire and character from rough stones, producing singular fancy cuts that cannot be replicated by automated mass production.';
 
   return (
-    <section className="bg-[#0D0C0A] text-white py-24 sm:py-32 border-t border-[#2A2722] relative overflow-hidden">
+    <section className="bg-[#0D0C0A] text-white py-20 sm:py-24 border-t border-[#2A2722] relative overflow-hidden">
       {/* Background Ambient Glow */}
       <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-rajvi-gold/5 rounded-full blur-[140px] pointer-events-none" />
 
@@ -39,7 +39,7 @@ export default function BrandStory({ settings }: BrandStoryProps) {
                 {/* Editorial Quote Box */}
                 <div className="absolute bottom-6 left-6 right-6 p-4 bg-[#141311]/90 backdrop-blur-md border border-rajvi-gold/30 rounded-sm shadow-md">
                   <p className="font-serif text-xs sm:text-sm text-white/90 italic leading-relaxed">
-                    &ldquo;A diamond’s true brilliance lies not in mass repetition, but in the harmony of rare geometry and individual cut character.&rdquo;
+                    &ldquo;A diamond’s true brilliance lies in the harmony of rare geometry and individual cut character.&rdquo;
                   </p>
                 </div>
               </div>
@@ -50,11 +50,11 @@ export default function BrandStory({ settings }: BrandStoryProps) {
           <div className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-rajvi-gold font-semibold">
               <Gem className="w-4 h-4 text-rajvi-gold" />
-              <span>Heritage & Artistry</span>
+              <span>Surat Atelier Heritage</span>
             </div>
 
-            <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl text-white font-normal tracking-tight leading-tight">
-              The Rajvi Diamonds Story
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-white font-normal tracking-tight leading-tight">
+              About Rajvi Diamonds
             </h2>
 
             <div className="space-y-4 text-white/75 text-sm sm:text-base leading-relaxed font-light">

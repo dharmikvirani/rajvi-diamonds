@@ -34,13 +34,13 @@ export default function WhyChooseUs() {
   ];
 
   return (
-    <section className="bg-[#0D0C0A] text-white py-24 sm:py-28 border-t border-[#2A2722] relative overflow-hidden">
+    <section className="bg-[#0D0C0A] text-white py-20 sm:py-24 border-t border-[#2A2722] relative overflow-hidden">
       {/* Background ambient light */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-rajvi-gold/5 rounded-full blur-[140px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
+        <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-16">
           <span className="text-[11px] uppercase tracking-[0.25em] text-rajvi-gold font-semibold block mb-3">
             Why Partner with Rajvi
           </span>
@@ -90,26 +90,6 @@ export default function WhyChooseUs() {
               </div>
             );
           })}
-        </div>
-
-        {/* Minimal Bottom Strip */}
-        <div className="mt-16 p-6 sm:p-8 bg-[#141311] border border-[#2A2722] rounded-sm flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div>
-            <h4 className="font-serif text-lg text-white font-normal mb-1">
-              Have Specific Diamond Cutting Requirements?
-            </h4>
-            <p className="text-xs text-white/60 font-light">
-              Connect with our lapidary specialists to discuss bespoke millimeter dimensions and parcel quotations.
-            </p>
-          </div>
-
-          <a
-            href="/contact"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-rajvi-gold hover:bg-rajvi-goldLight text-[#0D0C0A] font-semibold text-xs uppercase tracking-widest rounded-sm transition-all shadow-sm hover:scale-105 shrink-0"
-          >
-            <span>Discuss Requirements</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </a>
         </div>
       </div>
     </section>
