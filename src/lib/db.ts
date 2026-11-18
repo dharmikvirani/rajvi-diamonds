@@ -77,6 +77,9 @@ function getDefaultStoreData(): LocalStoreData {
 let inMemoryCache: LocalStoreData | null = null;
 
 function readLocalStore(): LocalStoreData {
+  if (inMemoryCache) {
+    return inMemoryCache;
+  }
   try {
     if (fs.existsSync(LOCAL_STORE_PATH)) {
       const content = fs.readFileSync(LOCAL_STORE_PATH, 'utf-8');
@@ -1486,54 +1489,93 @@ export async function saveCmsSectionDraft(
   sectionKey: string,
   draftData: Partial<CmsSection>
 ): Promise<CmsSection> {
-  const store = readLocalStore();
+  const supabase = createAdminClient();
+  let sections: CmsSection[] = [];
+
+  if (supabase) {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('setting_value')
+      .eq('setting_key', 'cms_sections')
+      .single();
+
+    if (data && Array.isArray(data.setting_value)) {
+      sections = data.setting_value;
+    }
+  }
+
+  if (!sections || sections.length === 0) {
+    const store = readLocalStore();
+    sections = store.cmsSections || initialCmsSections;
+  }
+
   const now = new Date().toISOString();
 
   // Find or create section
-  let idx = store.cmsSections.findIndex((s) => s.section_key === sectionKey);
+  let idx = sections.findIndex((s) => s.section_key === sectionKey);
   if (idx === -1) {
     const initialSec = initialCmsSections.find((s) => s.section_key === sectionKey);
     if (initialSec) {
-      store.cmsSections.push(JSON.parse(JSON.stringify(initialSec)));
-      idx = store.cmsSections.length - 1;
+      sections.push(JSON.parse(JSON.stringify(initialSec)));
+      idx = sections.length - 1;
     } else {
       throw new Error(`Section with key "${sectionKey}" not found.`);
     }
   }
 
-  const existing = store.cmsSections[idx];
+  const existing = sections[idx];
   const mergedDraft = {
     ...(existing.draft_data || {}),
     ...draftData,
   };
 
-  store.cmsSections[idx] = {
+  sections[idx] = {
     ...existing,
     draft_data: mergedDraft,
     has_draft: true,
     updated_at: now,
   };
 
+  const store = readLocalStore();
+  store.cmsSections = sections;
   writeLocalStore(store);
-  await persistCmsSetting('cms_sections', store.cmsSections);
+  await persistCmsSetting('cms_sections', sections);
 
-  return store.cmsSections[idx];
+  return sections[idx];
 }
 
 export async function publishCmsSection(sectionKey: string): Promise<CmsSection> {
-  const store = readLocalStore();
-  const now = new Date().toISOString();
+  const supabase = createAdminClient();
+  let sections: CmsSection[] = [];
 
-  const idx = store.cmsSections.findIndex((s) => s.section_key === sectionKey);
+  if (supabase) {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('setting_value')
+      .eq('setting_key', 'cms_sections')
+      .single();
+
+    if (data && Array.isArray(data.setting_value)) {
+      sections = data.setting_value;
+    }
+  }
+
+  if (!sections || sections.length === 0) {
+    const store = readLocalStore();
+    sections = store.cmsSections || initialCmsSections;
+  }
+
+  const now = new Date().toISOString();
+  const idx = sections.findIndex((s) => s.section_key === sectionKey);
   if (idx === -1) {
     throw new Error(`Section with key "${sectionKey}" not found.`);
   }
 
-  const sec = store.cmsSections[idx];
+  const sec = sections[idx];
   const draft = sec.draft_data || {};
 
   // Promote draft to published
-  store.cmsSections[idx] = {
+  sections[idx] = {
     ...sec,
     ...draft,
     draft_data: null,
@@ -1542,17 +1584,37 @@ export async function publishCmsSection(sectionKey: string): Promise<CmsSection>
     updated_at: now,
   };
 
+  const store = readLocalStore();
+  store.cmsSections = sections;
   writeLocalStore(store);
-  await persistCmsSetting('cms_sections', store.cmsSections);
+  await persistCmsSetting('cms_sections', sections);
 
-  return store.cmsSections[idx];
+  return sections[idx];
 }
 
 export async function reorderCmsSections(orderedKeys: string[]): Promise<boolean> {
-  const store = readLocalStore();
-  const now = new Date().toISOString();
+  const supabase = createAdminClient();
+  let sections: CmsSection[] = [];
 
-  store.cmsSections = store.cmsSections.map((sec) => {
+  if (supabase) {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('setting_value')
+      .eq('setting_key', 'cms_sections')
+      .single();
+
+    if (data && Array.isArray(data.setting_value)) {
+      sections = data.setting_value;
+    }
+  }
+
+  if (!sections || sections.length === 0) {
+    const store = readLocalStore();
+    sections = store.cmsSections || initialCmsSections;
+  }
+
+  const now = new Date().toISOString();
+  sections = sections.map((sec) => {
     const newIdx = orderedKeys.indexOf(sec.section_key);
     if (newIdx !== -1) {
       return {
@@ -1564,8 +1626,10 @@ export async function reorderCmsSections(orderedKeys: string[]): Promise<boolean
     return sec;
   });
 
+  const store = readLocalStore();
+  store.cmsSections = sections;
   writeLocalStore(store);
-  await persistCmsSetting('cms_sections', store.cmsSections);
+  await persistCmsSetting('cms_sections', sections);
   return true;
 }
 
@@ -1573,18 +1637,38 @@ export async function toggleCmsSectionVisibility(
   sectionKey: string,
   isActive: boolean
 ): Promise<boolean> {
-  const store = readLocalStore();
-  const now = new Date().toISOString();
+  const supabase = createAdminClient();
+  let sections: CmsSection[] = [];
 
-  const idx = store.cmsSections.findIndex((s) => s.section_key === sectionKey);
+  if (supabase) {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('setting_value')
+      .eq('setting_key', 'cms_sections')
+      .single();
+
+    if (data && Array.isArray(data.setting_value)) {
+      sections = data.setting_value;
+    }
+  }
+
+  if (!sections || sections.length === 0) {
+    const store = readLocalStore();
+    sections = store.cmsSections || initialCmsSections;
+  }
+
+  const now = new Date().toISOString();
+  const idx = sections.findIndex((s) => s.section_key === sectionKey);
   if (idx !== -1) {
-    store.cmsSections[idx] = {
-      ...store.cmsSections[idx],
+    sections[idx] = {
+      ...sections[idx],
       is_active: isActive,
       updated_at: now,
     };
+    const store = readLocalStore();
+    store.cmsSections = sections;
     writeLocalStore(store);
-    await persistCmsSetting('cms_sections', store.cmsSections);
+    await persistCmsSetting('cms_sections', sections);
     return true;
   }
   return false;
