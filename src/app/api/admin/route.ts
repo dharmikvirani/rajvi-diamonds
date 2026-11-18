@@ -86,6 +86,7 @@ export async function POST(request: NextRequest) {
       }
 
       // 4. Inquiries
+      case 'update_inquiry_status':
       case 'update_inquiry': {
         const saved = await updateInquiryStatus(payload.id, payload.status, payload.internalNotes);
         revalidatePath('/admin/inquiries', 'page');

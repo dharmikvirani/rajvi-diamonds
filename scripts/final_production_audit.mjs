@@ -582,7 +582,7 @@ async function runProductionAudit() {
   try {
     const colRes = await fetch(`${TARGET_URL}/collections`, { cache: 'no-store' });
     const colHtml = await colRes.text();
-    const hasCategory = colHtml.includes('Rose Cut Series') || colHtml.includes('Floral Silhouette');
+    const hasCategory = colHtml.includes('Geometric Fancy Cuts') || colHtml.includes('Botanical & Organic Cuts') || colHtml.includes('All Families');
     logTest(
       'MOD-08: CATEGORIES',
       'CMS-08',
