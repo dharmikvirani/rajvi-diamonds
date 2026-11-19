@@ -59,6 +59,8 @@ export default function DiamondFilterBar({
   onResetFilters,
   totalResults,
 }: DiamondFilterBarProps) {
+  const [mobileExpanded, setMobileExpanded] = React.useState(false);
+
   const hasActiveFilters =
     Boolean(searchQuery) ||
     selectedCategory !== 'all' ||
@@ -86,11 +88,21 @@ export default function DiamondFilterBar({
           />
         </div>
 
-        {/* Total count & reset button */}
-        <div className="flex items-center justify-between md:justify-end gap-4 text-xs">
+        {/* Total count, mobile filter toggle & reset button */}
+        <div className="flex items-center justify-between md:justify-end gap-3 text-xs">
           <span className="text-rajvi-textMuted font-medium">
             Showing <strong className="text-rajvi-textDark font-semibold">{totalResults}</strong> cuts
           </span>
+
+          <button
+            type="button"
+            onClick={() => setMobileExpanded(!mobileExpanded)}
+            className="md:hidden inline-flex items-center gap-1.5 px-3 py-1.5 border border-rajvi-borderLight bg-rajvi-offWhite text-rajvi-textDark text-[11px] uppercase tracking-wider font-semibold rounded-sm"
+          >
+            <Filter className="w-3.5 h-3.5 text-rajvi-gold" />
+            <span>{mobileExpanded ? 'Hide Filters' : 'Filters'}</span>
+            {hasActiveFilters && <span className="w-2 h-2 rounded-full bg-rajvi-gold" />}
+          </button>
 
           {hasActiveFilters && (
             <button
@@ -98,14 +110,14 @@ export default function DiamondFilterBar({
               className="inline-flex items-center gap-1.5 text-rajvi-gold hover:text-rajvi-goldMuted font-semibold uppercase tracking-wider text-[11px] transition-colors"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span>Reset Filters</span>
+              <span>Reset</span>
             </button>
           )}
         </div>
       </div>
 
       {/* Filter Selectors Grid (7 Selectors) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4 pt-6">
+      <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4 pt-6 ${mobileExpanded ? 'grid' : 'hidden md:grid'}`}>
         {/* 1. Category Filter */}
         <div>
           <label className="block text-[11px] uppercase tracking-wider text-rajvi-textMuted font-semibold mb-1.5">

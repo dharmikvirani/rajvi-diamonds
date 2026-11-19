@@ -74,7 +74,7 @@ export default function WhyChooseUs({
   const propositions = items && items.length > 0 ? items : defaultPropositions;
 
   return (
-    <section className="bg-[#0D0C0A] text-white py-20 sm:py-24 border-t border-[#2A2722] relative overflow-hidden">
+    <section className="bg-white text-rajvi-textDark py-20 sm:py-24 border-t border-rajvi-borderLight relative overflow-hidden">
       {/* Background ambient light */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-rajvi-gold/5 rounded-full blur-[140px] pointer-events-none" />
 
@@ -84,10 +84,10 @@ export default function WhyChooseUs({
           <span className="text-[11px] uppercase tracking-[0.25em] text-rajvi-gold font-semibold block mb-3">
             {badge}
           </span>
-          <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl text-white font-normal tracking-tight leading-tight">
+          <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl text-rajvi-textDark font-normal tracking-tight leading-tight">
             {title}
           </h2>
-          <p className="mt-4 text-white/70 text-sm sm:text-base leading-relaxed font-light max-w-xl mx-auto">
+          <p className="mt-4 text-rajvi-textMuted text-sm sm:text-base leading-relaxed font-light max-w-xl mx-auto">
             {subtitle}
           </p>
         </div>
@@ -100,30 +100,30 @@ export default function WhyChooseUs({
             return (
               <div
                 key={'id' in item && item.id ? item.id : idx}
-                className="bg-[#141311] border border-[#2A2722] p-8 rounded-sm hover:border-rajvi-gold/60 transition-all duration-300 hover:-translate-y-1 group flex flex-col justify-between shadow-luxuryDark"
+                className="bg-[#FDFBF7] border border-rajvi-borderLight p-8 rounded-sm hover:border-rajvi-gold/80 transition-all duration-300 hover:-translate-y-1 group flex flex-col justify-between shadow-sm hover:shadow-luxury"
               >
                 <div>
                   {/* Top Row: Icon & Number */}
                   <div className="flex items-center justify-between mb-8">
-                    <div className="w-12 h-12 rounded-sm bg-[#1A1916] border border-[#2A2722] flex items-center justify-center group-hover:border-rajvi-gold/60 transition-colors">
+                    <div className="w-12 h-12 rounded-sm bg-white border border-rajvi-borderLight flex items-center justify-center group-hover:border-rajvi-gold transition-colors shadow-sm">
                       <Icon className="w-5 h-5 text-rajvi-gold group-hover:scale-110 transition-transform" />
                     </div>
-                    <span className="font-serif text-xs text-white/30 tracking-widest uppercase">
+                    <span className="font-serif text-xs text-rajvi-textMuted/50 tracking-widest uppercase font-medium">
                       {displayNumber}
                     </span>
                   </div>
 
-                  <h3 className="font-serif text-xl sm:text-2xl text-white mb-3 font-normal group-hover:text-rajvi-goldLight transition-colors">
+                  <h3 className="font-serif text-xl sm:text-2xl text-rajvi-textDark mb-3 font-normal group-hover:text-rajvi-gold transition-colors">
                     {item.title}
                   </h3>
 
-                  <p className="text-xs sm:text-sm text-white/65 leading-relaxed font-light">
+                  <p className="text-xs sm:text-sm text-rajvi-textMuted leading-relaxed font-light">
                     {item.description}
                   </p>
                 </div>
 
-                <div className="mt-8 pt-4 border-t border-[#2A2722]/80 flex items-center justify-between">
-                  <span className="text-[10px] uppercase tracking-widest text-rajvi-gold/80 font-medium">
+                <div className="mt-8 pt-4 border-t border-rajvi-lightGrey flex items-center justify-between">
+                  <span className="text-[10px] uppercase tracking-widest text-rajvi-gold font-semibold">
                     Atelier Standard
                   </span>
                   <div className="w-1.5 h-1.5 rounded-full bg-rajvi-gold" />

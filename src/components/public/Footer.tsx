@@ -49,11 +49,23 @@ export default function Footer({
   const colLinks = customCollectionLinks && customCollectionLinks.length > 0 ? customCollectionLinks : defaultCollectionLinks;
   const navLinks = customNavLinks && customNavLinks.length > 0 ? customNavLinks : defaultNavLinks;
 
-  const logoSrc = footerSettings?.logo_url || (isDark ? '/rajvi-diamonds-logo-light.png' : '/rajvi-diamonds-logo-display.png');
+  // Guarantee high-contrast logo on light and dark footers
+  const lightThemeLogo = '/rajvi-diamonds-logo-display.png';
+  const darkThemeLogo = '/rajvi-diamonds-logo-light.png';
+  const logoSrc = isDark
+    ? (footerSettings?.logo_url && !footerSettings.logo_url.includes('logo-display') ? footerSettings.logo_url : darkThemeLogo)
+    : (footerSettings?.logo_url && !footerSettings.logo_url.includes('logo-light') ? footerSettings.logo_url : lightThemeLogo);
+
   const brandDesc = footerSettings?.brand_description || settings.footer_text || 'Manufacturer and supplier of exceptional fancy diamond cuts. Dedicated to precision craftsmanship, rarity, and enduring trade excellence.';
   const badgeText = footerSettings?.footer_badge || 'Fancy Diamond Specialist • Surat';
   const disclaimerText = footerSettings?.disclaimer || 'Premium Fancy Cut Showcase (B2B & Private Inquiry)';
-  const copyrightNotice = footerSettings?.copyright_text || `${settings.brand_name}. All rights reserved.`;
+
+  // Clean copyright text to prevent duplicate "©" and years
+  const rawCopyright = footerSettings?.copyright_text || `${settings.brand_name || 'Rajvi Diamonds'}. All rights reserved.`;
+  const cleanCopyright = rawCopyright
+    .replace(/^©\s*/i, '')
+    .replace(/^\d{4}\s*/, '')
+    .trim();
 
   return (
     <footer
@@ -64,7 +76,7 @@ export default function Footer({
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-12 mb-12 sm:mb-16">
           {/* Col 1: Brand & Logo */}
           <div className="space-y-6">
             <a href="/" className="inline-block group" aria-label={settings.brand_name}>
@@ -199,19 +211,17 @@ export default function Footer({
                   </span>
                 </a>
               )}
-              {settings.instagram_url && (
-                <a
-                  href={settings.instagram_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-start gap-2.5 hover:text-rajvi-gold transition-colors"
-                >
-                  <Instagram className="w-4 h-4 text-rajvi-gold shrink-0 mt-0.5" />
-                  <span className={isDark ? 'text-white/90' : 'text-rajvi-textDark'}>
-                    Instagram @rajvidiamonds
-                  </span>
-                </a>
-              )}
+              <a
+                href={settings.instagram_url || 'https://instagram.com/rajvidiamonds'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-2.5 hover:text-rajvi-gold transition-colors"
+              >
+                <Instagram className="w-4 h-4 text-rajvi-gold shrink-0 mt-0.5" />
+                <span className={isDark ? 'text-white/90' : 'text-rajvi-textDark'}>
+                  Instagram @rajvidiamonds
+                </span>
+              </a>
               {settings.business_address && (
                 <div className="flex items-start gap-2.5 pt-1">
                   <MapPin className="w-4 h-4 text-rajvi-gold shrink-0 mt-0.5" />
@@ -230,7 +240,7 @@ export default function Footer({
             isDark ? 'border-[#2A2722] text-white/50' : 'border-rajvi-borderLight text-rajvi-textMuted'
           }`}
         >
-          <p>© {currentYear} {copyrightNotice}</p>
+          <p>© {currentYear} {cleanCopyright}</p>
           <div className="flex items-center space-x-6">
             <a href="/privacy" className="hover:text-rajvi-gold transition-colors">
               Privacy Policy

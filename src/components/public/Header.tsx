@@ -56,8 +56,12 @@ export default function Header({
   const navLinks = customNavLinks && customNavLinks.length > 0 ? customNavLinks : defaultNavLinks;
   const isDark = theme === 'dark';
 
-  const defaultLogo = isDark ? '/rajvi-diamonds-logo-light.png' : '/rajvi-diamonds-logo-display.png';
-  const displayLogo = logoUrl && logoUrl.trim() !== '' ? logoUrl : defaultLogo;
+  // Guarantee high-contrast logo visibility across light and dark themes
+  const lightThemeLogo = '/rajvi-diamonds-logo-display.png';
+  const darkThemeLogo = '/rajvi-diamonds-logo-light.png';
+  const displayLogo = isDark
+    ? (logoUrl && !logoUrl.includes('logo-display') ? logoUrl : darkThemeLogo)
+    : (logoUrl && !logoUrl.includes('logo-light') ? logoUrl : lightThemeLogo);
 
   return (
     <header

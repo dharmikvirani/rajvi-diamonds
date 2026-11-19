@@ -321,56 +321,42 @@ export default function ContactForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        {/* Inquiry Type */}
-        <div>
-          <label className="block text-[11px] uppercase tracking-wider text-rajvi-textDark font-semibold mb-1.5">
-            Inquiry Type <span className="text-red-500">*</span>
-          </label>
-          <select
-            name="inquiryType"
-            value={formData.inquiryType}
-            onChange={handleChange}
-            className="w-full px-3 py-2.5 text-xs bg-rajvi-offWhite border border-rajvi-borderLight rounded-sm text-rajvi-textDark focus:outline-none focus:border-rajvi-gold"
-          >
-            <option value="General Inquiry">General Inquiry</option>
-            <option value="Wholesale Inquiry">Wholesale Inquiry</option>
-            <option value="Jewellery Manufacturing Inquiry">Jewellery Manufacturing</option>
-            <option value="Diamond Availability">Diamond Availability</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
+      {/* Contextual Inquiry Type & Cut Selection (Only shown when not already on a specific Diamond Detail page) */}
+      {!initialDiamondName && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-[11px] uppercase tracking-wider text-rajvi-textDark font-semibold mb-1.5">
+              Inquiry Type <span className="text-red-500">*</span>
+            </label>
+            <select
+              name="inquiryType"
+              value={formData.inquiryType}
+              onChange={handleChange}
+              className="w-full px-3.5 py-2.5 text-xs bg-rajvi-offWhite border border-rajvi-borderLight rounded-sm text-rajvi-textDark focus:outline-none focus:border-rajvi-gold"
+            >
+              <option value="General Inquiry">General Inquiry</option>
+              <option value="Wholesale Inquiry">Wholesale Inquiry</option>
+              <option value="Jewellery Manufacturing Inquiry">Jewellery Manufacturing</option>
+              <option value="Diamond Availability">Diamond Availability</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
 
-        {/* Diamond Name (Optional or Contextual) */}
-        <div>
-          <label className="block text-[11px] uppercase tracking-wider text-rajvi-textDark font-semibold mb-1.5">
-            Diamond Cut <span className="text-rajvi-textMuted text-[10px]">(Optional)</span>
-          </label>
-          <input
-            type="text"
-            name="diamondName"
-            placeholder="e.g. Rose Octagone"
-            value={formData.diamondName || ''}
-            onChange={handleChange}
-            className="w-full px-3.5 py-2.5 text-xs bg-rajvi-offWhite border border-rajvi-borderLight rounded-sm text-rajvi-textDark focus:outline-none focus:border-rajvi-gold"
-          />
+          <div>
+            <label className="block text-[11px] uppercase tracking-wider text-rajvi-textDark font-semibold mb-1.5">
+              Interested Diamond Cut <span className="text-rajvi-textMuted text-[10px]">(Optional)</span>
+            </label>
+            <input
+              type="text"
+              name="diamondName"
+              placeholder="e.g. Rose Octagone or Custom Silhouette"
+              value={formData.diamondName || ''}
+              onChange={handleChange}
+              className="w-full px-3.5 py-2.5 text-xs bg-rajvi-offWhite border border-rajvi-borderLight rounded-sm text-rajvi-textDark focus:outline-none focus:border-rajvi-gold"
+            />
+          </div>
         </div>
-
-        {/* Interested Size */}
-        <div>
-          <label className="block text-[11px] uppercase tracking-wider text-rajvi-textDark font-semibold mb-1.5">
-            Interested Size <span className="text-rajvi-textMuted text-[10px]">(Optional)</span>
-          </label>
-          <input
-            type="text"
-            name="selectedSize"
-            placeholder="e.g. 5 mm or Custom"
-            value={formData.selectedSize || ''}
-            onChange={handleChange}
-            className="w-full px-3.5 py-2.5 text-xs bg-rajvi-offWhite border border-rajvi-borderLight rounded-sm text-rajvi-textDark focus:outline-none focus:border-rajvi-gold"
-          />
-        </div>
-      </div>
+      )}
 
       {/* Message */}
       <div>

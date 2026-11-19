@@ -75,21 +75,21 @@ export default function CraftsmanshipSection({
   const currentStep = steps[activeStep] || steps[0];
 
   return (
-    <section className="py-20 sm:py-24 bg-[#12110F] text-white border-t border-[#2A2722] relative overflow-hidden">
+    <section className="py-20 sm:py-24 bg-[#FDFBF7] text-rajvi-textDark border-t border-rajvi-borderLight relative overflow-hidden">
       {/* Background Subtle Gradient */}
       <div className="absolute top-0 right-1/4 w-[400px] h-[400px] bg-rajvi-gold/5 rounded-full blur-[140px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-rajvi-gold/30 bg-[#1A1916] text-rajvi-goldLight text-[11px] uppercase tracking-[0.25em] font-medium mb-3 shadow-sm">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-rajvi-gold/40 bg-white/90 text-rajvi-goldMuted text-[11px] uppercase tracking-[0.25em] font-medium mb-3 shadow-sm">
             <Compass className="w-3.5 h-3.5 text-rajvi-gold" />
             <span>{badge}</span>
           </div>
-          <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl font-normal tracking-tight text-white leading-tight">
+          <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl font-normal tracking-tight text-rajvi-textDark leading-tight">
             {title}
           </h2>
-          <p className="mt-3 text-white/70 text-sm sm:text-base leading-relaxed font-light max-w-xl mx-auto">
+          <p className="mt-3 text-rajvi-textMuted text-sm sm:text-base leading-relaxed font-light max-w-xl mx-auto">
             {subtitle}
           </p>
         </div>
@@ -98,31 +98,33 @@ export default function CraftsmanshipSection({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
           {/* Left Column: Large Photography with Smooth Transition */}
           <div className="lg:col-span-7">
-            <div className="relative aspect-[4/3] sm:aspect-[16/11] rounded-sm overflow-hidden bg-[#0D0C0A] border border-[#2A2722] shadow-luxuryDark group">
-              <Image
-                src={currentStep.image_url || '/images/cuts2.jpeg'}
-                alt={currentStep.image_alt || currentStep.title}
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 60vw"
-                className="object-cover object-center transition-all duration-700 ease-in-out group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0D0C0A]/85 via-transparent to-transparent" />
+            <div className="relative aspect-[4/3] sm:aspect-[16/11] rounded-sm overflow-hidden bg-white border border-rajvi-borderLight shadow-luxury group p-2">
+              <div className="relative w-full h-full rounded-sm overflow-hidden">
+                <Image
+                  src={currentStep.image_url || '/images/cuts2.jpeg'}
+                  alt={currentStep.image_alt || currentStep.title}
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 60vw"
+                  className="object-cover object-center transition-all duration-700 ease-in-out group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-              {/* Step Pill */}
-              <div className="absolute top-4 left-4 inline-flex items-center gap-2 px-3 py-1 bg-[#0D0C0A]/90 backdrop-blur-md border border-rajvi-gold/40 text-rajvi-goldLight text-[11px] uppercase tracking-widest font-semibold rounded-sm">
-                <Sparkles className="w-3 h-3 text-rajvi-gold" />
-                <span>Step {currentStep.step} • {currentStep.badge}</span>
-              </div>
+                {/* Step Pill */}
+                <div className="absolute top-4 left-4 inline-flex items-center gap-2 px-3 py-1 bg-white/95 backdrop-blur-md border border-rajvi-gold/40 text-rajvi-textDark text-[11px] uppercase tracking-widest font-semibold rounded-sm shadow-sm">
+                  <Sparkles className="w-3 h-3 text-rajvi-gold" />
+                  <span>Step {currentStep.step} • {currentStep.badge}</span>
+                </div>
 
-              {/* Bottom Caption */}
-              <div className="absolute bottom-4 left-4 right-4 p-4 bg-[#0D0C0A]/85 backdrop-blur-md border border-[#2A2722] rounded-sm">
-                <span className="text-[10px] uppercase tracking-widest text-rajvi-gold block mb-1">
-                  Stage {currentStep.step}
-                </span>
-                <p className="font-serif text-lg text-white font-normal">
-                  {currentStep.title} — {currentStep.tagline}
-                </p>
+                {/* Bottom Caption */}
+                <div className="absolute bottom-4 left-4 right-4 p-4 bg-white/95 backdrop-blur-md border border-rajvi-borderLight rounded-sm shadow-sm">
+                  <span className="text-[10px] uppercase tracking-widest text-rajvi-gold block mb-1 font-semibold">
+                    Stage {currentStep.step}
+                  </span>
+                  <p className="font-serif text-lg text-rajvi-textDark font-normal">
+                    {currentStep.title} — {currentStep.tagline}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -137,13 +139,13 @@ export default function CraftsmanshipSection({
                   onClick={() => setActiveStep(idx)}
                   className={`w-full text-left p-5 sm:p-6 rounded-sm border transition-all duration-300 flex items-start gap-4 ${
                     isActive
-                      ? 'bg-[#181714] border-rajvi-gold/80 shadow-md ring-1 ring-rajvi-gold/20'
-                      : 'bg-[#141311] border-[#2A2722] hover:border-[#3A3731] hover:bg-[#161512]'
+                      ? 'bg-white border-rajvi-gold shadow-luxury ring-1 ring-rajvi-gold/30'
+                      : 'bg-[#FAF8F5] border-rajvi-borderLight hover:border-rajvi-gold/60 hover:bg-white'
                   }`}
                 >
                   <div
                     className={`font-serif text-2xl font-light shrink-0 transition-colors ${
-                      isActive ? 'text-rajvi-gold' : 'text-white/30'
+                      isActive ? 'text-rajvi-gold font-medium' : 'text-rajvi-textMuted/40'
                     }`}
                   >
                     {item.step}
@@ -153,7 +155,7 @@ export default function CraftsmanshipSection({
                     <div className="flex items-center justify-between mb-1">
                       <h3
                         className={`font-serif text-lg font-normal transition-colors ${
-                          isActive ? 'text-white' : 'text-white/80'
+                          isActive ? 'text-rajvi-textDark font-medium' : 'text-rajvi-textDark/85'
                         }`}
                       >
                         {item.title}
@@ -163,7 +165,7 @@ export default function CraftsmanshipSection({
                       )}
                     </div>
 
-                    <p className="text-xs text-white/60 leading-relaxed font-light">
+                    <p className="text-xs text-rajvi-textMuted leading-relaxed font-light">
                       {item.description}
                     </p>
                   </div>

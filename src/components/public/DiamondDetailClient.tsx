@@ -34,32 +34,30 @@ export default function DiamondDetailClient({
   settings,
   siteUrl,
 }: DiamondDetailClientProps) {
-  // Available sizes
+  // Available sizes - only preselect if exactly ONE size is recorded to avoid misleading defaults
   const availableSizesList = (diamond.sizes || []).filter((s) => s.is_available);
-  const defaultSize = availableSizesList.length > 0 ? availableSizesList[0].size_mm : null;
+  const defaultSize = availableSizesList.length === 1 ? availableSizesList[0].size_mm : null;
   const [selectedSizeMm, setSelectedSizeMm] = useState<number | null>(defaultSize);
 
-  // Available colors
+  // Available colors - only preselect if exactly ONE color exists
   const availableColors =
     diamond.available_colors && diamond.available_colors.length > 0
       ? diamond.available_colors
       : diamond.color
       ? [diamond.color]
       : [];
-  const [selectedColor, setSelectedColor] = useState<string>(
-    availableColors.length > 0 ? availableColors[0] : diamond.color || ''
-  );
+  const defaultColor = availableColors.length === 1 ? availableColors[0] : '';
+  const [selectedColor, setSelectedColor] = useState<string>(defaultColor);
 
-  // Available clarities
+  // Available clarities - only preselect if exactly ONE clarity exists
   const availableClarities =
     diamond.available_clarities && diamond.available_clarities.length > 0
       ? diamond.available_clarities
       : diamond.clarity
       ? [diamond.clarity]
       : [];
-  const [selectedClarity, setSelectedClarity] = useState<string>(
-    availableClarities.length > 0 ? availableClarities[0] : diamond.clarity || ''
-  );
+  const defaultClarity = availableClarities.length === 1 ? availableClarities[0] : '';
+  const [selectedClarity, setSelectedClarity] = useState<string>(defaultClarity);
 
   const formattedSelectedSize = selectedSizeMm ? formatSizeMm(selectedSizeMm) : null;
   const pageUrl = `${siteUrl}/collections/${diamond.slug}`;
@@ -68,14 +66,15 @@ export default function DiamondDetailClient({
     diamond.availability_status || (availableSizesList.length > 0 ? 'Available' : 'Made to Order');
   const isAvailableNow = availability === 'Available';
 
-  // Build dynamic CTA labels
-  const dynamicSpecsSummary = [
-    formattedSelectedSize,
-    selectedColor ? `Color ${selectedColor}` : null,
-    selectedClarity ? `Clarity ${selectedClarity}` : null,
-  ]
-    .filter(Boolean)
-    .join(' • ');
+  // Build dynamic CTA labels accurately without misleading preselected values
+  const configuredSpecsList: string[] = [];
+  if (formattedSelectedSize) configuredSpecsList.push(formattedSelectedSize);
+  if (selectedColor) configuredSpecsList.push(`Color ${selectedColor}`);
+  if (selectedClarity) configuredSpecsList.push(`Clarity ${selectedClarity}`);
+
+  const dynamicSpecsSummary = configuredSpecsList.length > 0
+    ? configuredSpecsList.join(' • ')
+    : '';
 
   const handleScrollToInquiry = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -237,12 +236,29 @@ export default function DiamondDetailClient({
               )}
 
               {/* Active Selection Summary Card */}
-              {dynamicSpecsSummary && (
-                <div className="p-3 bg-rajvi-offWhite border border-rajvi-borderLight rounded-sm flex items-center justify-between text-xs">
-                  <span className="text-rajvi-textMuted">Configured Cut:</span>
-                  <span className="font-semibold text-rajvi-textDark">{dynamicSpecsSummary}</span>
+              <div className="p-3.5 bg-rajvi-offWhite border border-rajvi-borderLight rounded-sm flex flex-col sm:flex-row sm:items-center justify-between text-xs gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-[10px] uppercase tracking-wider text-rajvi-gold font-bold">
+                    {dynamicSpecsSummary ? 'Configured Specification:' : 'Workshop Availability:'}
+                  </span>
+                  <span className="font-semibold text-rajvi-textDark">
+                    {dynamicSpecsSummary || 'Select size, color or clarity above (or submit custom inquiry)'}
+                  </span>
                 </div>
-              )}
+                {dynamicSpecsSummary && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedSizeMm(null);
+                      setSelectedColor('');
+                      setSelectedClarity('');
+                    }}
+                    className="text-[10px] uppercase tracking-wider text-rajvi-textMuted hover:text-red-600 underline font-medium self-end sm:self-auto transition-colors"
+                  >
+                    Reset
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Primary Action Buttons */}
@@ -251,11 +267,11 @@ export default function DiamondDetailClient({
               <button
                 type="button"
                 onClick={handleScrollToInquiry}
-                className="w-full inline-flex items-center justify-center gap-2.5 py-4 px-6 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-semibold text-xs uppercase tracking-widest transition-all duration-300 shadow-md hover:scale-[1.01]"
+                className="w-full inline-flex items-center justify-center gap-2.5 py-4 px-6 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-semibold text-xs uppercase tracking-widest transition-all duration-300 shadow-luxury hover:scale-[1.01]"
               >
                 <DollarSign className="w-4 h-4 text-rajvi-black" />
                 <span>
-                  Request Price Quote {dynamicSpecsSummary ? `(${dynamicSpecsSummary})` : ''}
+                  Request Price Quote {dynamicSpecsSummary ? `(${dynamicSpecsSummary})` : `(${diamond.name})`}
                 </span>
               </button>
 
@@ -359,6 +375,38 @@ export default function DiamondDetailClient({
           </div>
         </div>
       )}
+
+      {/* Sticky Mobile Inquiry Action Bar */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-rajvi-borderLight p-3 px-4 shadow-luxury flex items-center justify-between gap-3">
+        <div className="flex-1 min-w-0">
+          <p className="font-serif text-sm font-semibold text-rajvi-textDark truncate">
+            {diamond.name}
+          </p>
+          <p className="text-[10px] text-rajvi-gold font-medium truncate">
+            {dynamicSpecsSummary || 'Inquire for Availability & Sizing'}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={handleScrollToInquiry}
+            className="px-3.5 py-2 bg-rajvi-gold hover:bg-rajvi-goldLight text-rajvi-black font-semibold text-[11px] uppercase tracking-wider rounded-sm transition-all shadow-sm"
+          >
+            Quote
+          </button>
+          <WhatsAppButton
+            phoneNumber={settings.whatsapp_number}
+            diamondName={diamond.name}
+            selectedSize={formattedSelectedSize}
+            color={selectedColor}
+            clarity={selectedClarity}
+            pageUrl={pageUrl}
+            variant="outline"
+            className="px-3 py-1.5 bg-white border border-rajvi-gold text-rajvi-gold text-[11px] uppercase tracking-wider font-semibold rounded-sm"
+            label="WhatsApp"
+          />
+        </div>
+      </div>
     </div>
   );
 }

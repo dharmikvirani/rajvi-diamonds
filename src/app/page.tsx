@@ -82,7 +82,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   ]);
 
   return (
-    <main className="min-h-screen bg-[#0D0C0A] text-white flex flex-col selection:bg-rajvi-gold selection:text-[#0D0C0A]">
+    <main className="min-h-screen bg-rajvi-offWhite text-rajvi-textDark flex flex-col selection:bg-rajvi-gold selection:text-white">
       {/* Draft Preview Indicator Banner */}
       {isPreview && (
         <div className="bg-amber-500/20 border-b border-amber-500/40 text-amber-200 px-4 py-2.5 text-xs text-center flex items-center justify-center gap-2 sticky top-0 z-50 backdrop-blur-md">
@@ -103,7 +103,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       <Header
         whatsappNumber={settings.whatsapp_number}
         brandName={settings.brand_name}
-        theme="dark"
+        theme="light"
         logoUrl={headerSettings.logo_url}
         navLinks={navLinks}
         showCta={headerSettings.show_cta}
@@ -140,7 +140,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                 badge={sec.badge}
                 buttonLabel={sec.buttons?.[0]?.label}
                 buttonHref={sec.buttons?.[0]?.href}
-                theme="dark"
+                theme="light"
               />
             );
 
@@ -207,7 +207,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       {/* Footer & Dynamic Links */}
       <Footer
         settings={settings}
-        theme="dark"
+        theme="light"
         footerSettings={footerSettings}
         collectionLinks={footerColNav}
         navigationLinks={footerNav}
